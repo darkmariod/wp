@@ -1,0 +1,49 @@
+{# Plantilla del correo. Los correos usan HTML antiguo y estilos en línea, #}
+{# porque muchos clientes de correo ignoran las hojas de estilo externas.  #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerta de monitoreo</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #14202f;">
+
+    <div style="max-width: 520px; margin: 0 auto; padding: 24px;">
+
+        <h2 style="color: #306998; margin: 0 0 16px;">
+            Alerta de monitoreo
+        </h2>
+
+        <p>
+            El dispositivo <strong>{{ dispositivo.nombre }}</strong>
+            ({{ dispositivo.direccion_ip }}) necesita revisión.
+        </p>
+
+        <table style="border-collapse: collapse; width: 100%; margin: 16px 0;">
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #dde;">Red</td>
+                <td style="padding: 8px; border-bottom: 1px solid #dde;">
+                    <strong>{{ dispositivo.red.nombre }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #dde;">Errores</td>
+                <td style="padding: 8px; border-bottom: 1px solid #dde;">
+                    <strong>{{ errores }}</strong>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Latencia promedio</td>
+                <td style="padding: 8px;">
+                    <strong>{{ promedio|floatformat:2|default:"sin datos" }} ms</strong>
+                </td>
+            </tr>
+        </table>
+
+        <p style="color: #5a6b81; font-size: 13px;">
+            Mensaje automático del sistema de monitoreo.
+        </p>
+    </div>
+
+</body>
+</html>

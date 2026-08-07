@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ dispositivo.nombre }}{% endblock %}
+
+{% block contenido %}
+
+<p class="miga"><a href="{% url 'dispositivos:lista' %}">← Dispositivos</a></p>
+
+<div class="titulo-fila">
+    <h1>{{ dispositivo.nombre }}</h1>
+    <div>
+        <a class="boton boton--claro"
+           href="{% url 'dispositivos:editar' dispositivo.pk %}">Editar</a>
+
+        {# El borrado va por POST: por eso es un formulario, no un enlace. #}
+        <form method="post" action="{% url 'dispositivos:borrar' dispositivo.pk %}"
+              class="en-linea"
+              onsubmit="return confirm('¿Borrar este dispositivo?')">
+            {% csrf_token %}
+            <button class="boton boton--peligro" type="submit">Borrar</button>
+        </form>
+    </div>
+</div>
+
+<div class="tarjetas">
+    <div class="tarjeta">
+        <span class="etiqueta">Dirección IP</span>
+        <strong class="mono">{{ dispositivo.direccion_ip }}</strong>
+    </div>
+    <div class="tarjeta">
+        <span class="etiqueta">Red</span>
+        <strong>{{ dispositivo.red.nombre }}</strong>
+    </div>
+    <div class="tarjeta">
+        <span class="etiqueta">Latencia promedio</span>
+        {# floatformat:2 redondea a dos decimales. #}
+        {# El filtro default se usa cuando el valor es None. #}
+        <strong>{{ promedio|floatformat:2|default:"sin datos" }} ms</strong>
+    </div>
+    <div class="tarjeta">
+        <span class="etiqueta">Errores acumulados</span>
+        <strong>{{ errores }}</strong>
+    </div>
+</div>
+
+<div class="titulo-fila">
+    <h2>Monitoreos</h2>
+    <form method="post" action="{% url 'dispositivos:alertar' dispositivo.pk %}">
+        {% csrf_token %}
+        <button class="boton boton--claro" type="submit">Enviar alerta</button>
+    </form>
+</div>
+
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Fecha y hora</th>
+            <th>Latencia</th>
+            <th>Errores</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for monitoreo in monitoreos %}
+        <tr>
+            <td>{{ monitoreo.fecha_hora|date:"d/m/Y H:i" }}</td>
+            <td>{{ monitoreo.latencia_ms|default:"—" }} ms</td>
+            <td>{{ monitoreo.errores }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="vacio">Sin monitoreos registrados.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

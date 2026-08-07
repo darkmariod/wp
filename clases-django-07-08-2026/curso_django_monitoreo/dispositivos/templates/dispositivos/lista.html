@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block titulo %}Dispositivos{% endblock %}
+
+{% block contenido %}
+
+<div class="titulo-fila">
+    <h1>Dispositivos <span class="contador">{{ total }}</span></h1>
+    <a class="boton" href="{% url 'dispositivos:crear' %}">+ Nuevo</a>
+</div>
+
+<form class="buscador" method="get">
+    <input class="campo" type="search" name="q" value="{{ busqueda }}"
+           placeholder="Buscar por nombre...">
+    <button class="boton boton--claro" type="submit">Buscar</button>
+</form>
+
+<table class="tabla">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Dirección IP</th>
+            <th>Red</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {# El for de Django no lleva dos puntos y SÍ lleva endfor. #}
+        {% for dispositivo in dispositivos %}
+        <tr>
+            <td>
+                <a href="{% url 'dispositivos:detalle' dispositivo.pk %}">
+                    {{ dispositivo.nombre }}
+                </a>
+            </td>
+            <td class="mono">{{ dispositivo.direccion_ip }}</td>
+            <td>{{ dispositivo.red.nombre }}</td>
+            <td>
+                {% if dispositivo.activo %}
+                    <span class="pastilla pastilla--ok">Activo</span>
+                {% else %}
+                    <span class="pastilla pastilla--off">Inactivo</span>
+                {% endif %}
+            </td>
+            <td class="derecha">
+                <a href="{% url 'dispositivos:editar' dispositivo.pk %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        {# {% empty %} se muestra cuando la lista está vacía. #}
+        <tr>
+            <td colspan="5" class="vacio">
+                No hay dispositivos todavía.
+                <a href="{% url 'dispositivos:crear' %}">Crea el primero</a>.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

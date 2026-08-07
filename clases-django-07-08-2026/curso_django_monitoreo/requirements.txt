@@ -1,0 +1,13 @@
+# Django 5.2 es LTS: soporte largo y compatible con Django REST Framework.
+# NO uses Django 6.x todavía: DRF 3.17 aún no funciona con esa versión.
+Django==5.2.17
+
+# El driver de MySQL que exige django.db.backends.mysql.
+# Ojo: NO sirve mysql-connector-python aquí.
+mysqlclient==2.2.8
+
+# La API REST.
+djangorestframework==3.17.2
+
+# Para leer el archivo .env.
+python-dotenv==1.2.2
