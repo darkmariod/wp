@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es-EC">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.classList.add('js')</script>
+<title>Nosotros | Unidad Educativa Pestalozzi Ambato</title>
+<meta name="description" content="Quiénes somos, la filosofía Pestalozzi en el aula, misión y visión de la Unidad Educativa Pestalozzi de Ambato.">
+<meta property="og:title" content="Nosotros | Pestalozzi Ambato">
+<meta property="og:image" content="img/hero/nosotros.webp">
+<meta property="og:locale" content="es_EC">
+
+<link rel="icon" href="img/marca/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/hero/nosotros.webp">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/componentes.css">
+<link rel="stylesheet" href="css/animaciones.css">
+</head>
+<body>
+
+<a class="saltar" href="#principal">Saltar al contenido</a>
+
+<header class="header">
+  <div class="contenedor header__inner">
+    <a href="index.html" class="header__logo" aria-label="Pestalozzi Ambato, inicio">
+      <img src="img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html" class="activo" aria-current="page">Nosotros</a>
+      <a href="galeria.html">Galería</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <a href="contacto.html" class="btn btn--acento header__cta">Admisiones 2026–2027</a>
+    <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="velo"></div>
+<nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
+  <a href="index.html">Inicio</a>
+  <a href="nosotros.html">Nosotros</a>
+  <a href="galeria.html">Galería</a>
+  <a href="contacto.html">Contacto</a>
+  <a href="contacto.html" class="btn btn--acento">Admisiones 2026–2027</a>
+  <div class="menu-movil__datos">
+    <a href="tel:+593990000000">099 000 0000</a><br>
+    <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+  </div>
+</nav>
+
+<main id="principal">
+
+  <section class="hero hero--interior">
+    <img class="hero__foto" src="img/hero/nosotros.webp" alt="Fachada de la Unidad Educativa Pestalozzi con la bandera del Ecuador" width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href="index.html">Inicio</a> / Nosotros</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Conócenos</h1>
+      <p class="hero__bajada">Una escuelita de barrio en Ambato, con la filosofía que puso al niño primero.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIÉNES SOMOS ============ -->
+  <section class="seccion seccion--clara">
+    <div class="contenedor partido partido--texto-primero">
+      <div class="partido__texto" data-revelar="izq">
+        <span class="eyebrow">Quiénes somos</span>
+        <h2>Mi escuelita Pestalozzi</h2>
+        <p>Somos una unidad educativa de la ciudad de Ambato dedicada a la formación
+           integral de niñas y niños. Trabajamos con grupos reducidos, seguimiento
+           individual y una relación cercana con cada familia.</p>
+        <p>Nuestro plantel está en una ladera con patio de césped, huerto, juegos y
+           vista a la ciudad. Los niños salen a correr todos los días: aquí el
+           movimiento es parte del aprendizaje, no un premio.</p>
+      </div>
+      <div class="partido__foto" data-revelar="der">
+        <img src="img/galeria/g05.webp" alt="Edificio de la institución visto desde el patio" width="640" height="1138" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FILOSOFÍA ============ -->
+  <section class="seccion seccion--suave">
+    <div class="contenedor">
+      <div class="enc-seccion" data-revelar>
+        <span class="eyebrow">El método</span>
+        <h2>La filosofía Pestalozzi en el aula</h2>
+        <p>Johann Heinrich Pestalozzi propuso que el niño debe ser el centro de su propio
+           aprendizaje, formándose en tres dimensiones a la vez.</p>
+      </div>
+
+      <div class="pilares">
+        <article data-revelar>
+          <h3>Cabeza</h3>
+          <p>El pensamiento se construye desde la observación directa. Primero el niño
+             mira y describe con sus palabras; recién después llega el concepto.</p>
+        </article>
+        <article data-revelar data-retraso="100">
+          <h3>Corazón</h3>
+          <p>La formación moral y afectiva no es una materia aparte. Se aprende en el
+             trato diario, en cómo se resuelve un conflicto y en cómo se celebra un logro.</p>
+        </article>
+        <article data-revelar data-retraso="200">
+          <h3>Manos</h3>
+          <p>La habilidad práctica cierra el círculo. Dibujar, construir, sembrar y
+             experimentar fijan lo aprendido mejor que cualquier repetición.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="franja">
+    <img class="franja__foto" src="img/galeria/g06.webp" alt="" loading="lazy">
+    <div class="franja__velo"></div>
+    <div class="contenedor">
+      <h2>¿Te gustaría conocernos en persona?</h2>
+      <p>Agenda una visita guiada y recorre las aulas y el patio con nosotros.</p>
+      <div class="franja__acciones">
+        <a href="https://wa.me/593990000000" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+        <a href="contacto.html" class="enlace-flecha">Ver datos de contacto</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="contenedor">
+    <div class="footer__rejilla">
+      <div class="footer__marca">
+        <img src="img/marca/logo.png" alt="Pestalozzi Ambato" width="287" height="268" loading="lazy">
+        <p>Unidad Educativa · Ambato, Ecuador</p>
+      </div>
+      <div>
+        <h4>Institución</h4>
+        <ul>
+          <li><a href="index.html#propuesta">Propuesta educativa</a></li>
+          <li><a href="index.html#niveles">Niveles</a></li>
+          <li><a href="nosotros.html">Filosofía</a></li>
+          <li><a href="contacto.html">Admisiones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <address>
+          Tiwinza #1995 y Etza<br>
+          Ambato, Ecuador<br>
+          <a href="tel:+593990000000">099 000 0000</a><br>
+          <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+        </address>
+        <ul style="margin-top:var(--space-4)">
+          <li><a href="https://facebook.com/pestalozziambato" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://wa.me/593990000000" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <p>© <span id="anio">2026</span> Unidad Educativa Pestalozzi Ambato. Todos los derechos reservados.</p>
+      <p>Ambato · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>

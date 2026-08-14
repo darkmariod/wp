@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es-EC">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nosotros | Unidad Educativa Pestalozzi Ambato</title>
+<meta name="description" content="Quiénes somos, la filosofía Pestalozzi en el aula, misión y visión de la Unidad Educativa Pestalozzi de Ambato.">
+<meta property="og:title" content="Nosotros | Pestalozzi Ambato">
+<meta property="og:image" content="img/hero/nosotros.webp">
+<meta property="og:locale" content="es_EC">
+
+<link rel="icon" href="img/marca/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/hero/nosotros.webp">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/componentes.css">
+<link rel="stylesheet" href="css/animaciones.css">
+</head>
+<body>
+
+<a class="saltar" href="#principal">Saltar al contenido</a>
+
+<header class="header">
+  <div class="contenedor header__inner">
+    <a href="index.html" class="header__logo" aria-label="Pestalozzi Ambato, inicio">
+      <img src="img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html" class="activo" aria-current="page">Nosotros</a>
+      <a href="galeria.html">Galería</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <a href="contacto.html" class="btn btn--acento header__cta">Admisiones 2026–2027</a>
+    <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="velo"></div>
+<nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
+  <a href="index.html">Inicio</a>
+  <a href="nosotros.html">Nosotros</a>
+  <a href="galeria.html">Galería</a>
+  <a href="contacto.html">Contacto</a>
+  <a href="contacto.html" class="btn btn--acento">Admisiones 2026–2027</a>
+  <div class="menu-movil__datos">
+    <a href="tel:+593998246396">099 824 6396</a><br>
+    <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+  </div>
+</nav>
+
+<main id="principal">
+
+  <section class="hero hero--interior">
+    <img class="hero__foto" src="img/hero/nosotros.webp" alt="Fachada de la Unidad Educativa Pestalozzi con la bandera del Ecuador" width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href="index.html">Inicio</a> / Nosotros</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Conócenos</h1>
+      <p class="hero__bajada">Una escuelita de barrio en Ambato, con la filosofía que puso al niño primero.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIÉNES SOMOS ============ -->
+  <section class="seccion seccion--clara">
+    <div class="contenedor partido">
+      <div class="partido__texto" data-revelar="izq">
+        <span class="eyebrow">Quiénes somos</span>
+        <h2>Mi escuelita Pestalozzi</h2>
+        <p>Somos una unidad educativa de la ciudad de Ambato dedicada a la formación
+           integral de niñas y niños. Trabajamos con grupos reducidos, seguimiento
+           individual y una relación cercana con cada familia.</p>
+        <p>Nuestro plantel está en una ladera con patio de césped, huerto, juegos y
+           vista a la ciudad. Los niños salen a correr todos los días: aquí el
+           movimiento es parte del aprendizaje, no un premio.</p>
+        <p style="margin-top:var(--space-6)">
+          <span class="pendiente">Por completar</span>
+          La reseña histórica y el año de fundación los entrega la institución.
+        </p>
+      </div>
+      <div class="partido__foto" data-revelar="der">
+        <img src="img/galeria/g05.webp" alt="Edificio de la institución visto desde el patio" width="640" height="1138" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FILOSOFÍA ============ -->
+  <section class="seccion seccion--suave">
+    <div class="contenedor">
+      <div class="enc-seccion" data-revelar>
+        <span class="eyebrow">El método</span>
+        <h2>La filosofía Pestalozzi en el aula</h2>
+        <p>Johann Heinrich Pestalozzi propuso que el niño debe ser el centro de su propio
+           aprendizaje, formándose en tres dimensiones a la vez.</p>
+      </div>
+
+      <div class="rejilla rejilla--3">
+        <article class="tarjeta" data-revelar>
+          <p class="eyebrow" style="margin-bottom:var(--space-2)">01</p>
+          <h3>Cabeza</h3>
+          <p>El pensamiento se construye desde la observación directa. Primero el niño
+             mira y describe con sus palabras; recién después llega el concepto.</p>
+        </article>
+        <article class="tarjeta" data-revelar data-retraso="100">
+          <p class="eyebrow" style="margin-bottom:var(--space-2)">02</p>
+          <h3>Corazón</h3>
+          <p>La formación moral y afectiva no es una materia aparte. Se aprende en el
+             trato diario, en cómo se resuelve un conflicto y en cómo se celebra un logro.</p>
+        </article>
+        <article class="tarjeta" data-revelar data-retraso="200">
+          <p class="eyebrow" style="margin-bottom:var(--space-2)">03</p>
+          <h3>Manos</h3>
+          <p>La habilidad práctica cierra el círculo. Dibujar, construir, sembrar y
+             experimentar fijan lo aprendido mejor que cualquier repetición.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MISIÓN Y VISIÓN ============ -->
+  <section class="seccion seccion--clara">
+    <div class="contenedor">
+      <div class="enc-seccion" data-revelar>
+        <h2>Misión y visión</h2>
+        <p><span class="pendiente">Por completar</span> Textos oficiales pendientes de entrega.</p>
+      </div>
+      <div class="rejilla rejilla--2">
+        <div class="bloque-mv" data-revelar>
+          <h3>Misión</h3>
+          <p>Espacio reservado para el texto oficial de la misión institucional.
+             Se recomienda un máximo de tres líneas para que se lea de un vistazo.</p>
+        </div>
+        <div class="bloque-mv" data-revelar data-retraso="100">
+          <h3>Visión</h3>
+          <p>Espacio reservado para el texto oficial de la visión institucional.
+             Mismo criterio: breve, concreta y sin lenguaje administrativo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EQUIPO ============ -->
+  <section class="seccion seccion--suave">
+    <div class="contenedor">
+      <div class="enc-seccion" data-revelar>
+        <span class="eyebrow">Nuestro equipo</span>
+        <h2>Quién acompaña a los estudiantes</h2>
+        <p><span class="pendiente">Por completar</span> Requiere fotografías y autorización de cada docente.</p>
+      </div>
+      <div class="rejilla rejilla--4">
+        <article class="tarjeta centro" data-revelar>
+          <div class="tarjeta__icono" style="margin-inline:auto;width:88px;height:88px" aria-hidden="true"></div>
+          <h3>Nombre del docente</h3>
+          <p>Área o nivel a cargo</p>
+        </article>
+        <article class="tarjeta centro" data-revelar data-retraso="100">
+          <div class="tarjeta__icono" style="margin-inline:auto;width:88px;height:88px" aria-hidden="true"></div>
+          <h3>Nombre del docente</h3>
+          <p>Área o nivel a cargo</p>
+        </article>
+        <article class="tarjeta centro" data-revelar data-retraso="200">
+          <div class="tarjeta__icono" style="margin-inline:auto;width:88px;height:88px" aria-hidden="true"></div>
+          <h3>Nombre del docente</h3>
+          <p>Área o nivel a cargo</p>
+        </article>
+        <article class="tarjeta centro" data-revelar data-retraso="300">
+          <div class="tarjeta__icono" style="margin-inline:auto;width:88px;height:88px" aria-hidden="true"></div>
+          <h3>Nombre del docente</h3>
+          <p>Área o nivel a cargo</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="franja">
+    <div class="contenedor">
+      <h2>¿Te gustaría conocernos en persona?</h2>
+      <p>Agenda una visita guiada y recorre las aulas y el patio con nosotros.</p>
+      <div class="franja__acciones">
+        <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+        <a href="contacto.html" class="btn btn--fantasma">Ver datos de contacto</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="contenedor">
+    <div class="footer__rejilla">
+      <div class="footer__marca">
+        <img src="img/marca/logo.png" alt="Pestalozzi Ambato" width="287" height="268" loading="lazy">
+        <p>Unidad Educativa · Ambato, Ecuador</p>
+      </div>
+      <div>
+        <h4>Secciones</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="galeria.html">Galería</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institución</h4>
+        <ul>
+          <li><a href="index.html#propuesta">Propuesta educativa</a></li>
+          <li><a href="index.html#niveles">Niveles</a></li>
+          <li><a href="nosotros.html">Filosofía</a></li>
+          <li><a href="contacto.html">Admisiones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <address>
+          Tiwinza #1995 y Etza<br>
+          Ambato, Ecuador<br>
+          <a href="tel:+593998246396">099 824 6396</a><br>
+          <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+        </address>
+        <ul style="margin-top:var(--space-4)">
+          <li><a href="https://facebook.com/pestalozziambato" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://wa.me/593998246396" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <p>© <span id="anio">2026</span> Unidad Educativa Pestalozzi Ambato. Todos los derechos reservados.</p>
+      <p>Ambato · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/593998246396" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/>
+    <path d="M17.5 14.4c-.3-.2-1.7-.9-2-1s-.5-.1-.7.1-.7 1-.9 1.2-.4.2-.7 0a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.5v-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4A3.3 3.3 0 0 0 6 8.7a5.8 5.8 0 0 0 1.2 3 13 13 0 0 0 5 4.4c2.3.9 2.3.6 2.8.6a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4l-.6-.4Z"/>
+  </svg>
+</a>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>

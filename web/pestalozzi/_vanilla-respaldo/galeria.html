@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es-EC">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Galería | Unidad Educativa Pestalozzi Ambato</title>
+<meta name="description" content="Instalaciones, actividades, deportes y eventos de la Unidad Educativa Pestalozzi de Ambato.">
+<meta property="og:title" content="Galería | Pestalozzi Ambato">
+<meta property="og:image" content="img/hero/galeria.webp">
+<meta property="og:locale" content="es_EC">
+
+<link rel="icon" href="img/marca/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/hero/galeria.webp">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/componentes.css">
+<link rel="stylesheet" href="css/animaciones.css">
+</head>
+<body>
+
+<a class="saltar" href="#principal">Saltar al contenido</a>
+
+<header class="header">
+  <div class="contenedor header__inner">
+    <a href="index.html" class="header__logo" aria-label="Pestalozzi Ambato, inicio">
+      <img src="img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="galeria.html" class="activo" aria-current="page">Galería</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <a href="contacto.html" class="btn btn--acento header__cta">Admisiones 2026–2027</a>
+    <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="velo"></div>
+<nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
+  <a href="index.html">Inicio</a>
+  <a href="nosotros.html">Nosotros</a>
+  <a href="galeria.html">Galería</a>
+  <a href="contacto.html">Contacto</a>
+  <a href="contacto.html" class="btn btn--acento">Admisiones 2026–2027</a>
+  <div class="menu-movil__datos">
+    <a href="tel:+593998246396">099 824 6396</a><br>
+    <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+  </div>
+</nav>
+
+<main id="principal">
+
+  <section class="hero hero--interior">
+    <img class="hero__foto" src="img/hero/galeria.webp" alt="Estudiantes en el aula de la institución" width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href="index.html">Inicio</a> / Galería</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Galería</h1>
+      <p class="hero__bajada">Instalaciones, actividades, deportes y eventos del año lectivo.</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor">
+
+      <div class="filtros" role="group" aria-label="Filtrar fotografías por categoría">
+        <button class="filtro" data-categoria="todas" aria-pressed="true">Todas</button>
+        <button class="filtro" data-categoria="instalaciones" aria-pressed="false">Instalaciones</button>
+        <button class="filtro" data-categoria="actividades" aria-pressed="false">Actividades</button>
+        <button class="filtro" data-categoria="deportes" aria-pressed="false">Deportes</button>
+        <button class="filtro" data-categoria="eventos" aria-pressed="false">Eventos</button>
+      </div>
+
+      <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
+        <span id="cuenta-fotos">6 fotografías</span>
+      </p>
+
+      <div class="mosaico">
+        <button class="foto" data-categoria="deportes" data-revelar aria-label="Ampliar: niños corriendo en el patio">
+          <img src="img/galeria/g01.webp" alt="Niños corriendo en el patio de césped de la institución" width="640" height="1138" loading="lazy">
+        </button>
+        <button class="foto" data-categoria="instalaciones" data-revelar data-retraso="80" aria-label="Ampliar: casita de madera del patio">
+          <img src="img/galeria/g02.webp" alt="Niño asomado en la casita de madera del patio" width="640" height="1138" loading="lazy">
+        </button>
+        <button class="foto" data-categoria="actividades" data-revelar data-retraso="160" aria-label="Ampliar: clase en el aula">
+          <img src="img/galeria/g03.webp" alt="Estudiantes trabajando en el aula frente a la pizarra" width="640" height="1138" loading="lazy">
+        </button>
+        <button class="foto" data-categoria="actividades" data-revelar data-retraso="240" aria-label="Ampliar: taller de construcción">
+          <img src="img/galeria/g04.webp" alt="Estudiante armando una estructura con piezas de construcción" width="640" height="1138" loading="lazy">
+        </button>
+        <button class="foto" data-categoria="instalaciones" data-revelar data-retraso="320" aria-label="Ampliar: fachada de la institución">
+          <img src="img/galeria/g05.webp" alt="Fachada del plantel con la bandera del Ecuador" width="640" height="1138" loading="lazy">
+        </button>
+        <button class="foto" data-categoria="deportes" data-revelar data-retraso="400" aria-label="Ampliar: juegos del patio">
+          <img src="img/galeria/g06.webp" alt="Estudiante jugando en la resbaladera del patio" width="640" height="1138" loading="lazy">
+        </button>
+      </div>
+
+      <div class="centro" style="margin-top:var(--space-16)" data-revelar>
+        <p style="color:var(--ink-400);margin-bottom:var(--space-4)">
+          <span class="pendiente">Demo</span>
+          Estas 6 fotografías provienen del video institucional. La galería final se arma
+          con las fotos en alta resolución que entregue la institución.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="franja">
+    <div class="contenedor">
+      <h2>¿Quieres conocer el plantel en persona?</h2>
+      <p>Las fotos ayudan, pero recorrer el patio y las aulas convence más.</p>
+      <div class="franja__acciones">
+        <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Agenda tu visita</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" role="dialog" aria-modal="true" aria-label="Fotografía ampliada" aria-hidden="true">
+  <button class="lightbox__btn lightbox__cerrar" aria-label="Cerrar">&times;</button>
+  <button class="lightbox__btn lightbox__ant" aria-label="Anterior">&#8249;</button>
+  <img src="" alt="">
+  <button class="lightbox__btn lightbox__sig" aria-label="Siguiente">&#8250;</button>
+  <p class="lightbox__cuenta">1 / 6</p>
+</div>
+
+<footer class="footer">
+  <div class="contenedor">
+    <div class="footer__rejilla">
+      <div class="footer__marca">
+        <img src="img/marca/logo.png" alt="Pestalozzi Ambato" width="287" height="268" loading="lazy">
+        <p>Unidad Educativa · Ambato, Ecuador</p>
+      </div>
+      <div>
+        <h4>Secciones</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="galeria.html">Galería</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Institución</h4>
+        <ul>
+          <li><a href="index.html#propuesta">Propuesta educativa</a></li>
+          <li><a href="index.html#niveles">Niveles</a></li>
+          <li><a href="nosotros.html">Filosofía</a></li>
+          <li><a href="contacto.html">Admisiones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <address>
+          Tiwinza #1995 y Etza<br>
+          Ambato, Ecuador<br>
+          <a href="tel:+593998246396">099 824 6396</a><br>
+          <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+        </address>
+        <ul style="margin-top:var(--space-4)">
+          <li><a href="https://facebook.com/pestalozziambato" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://wa.me/593998246396" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__legal">
+      <p>© <span id="anio">2026</span> Unidad Educativa Pestalozzi Ambato. Todos los derechos reservados.</p>
+      <p>Ambato · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/593998246396" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/>
+    <path d="M17.5 14.4c-.3-.2-1.7-.9-2-1s-.5-.1-.7.1-.7 1-.9 1.2-.4.2-.7 0a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.5v-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4A3.3 3.3 0 0 0 6 8.7a5.8 5.8 0 0 0 1.2 3 13 13 0 0 0 5 4.4c2.3.9 2.3.6 2.8.6a3 3 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4l-.6-.4Z"/>
+  </svg>
+</a>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>
