@@ -15,9 +15,31 @@
 <link rel="icon" href="img/marca/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap"></noscript>
 <link rel="preload" as="image" href="img/hero/galeria.webp">
 
+<style>
+/* CSS critico en linea: garantiza fondo, tipografia y que el header no
+   aparezca como lista de enlaces sueltos aunque el CSS externo tarde.
+   Sin esto, Firefox alcanza a pintar el HTML sin estilos al navegar. */
+:root{--bg:#FAFAF7;--ink-900:#14261C;--header-h:84px}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink-900);
+     font-family:'Work Sans',system-ui,-apple-system,sans-serif;
+     line-height:1.65;overflow-x:hidden}
+img,video{display:block;max-width:100%;height:auto}
+.header{position:fixed;inset:0 0 auto 0;z-index:100;padding-block:1rem;
+        background:rgba(250,250,247,.82)}
+.header__inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.nav{display:none;gap:2rem}
+.menu-movil{position:fixed;inset:0 0 0 auto;transform:translateX(100%)}
+.velo{position:fixed;inset:0;opacity:0;pointer-events:none}
+.hero{position:relative;display:grid;align-items:center;min-height:100svh;
+      padding-top:var(--header-h);overflow:hidden}
+.saltar{position:absolute;left:-9999px}
+</style>
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/componentes.css">
