@@ -1,5 +1,7 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "framework": null
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "."
 }
