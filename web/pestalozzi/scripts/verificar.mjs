@@ -52,11 +52,14 @@ for (const p of PAGINAS) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3. TELÉFONO — ningún número real publicado
+   3. TELÉFONO — número oficial publicado en todas partes
    ───────────────────────────────────────────────────────────── */
-titulo('3. Teléfono placeholder');
-const REAL = ['593998246396', '824 6396'];
-let hayReal = false;
+titulo('3. Teléfono oficial');
+// El colegio confirmó el número el 2026-08-14 (099 824 6396 / 593998246396).
+// Ya NO es un placeholder: ahora se verifica que esté publicado en todas
+// partes y que no quede ningún rastro del antiguo ficticio (099 000 0000).
+const OFICIAL = '593998246396';
+const PLACEHOLDER_VIEJO = ['593990000000', '099 000 0000'];
 const archivos = [];
 const recorrer = async (d) => {
   for (const e of await readdir(d, { withFileTypes: true })) {
@@ -66,14 +69,19 @@ const recorrer = async (d) => {
   }
 };
 await recorrer(dist);
+let quedaPlaceholder = false;
 for (const f of archivos) {
   const c = await readFile(f, 'utf8');
-  for (const n of REAL) if (c.includes(n)) { fallo(`${f.replace(dist,'dist')}: contiene el número real "${n}"`); hayReal = true; }
+  for (const n of PLACEHOLDER_VIEJO) if (c.includes(n)) { fallo(`${f.replace(dist,'dist')}: aún tiene el placeholder viejo "${n}"`); quedaPlaceholder = true; }
 }
-if (!hayReal) ok('ningún archivo publica el número real');
-html['index.html'].includes('593990000000')
-  ? ok('placeholder presente')
-  : fallo('no se encontró el placeholder');
+if (!quedaPlaceholder) ok('ningún archivo conserva el placeholder ficticio anterior');
+html['index.html'].includes(OFICIAL) ? ok('número oficial presente en la portada')
+                                     : fallo('el número oficial no aparece en la portada');
+html['index.html'].includes(`"telephone": "+${OFICIAL}"`) ? ok('número oficial en el JSON-LD (lo que lee Google)')
+                                                          : fallo('el JSON-LD no tiene el número oficial');
+for (const p of PAGINAS) {
+  html[p].includes(OFICIAL) ? ok(`${p}: número oficial presente`) : fallo(`${p}: falta el número oficial`);
+}
 
 /* ─────────────────────────────────────────────────────────────
    4. GSAP — no debe cargarse en celular
@@ -205,8 +213,8 @@ jsFinal.includes('punteroFino && pantallaAncha')
    ───────────────────────────────────────────────────────────── */
 titulo('11. Pendientes antes de cobrar y entregar');
 const idxHtml = html['index.html'], nosHtml = html['nosotros.html'];
-idxHtml.includes('593990000000') ? aviso('Teléfono: sigue el placeholder 099 000 0000 (4 páginas, botón flotante y JSON-LD)')
-                                 : ok('Teléfono oficial ya colocado');
+idxHtml.includes('593998246396') ? ok('Teléfono: oficial confirmado y publicado (099 824 6396)')
+                                  : aviso('Teléfono: falta el número oficial');
 // OJO: buscar la palabra "pendiente" daba falso verde cuando se quitaba el
 // marcador pero el dato seguia sin confirmar. Ahora se verifica el HECHO.
 idxHtml.includes('Educación General Básica')

@@ -242,7 +242,7 @@
   if (formulario) {
     var aviso = formulario.querySelector('.form-aviso');
     var campos = Array.prototype.slice.call(formulario.querySelectorAll('.campo[data-validar]'));
-    var TELEFONO_WHATSAPP = '593990000000';   // PLACEHOLDER — reemplazar por el numero oficial cuando el colegio lo confirme
+    var TELEFONO_WHATSAPP = '593998246396';   // Numero oficial confirmado el 2026-08-14
 
     var esValidoEmail = function (valor) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
