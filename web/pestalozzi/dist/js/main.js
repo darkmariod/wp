@@ -341,6 +341,36 @@
       });
     };
 
+    // Split del titular en letras (preserva <br> y <em>) para el efecto
+    // de maquina de escribir en la primera entrada. Misma recursion que
+    // dividirEnPalabras, a nivel de caracter en vez de palabra.
+    function envolverLetra(caracter) {
+      var s = document.createElement('span');
+      s.className = 'letra';
+      s.textContent = caracter;
+      return s;
+    }
+
+    function dividirEnLetras(el) {
+      var nodos = Array.prototype.slice.call(el.childNodes);
+      var fragmento = document.createDocumentFragment();
+      nodos.forEach(function (nodo) {
+        if (nodo.nodeType === 3) {
+          nodo.textContent.split('').forEach(function (caracter) {
+            if (caracter === ' ') fragmento.appendChild(document.createTextNode(' '));
+            else fragmento.appendChild(envolverLetra(caracter));
+          });
+        } else if (nodo.nodeName === 'BR') {
+          fragmento.appendChild(document.createElement('br'));
+        } else {
+          dividirEnLetras(nodo);
+          fragmento.appendChild(nodo);
+        }
+      });
+      el.textContent = '';
+      el.appendChild(fragmento);
+    }
+
     // Split del titular en palabras con máscara (preserva <br> y <em>).
     function envolverPalabra(texto) {
       var m = document.createElement('span');
@@ -373,17 +403,19 @@
       el.appendChild(fragmento);
     }
 
-    // E0 — entrada del hero: split por palabra con máscara (editorial).
+    // E0 — entrada del hero: maquina de escribir letra por letra.
+    // Pedido explicito del cliente: "que parezca que se escriben al
+    // recargar". Solo opacity (sin transform): no necesita mascara ni
+    // perspectiva 3D, que sí usa la rotacion posterior de titulares.
     function iniciarEntradaHero(gsap) {
       var primero = document.querySelector('.hero__titulo--texto');
       if (!primero) return;
-      if (!primero.dataset.split) { dividirEnPalabras(primero); primero.dataset.split = '1'; }
-      gsap.set(primero, { perspective: 1000 });
-      gsap.from(primero.querySelectorAll('.palabra-int'), {
-        yPercent: 110,
-        duration: 0.85,
-        stagger: 0.05,
-        ease: 'power3.out'
+      if (!primero.dataset.split) { dividirEnLetras(primero); primero.dataset.split = '1'; }
+      gsap.from(primero.querySelectorAll('.letra'), {
+        opacity: 0,
+        duration: 0.01,
+        stagger: 0.032,
+        ease: 'none'
       });
       if (document.querySelector('.hero__bajada')) {
         // fromTo y no from: from fija el estado inicial de inmediato y, si el

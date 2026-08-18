@@ -26,6 +26,7 @@ const excluidos = new Set([
   'scripts',
   'PLAN-DESARROLLO.md',
   'PLAN-EFECTOS.md',
+  'PLAN-CHATBOT.md',
   'package.json',
   '.gitignore',
   '.DS_Store',
