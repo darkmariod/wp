@@ -990,3 +990,103 @@
 
 /* Y el footer se separa del negro-verde: sube un escalón de tono */
 .footer { background: var(--green-900); }
+
+/* ============================================================
+   BOTÓN DE CONTACTO FLOTANTE (speed dial)
+   Un disparador circular que abre tres opciones en arco hacia
+   arriba-izquierda: WhatsApp, llamada y correo.
+   Sin GSAP: tiene que funcionar en celular, que es donde más sirve.
+   ============================================================ */
+.fab {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 120;
+  width: 62px;
+  height: 62px;
+}
+
+/* --- Disparador --- */
+.fab__disparador {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  padding: 0;
+  color: #fff;
+  background: var(--green-800);
+  border: 0;
+  border-radius: var(--radius-full);
+  box-shadow: 0 6px 20px rgba(5, 52, 26, .35);
+  cursor: pointer;
+  transition: transform .3s var(--ease-spring), background .25s var(--ease-out);
+}
+.fab__disparador:hover { background: var(--green-900); transform: scale(1.06); }
+.fab__disparador svg { transition: transform .35s var(--ease-spring); }
+.fab[data-abierto="true"] .fab__disparador { background: var(--ink-900); }
+.fab[data-abierto="true"] .fab__disparador svg { transform: rotate(135deg); }
+
+/* --- Opciones --- */
+.fab__opcion {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 5px;                      /* centra el circulo menor sobre el mayor */
+  color: #fff;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(5, 52, 26, .3);
+  text-decoration: none;
+  opacity: 0;
+  transform: translate(0, 0) scale(.4);
+  pointer-events: none;
+  transition: transform .38s var(--ease-spring), opacity .25s var(--ease-out);
+}
+
+.fab__opcion--wa     { background: #25D366; }
+.fab__opcion--tel    { background: var(--green-700); }
+.fab__opcion--correo { background: var(--accent-500); color: var(--ink-900); }
+
+/* Arco: 90°, 135° y 180° a 86 px del centro */
+.fab[data-abierto="true"] .fab__opcion { opacity: 1; pointer-events: auto; }
+.fab[data-abierto="true"] .fab__opcion--wa     { transform: translate(0, -86px) scale(1);      transition-delay: .04s; }
+.fab[data-abierto="true"] .fab__opcion--tel    { transform: translate(-61px, -61px) scale(1);  transition-delay: .10s; }
+.fab[data-abierto="true"] .fab__opcion--correo { transform: translate(-86px, 0) scale(1);      transition-delay: .16s; }
+
+/* --- Etiqueta al pasar el mouse --- */
+.fab__opcion::after {
+  content: attr(data-etiqueta);
+  position: absolute;
+  right: calc(100% + 10px);
+  padding: 5px 10px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--ink-900);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s var(--ease-out);
+}
+.fab__opcion:hover::after,
+.fab__opcion:focus-visible::after { opacity: 1; }
+
+/* Sin puntero fino (celular) las etiquetas estorban */
+@media (pointer: coarse) { .fab__opcion::after { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fab__opcion,
+  .fab__disparador svg { transition-duration: .01ms !important; }
+}
+
+/* La foto reserva su espacio con un tono de marca, nunca blanco:
+   mientras carga se ve un bloque verde claro, no un hueco. */
+.foto { background: var(--green-100); }
+.foto img { background: var(--green-100); }

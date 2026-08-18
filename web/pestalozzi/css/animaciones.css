@@ -48,24 +48,22 @@
 }
 
 /* ============================================================
-   VIEW TRANSITIONS — navegación cross-document (fade 180 ms)
-   Chrome/Edge 126+, Safari 18.2+. Sin soporte o con
-   reduced-motion: navegación normal (progresivo, no falla).
+   VIEW TRANSITIONS — RETIRADAS A PROPÓSITO
+   ============================================================
+   Aquí vivía `@view-transition { navigation: auto; }`, que activa
+   transiciones cross-document entre páginas.
+
+   Era la causa del destello de "HTML crudo" al cambiar de sección.
+   El navegador congela una captura de la página saliente mientras
+   construye la entrante; si la transición se aborta, se alcanza a
+   ver el documento nuevo a medio construir, sin estilos aplicados.
+   La consola lo delataba con `AbortError: Transition was skipped`.
+
+   El soporte cross-document todavía es irregular (en Firefox va
+   detrás de bandera). No se recupera hasta poder verificarlo en
+   Firefox, Chrome y Safari: 180 ms de fundido no valen un destello
+   visible en cada navegación.
    ============================================================ */
-@view-transition { navigation: auto; }
-
-::view-transition-old(root) {
-  animation: vt-salida .18s var(--ease-in-out) both;
-}
-::view-transition-new(root) {
-  animation: vt-entrada .18s var(--ease-in-out) both;
-}
-
-@keyframes vt-salida { to { opacity: 0; } }
-@keyframes vt-entrada { from { opacity: 0; } }
-
-/* El logo del header persiste durante la transición entre páginas */
-.header__logo { view-transition-name: logo; }
 
 /* ============================================================
    HERO SPLIT — máscara por palabra (la anima GSAP en escritorio)
@@ -92,4 +90,25 @@
 @keyframes kb-zoom {
   from { transform: scale(1); }
   to   { transform: scale(1.1); }
+}
+
+/* ============================================================
+   REVELADO DIRECCIONAL DE IMÁGENES
+   La imagen entra desde su lado y se destapa con clip-path,
+   como si se corriera una cortina. Solo clip-path y transform:
+   ambos en GPU, sin reflow.
+   ============================================================ */
+[data-cortina] {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path .9s var(--ease-out), transform .9s var(--ease-out);
+  transform: scale(1.06);
+}
+[data-cortina="der"] { clip-path: inset(0 0 0 100%); }
+[data-cortina].visible {
+  clip-path: inset(0 0 0 0);
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-cortina] { clip-path: none !important; transform: none !important; }
 }

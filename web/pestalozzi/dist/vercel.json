@@ -1,29 +1,11 @@
 {
   "framework": null,
-  "buildCommand": "",
-  "outputDirectory": ".",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "trailingSlash": false,
-
-  "_comentario": "cleanUrls emite un 308 cuyo cuerpo Vercel sirve como text/plain, y el navegador lo pinta un instante al navegar. Ademas un 308 es 'permanente' y queda cacheado en el navegador del visitante. Con rewrites la resolucion es interna: /nosotros y /nosotros.html devuelven 200 sin ningun redirect.",
-
   "rewrites": [
     { "source": "/nosotros", "destination": "/nosotros.html" },
     { "source": "/galeria",  "destination": "/galeria.html"  },
     { "source": "/contacto", "destination": "/contacto.html" }
-  ],
-
-  "headers": [
-    {
-      "source": "/(.*)\\.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/(nosotros|galeria|contacto)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    }
   ]
 }

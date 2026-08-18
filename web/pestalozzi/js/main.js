@@ -386,10 +386,19 @@
         ease: 'power3.out'
       });
       if (document.querySelector('.hero__bajada')) {
-        gsap.from('.hero__bajada', { y: 28, opacity: 0, duration: 0.9, delay: 0.2, ease: 'power3.out' });
+        // fromTo y no from: from fija el estado inicial de inmediato y, si el
+        // tween se interrumpe, el elemento queda invisible para siempre.
+        // clearProps devuelve el control al CSS al terminar.
+        gsap.fromTo('.hero__bajada',
+          { y: 28, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.9, delay: 0.2, ease: 'power3.out',
+            clearProps: 'opacity,transform' });
       }
       if (document.querySelector('.hero__acciones')) {
-        gsap.from('.hero__acciones', { y: 28, opacity: 0, duration: 0.9, delay: 0.35, ease: 'power3.out' });
+        gsap.fromTo('.hero__acciones',
+          { y: 28, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.9, delay: 0.35, ease: 'power3.out',
+            clearProps: 'opacity,transform' });
       }
     }
 
@@ -420,6 +429,7 @@
 
         var tl = gsap.timeline({ onComplete: function () {
           viejo.classList.add('escondido');
+          viejo.hidden = true;
           corriendo = false;
           setTimeout(rotar, tiempo);
         }});
@@ -437,7 +447,7 @@
             rotationX: function () { return gsap.utils.random(-90, 90); },
             z: function () { return gsap.utils.random(300, 500); } },
           { duration: 0.8, ease: 'power3.out', opacity: 1, xPercent: 0, yPercent: 0, rotationX: 0, z: 0,
-            stagger: { each: 0.02, from: 'random' } }, 0.1);
+            stagger: { each: 0.02, from: 'random' } }, 0.42);   // el viejo ya salio: sin solape legible
       }
 
       setTimeout(rotar, tiempo);
@@ -462,6 +472,25 @@
           ease: 'power3.out',
           stagger: 0.08,
           scrollTrigger: { trigger: '.mosaico', start: 'top 80%', toggleActions: 'play none none none' }
+        });
+
+      // Parallax por columna: cada columna se desplaza distinto, asi el
+      // mosaico se siente con profundidad al scrollear en vez de moverse
+      // en bloque. Solo transform, y solo escritorio.
+      var DESPLAZAMIENTO = [7, -7, 10];
+      Array.prototype.slice.call(document.querySelectorAll('.mosaico .foto'))
+        .forEach(function (foto) {
+          var col = Number(foto.getAttribute('data-col')) || 0;
+          gsap.to(foto, {
+            yPercent: DESPLAZAMIENTO[col],
+            ease: 'none',
+            scrollTrigger: {
+              trigger: foto,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          });
         });
       }
 
@@ -566,4 +595,79 @@
       });
     }
   }
+
+  /* ------------------------------------------------------------
+     BOTÓN DE CONTACTO FLOTANTE (speed dial)
+     Sustituye al bloque genérico de contacto. Sin librerías: en
+     celular es donde más se usa y ahí no cargamos GSAP.
+     ------------------------------------------------------------ */
+  var fab = document.querySelector('.fab');
+  if (fab) {
+    var disparador = fab.querySelector('.fab__disparador');
+    var opciones = Array.prototype.slice.call(fab.querySelectorAll('.fab__opcion'));
+
+    var abrirFab = function (abierto) {
+      fab.setAttribute('data-abierto', String(abierto));
+      disparador.setAttribute('aria-expanded', String(abierto));
+      disparador.setAttribute('aria-label',
+        abierto ? 'Cerrar opciones de contacto' : 'Abrir opciones de contacto');
+      // Cerradas no deben ser alcanzables con Tab ni por lectores de pantalla
+      opciones.forEach(function (o) {
+        o.setAttribute('tabindex', abierto ? '0' : '-1');
+        o.setAttribute('aria-hidden', String(!abierto));
+      });
+      if (abierto) opciones[0].focus();
+    };
+
+    disparador.addEventListener('click', function () {
+      abrirFab(fab.getAttribute('data-abierto') !== 'true');
+    });
+
+    // Clic fuera
+    document.addEventListener('click', function (e) {
+      if (fab.getAttribute('data-abierto') === 'true' && !fab.contains(e.target)) abrirFab(false);
+    });
+
+    // Escape y foco atrapado
+    fab.addEventListener('keydown', function (e) {
+      if (fab.getAttribute('data-abierto') !== 'true') return;
+      if (e.key === 'Escape') { abrirFab(false); disparador.focus(); return; }
+      if (e.key !== 'Tab') return;
+      var foco = [disparador].concat(opciones);
+      var i = foco.indexOf(document.activeElement);
+      if (i === -1) return;
+      var siguiente = e.shiftKey ? i - 1 : i + 1;
+      if (siguiente < 0 || siguiente >= foco.length) { e.preventDefault(); foco[e.shiftKey ? foco.length - 1 : 0].focus(); }
+    });
+
+    // Al elegir una opción se cierra
+    opciones.forEach(function (o) { o.addEventListener('click', function () { abrirFab(false); }); });
+
+    abrirFab(false);   // estado inicial coherente
+  }
+
+
+  /* ------------------------------------------------------------
+     PALABRAS CLAVE Y CORTINAS
+     Reutiliza el mismo patron del revelado: el observador agrega
+     una clase y el CSS hace el movimiento. Sin GSAP, para que
+     tambien funcione en celular.
+     ------------------------------------------------------------ */
+  var cortinas = Array.prototype.slice.call(document.querySelectorAll('[data-cortina]'));
+
+  if (reducir || !('IntersectionObserver' in window)) {
+    cortinas.forEach(function (c) { c.classList.add('visible'); });
+  } else {
+    if (cortinas.length) {
+      var obsCortina = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('visible');
+          obsCortina.unobserve(e.target);
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
+      cortinas.forEach(function (c) { obsCortina.observe(c); });
+    }
+  }
+
 })();
