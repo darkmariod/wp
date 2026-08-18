@@ -223,7 +223,20 @@ idxHtml.includes('Educación General Básica')
 /<h2[^>]*>\s*Misión|Misión y visión/.test(nosHtml)
   ? aviso('Misión y visión: revisar que el texto sea el oficial')
   : aviso('Misión y visión: la sección NO existe en Nosotros');
-aviso('Fotos: las 6 son fotogramas de video 720px vertical, solo para demo');
+// Alto real vía `magick identify`: un parseo manual del binario WebP
+// (leer bytes 26-27) daba 640 para TODAS las fotos — el campo equivocado,
+// falso positivo silencioso. Mejor delegar a una herramienta que ya sabe
+// leer el formato en vez de reinventarlo mal.
+const { execFileSync } = await import('node:child_process');
+const galFotos = (await readdir(join(dist, 'img', 'galeria'))).filter((n) => n.endsWith('.webp'));
+let videoFrames = 0, realesGaleria = 0;
+for (const f of galFotos) {
+  const ruta = join(dist, 'img', 'galeria', f);
+  const h = Number(execFileSync('magick', ['identify', '-format', '%h', ruta], { encoding: 'utf8' }).trim());
+  (h > 1000 ? videoFrames++ : realesGaleria++);
+}
+if (videoFrames > 0) aviso(`Fotos: ${videoFrames} de ${galFotos.length} siguen siendo fotogramas de video (720px vertical), solo para demo`);
+if (realesGaleria > 0) ok(`Fotos: ${realesGaleria} foto(s) real(es) ya entregada(s) por el colegio`);
 aviso('Logo: PNG recortado del video; el verde definitivo depende del vectorial');
 
 /* ─────────────────────────────────────────────────────────────
