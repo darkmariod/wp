@@ -131,6 +131,26 @@ for (const p of PAGINAS) {
 titulos.size === PAGINAS.length ? ok('4 títulos únicos') : fallo(`solo ${titulos.size} títulos únicos`);
 descripciones.size === PAGINAS.length ? ok('4 descripciones únicas') : fallo(`solo ${descripciones.size} únicas`);
 
+for (const p of PAGINAS) {
+  const img = html[p].match(/property="og:image" content="(.*?)"/)?.[1];
+  // Relativa: los scrapers de Facebook/WhatsApp/X no siempre la resuelven
+  // contra la URL de la página y la vista previa sale sin imagen.
+  img?.startsWith('https://') ? ok(`${p}: og:image absoluta`) : fallo(`${p}: og:image relativa (${img})`);
+  html[p].includes('og:description') ? ok(`${p}: og:description presente`) : fallo(`${p}: falta og:description`);
+  html[p].includes('name="twitter:card"') ? ok(`${p}: twitter:card presente`) : fallo(`${p}: falta twitter:card`);
+}
+
+try {
+  const robots = await readFile(join(dist, 'robots.txt'), 'utf8');
+  robots.includes('Sitemap:') ? ok('robots.txt: declara sitemap') : fallo('robots.txt: no declara sitemap');
+} catch { fallo('robots.txt: no existe en dist/'); }
+
+try {
+  const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
+  const urls = (sitemap.match(/<loc>/g) || []).length;
+  urls === PAGINAS.length ? ok(`sitemap.xml: ${urls} URLs`) : fallo(`sitemap.xml: ${urls} URLs, esperaba ${PAGINAS.length}`);
+} catch { fallo('sitemap.xml: no existe en dist/'); }
+
 /* ─────────────────────────────────────────────────────────────
    7. PRESUPUESTO DE RENDIMIENTO
    ───────────────────────────────────────────────────────────── */
@@ -256,6 +276,76 @@ heroImgs.length >= 4 ? ok(`una portada por página (${heroImgs.length} imágenes
 ((cssInline.match(/--green-\d+:/g) || []).length >= 6)
   ? ok('paleta en variables: se cambia en un solo lugar')
   : fallo('colores no centralizados');
+
+/* ─────────────────────────────────────────────────────────────
+   13. CONTRASTE (WCAG AA) — texto sobre velo de foto/video
+   El video del hero y la foto de la franja son fotogramas que
+   cambian; si algún fotograma es claro (cielo, pared blanca) el
+   velo tiene que seguir garantizando AA. Se recalcula sobre el
+   peor caso real: el mismo tinte, mezclado contra blanco puro.
+   ───────────────────────────────────────────────────────────── */
+titulo('13. Contraste (WCAG AA) sobre fondos de foto');
+function lin(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }
+function luminancia([r, g, b]) { return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b); }
+function contraste(a, b) {
+  const [l1, l2] = [luminancia(a), luminancia(b)].sort((x, y) => y - x);
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+function mezclar(fg, alpha, bg) { return fg.map((c, i) => Math.round(c * alpha + bg[i] * (1 - alpha))); }
+function hexA(h) { h = h.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+
+const BLANCO = [255, 255, 255];
+
+function peorAlphaDe(gradienteCss) {
+  // Toma el alpha MÁS BAJO entre los stops rgba(...) del gradiente:
+  // ese es el punto donde menos tapa la foto de fondo.
+  const alphas = [...gradienteCss.matchAll(/rgba\([^)]+,\s*([\d.]+)\)/g)].map((m) => Number(m[1]));
+  return Math.min(...alphas);
+}
+
+const veloHeroCss = cssInline.match(/\.hero__velo\s*{[^}]*}/)?.[0] || '';
+const veloFranjaCss = [...cssInline.matchAll(/\.franja__velo\s*{[^}]*}/g)].pop()?.[0] || '';
+
+if (veloHeroCss) {
+  const peor = mezclar([11, 74, 38], peorAlphaDe(veloHeroCss), BLANCO);
+  const rBlanco = contraste(BLANCO, peor);
+  rBlanco >= 4.5 ? ok(`velo del hero, peor punto: texto blanco ${rBlanco.toFixed(2)}:1`)
+                 : fallo(`velo del hero, peor punto: texto blanco ${rBlanco.toFixed(2)}:1 (min 4.5)`);
+} else {
+  fallo('no se encontró .hero__velo en el CSS embebido');
+}
+
+if (veloFranjaCss) {
+  // El 100% del gradiente de franja es intencionalmente claro (sin
+  // texto encima, ver comentario en componentes.css) — se evalúa el
+  // segundo stop (42%), que es donde vive el párrafo.
+  const alphas = [...veloFranjaCss.matchAll(/rgba\([^)]+,\s*([\d.]+)\)/g)].map((m) => Number(m[1]));
+  const alphaConTexto = alphas[1];
+  const peor = mezclar([11, 74, 38], alphaConTexto, BLANCO);
+  const green100 = hexA('D7F0E2');
+  const r = contraste(green100, peor);
+  r >= 4.5 ? ok(`velo de franja, lado con texto: green-100 ${r.toFixed(2)}:1`)
+           : fallo(`velo de franja, lado con texto: green-100 ${r.toFixed(2)}:1 (min 4.5)`);
+} else {
+  fallo('no se encontró .franja__velo en el CSS embebido');
+}
+
+const fabWa = cssInline.match(/\.fab__opcion--wa\s*{\s*background:\s*(#[0-9a-fA-F]{6})/)?.[1];
+if (fabWa) {
+  const r = contraste(BLANCO, hexA(fabWa));
+  // Icono, no texto: el umbral que aplica es 3:1 (WCAG 1.4.11).
+  r >= 3.0 ? ok(`icono del FAB de WhatsApp: ${r.toFixed(2)}:1`)
+           : fallo(`icono del FAB de WhatsApp: ${r.toFixed(2)}:1 (min 3.0)`);
+} else {
+  fallo('no se encontró el color del FAB de WhatsApp');
+}
+
+const eyebrowHero = cssInline.match(/\.hero__contenido \.eyebrow\s*{\s*color:\s*var\(--(\S+?)\)/)?.[1];
+eyebrowHero === 'accent-100' || eyebrowHero === 'accent-500' || eyebrowHero === 'green-300'
+  ? (eyebrowHero === 'accent-100'
+      ? ok(`eyebrow del hero usa --accent-100 (pasa AA sobre el velo)`)
+      : fallo(`eyebrow del hero volvió a --${eyebrowHero}, no pasa AA sobre el velo`))
+  : aviso('no se pudo verificar el color del eyebrow del hero');
 
 /* ───────────────────────────────────────────────────────────── */
 console.log(`\n\x1b[1mRESULTADO\x1b[0m  \x1b[32m${pasadas} pasadas\x1b[0m  \x1b[31m${fallidas} fallidas\x1b[0m  \x1b[33m${avisos} avisos\x1b[0m`);

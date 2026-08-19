@@ -10,8 +10,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Unidad Educativa Pestalozzi Ambato">
 <meta property="og:description" content="Mi escuelita Pestalozzi. Aquí crezco creando y aprendiendo a hacer, con confianza y autonomía.">
-<meta property="og:image" content="img/hero/portada.webp">
+<meta property="og:image" content="https://pestalozzi-opal.vercel.app/img/hero/portada.webp">
 <meta property="og:locale" content="es_EC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unidad Educativa Pestalozzi Ambato">
+<meta name="twitter:description" content="Mi escuelita Pestalozzi. Aquí crezco creando y aprendiendo a hacer, con confianza y autonomía.">
+<meta name="twitter:image" content="https://pestalozzi-opal.vercel.app/img/hero/portada.webp">
 
 <link rel="canonical" href="https://pestalozzi-opal.vercel.app/">
 <meta property="og:url" content="https://pestalozzi-opal.vercel.app/">
@@ -434,9 +438,9 @@ ul { list-style: none; padding: 0; }
  inset: 0;
  z-index: -1;
  background: linear-gradient(180deg,
- rgba(11, 74, 38, .72) 0%,
- rgba(11, 74, 38, .55) 45%,
- rgba(5, 52, 26, .82) 100%);
+ rgba(11, 74, 38, .80) 0%,
+ rgba(11, 74, 38, .75) 45%,
+ rgba(5, 52, 26, .88) 100%);
 }
 .hero__contenido {
  text-align: left;
@@ -450,7 +454,7 @@ ul { list-style: none; padding: 0; }
  background: var(--accent-500);
  margin-bottom: var(--space-6);
 }
-.hero__contenido .eyebrow { color: var(--green-300); }
+.hero__contenido .eyebrow { color: var(--accent-100); }
 .hero__titulo {
  display: grid;
  font-size: var(--fs-display);
@@ -461,7 +465,7 @@ ul { list-style: none; padding: 0; }
 .hero__titulo--texto.escondido { visibility: hidden; }
 .hero__titulo em {
  font-style: normal;
- color: var(--accent-500);
+ color: var(--accent-100);
 }
 .hero__bajada {
  max-width: 46ch;
@@ -495,7 +499,7 @@ ul { list-style: none; padding: 0; }
 .enlace-flecha:hover { background-size: 100% 2px; gap: var(--space-3); }
 .hero__migas {
  font-size: var(--fs-small);
- color: rgba(255, 255, 255, .78);
+ color: rgba(255, 255, 255, .92);
  margin-bottom: var(--space-3);
 }
 .hero__migas a { text-decoration: none; }
@@ -508,7 +512,7 @@ ul { list-style: none; padding: 0; }
  display: grid;
  place-items: center;
  gap: var(--space-2);
- color: rgba(255, 255, 255, .8);
+ color: rgba(255, 255, 255, .92);
  font-size: 0.75rem;
  letter-spacing: 0.1em;
  text-transform: uppercase;
@@ -1058,8 +1062,8 @@ ul { list-style: none; padding: 0; }
 }
 .franja__velo {
  background: linear-gradient(100deg,
- rgba(5, 52, 26, .86) 0%,
- rgba(11, 74, 38, .66) 42%,
+ rgba(5, 52, 26, .90) 0%,
+ rgba(11, 74, 38, .78) 42%,
  rgba(5, 52, 26, .28) 100%);
 }
 .franja .enlace-flecha,
@@ -1116,7 +1120,7 @@ ul { list-style: none; padding: 0; }
  pointer-events: none;
  transition: transform .38s var(--ease-spring), opacity .25s var(--ease-out);
 }
-.fab__opcion--wa { background: #25D366; }
+.fab__opcion--wa { background: #128C42; } 
 .fab__opcion--tel { background: var(--green-700); }
 .fab__opcion--correo { background: var(--accent-500); color: var(--ink-900); }
 .fab[data-abierto="true"] .fab__opcion { opacity: 1; pointer-events: auto; }

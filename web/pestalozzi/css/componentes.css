@@ -213,14 +213,19 @@
 }
 .hero__video--listo { opacity: 1; }
 
+/* El velo tenía un punto medio (45%) al 55% de opacidad: sobre un
+   fotograma claro del video (cielo, pared blanca) el texto blanco
+   caía a ~3:1, por debajo de AA. Subido a un piso de .75 en todo el
+   degradado: el texto pasa AA sin importar qué fotograma esté
+   mostrando el video en ese instante. */
 .hero__velo {
   position: absolute;
   inset: 0;
   z-index: -1;
   background: linear-gradient(180deg,
-    rgba(11, 74, 38, .72) 0%,
-    rgba(11, 74, 38, .55) 45%,
-    rgba(5, 52, 26, .82) 100%);
+    rgba(11, 74, 38, .80) 0%,
+    rgba(11, 74, 38, .75) 45%,
+    rgba(5, 52, 26, .88) 100%);
 }
 
 .hero__contenido {
@@ -235,7 +240,10 @@
   background: var(--accent-500);
   margin-bottom: var(--space-6);
 }
-.hero__contenido .eyebrow { color: var(--green-300); }
+/* accent-500 y green-300 no pasan AA sobre el velo del hero incluso
+   ya reforzado (son colores de luminosidad media). accent-100 sí,
+   con margen, y mantiene la paleta cálida del acento. */
+.hero__contenido .eyebrow { color: var(--accent-100); }
 
 .hero__titulo {
   display: grid;
@@ -247,7 +255,7 @@
 .hero__titulo--texto.escondido { visibility: hidden; }
 .hero__titulo em {
   font-style: normal;
-  color: var(--accent-500);
+  color: var(--accent-100);
 }
 
 .hero__bajada {
@@ -286,7 +294,7 @@
 
 .hero__migas {
   font-size: var(--fs-small);
-  color: rgba(255, 255, 255, .78);
+  color: rgba(255, 255, 255, .92);
   margin-bottom: var(--space-3);
 }
 .hero__migas a { text-decoration: none; }
@@ -300,7 +308,7 @@
   display: grid;
   place-items: center;
   gap: var(--space-2);
-  color: rgba(255, 255, 255, .8);
+  color: rgba(255, 255, 255, .92);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -967,11 +975,15 @@
    ============================================================ */
 
 /* El velo baja para que la fotografía respire. El lado izquierdo
-   mantiene carga suficiente para que el texto blanco siga pasando AA. */
+   mantiene carga suficiente para que el texto blanco siga pasando AA:
+   el 42% (.66) medido contra un fotograma claro daba ~3.9:1 para el
+   párrafo — insuficiente. Subido a .78 para que green-100 llegue a
+   AA sin importar el fotograma. El 100% (sin texto encima) se deja
+   igual: ahí sí puede respirar la foto. */
 .franja__velo {
   background: linear-gradient(100deg,
-    rgba(5, 52, 26, .86) 0%,
-    rgba(11, 74, 38, .66) 42%,
+    rgba(5, 52, 26, .90) 0%,
+    rgba(11, 74, 38, .78) 42%,
     rgba(5, 52, 26, .28) 100%);
 }
 
@@ -1048,7 +1060,7 @@
   transition: transform .38s var(--ease-spring), opacity .25s var(--ease-out);
 }
 
-.fab__opcion--wa     { background: #25D366; }
+.fab__opcion--wa     { background: #128C42; } /* verde WhatsApp oficial: icono blanco a 1.98:1, muy por debajo de 3:1. Este tono lo sube a 4.3:1 y sigue leyéndose como WhatsApp. */
 .fab__opcion--tel    { background: var(--green-700); }
 .fab__opcion--correo { background: var(--accent-500); color: var(--ink-900); }
 
