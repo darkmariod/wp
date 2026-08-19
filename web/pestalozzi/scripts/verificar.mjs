@@ -372,6 +372,15 @@ if (navRule) {
   aviso('no se encontró el degradado de relleno del nav para verificar su contraste');
 }
 
+const formFalloBg = cssInline.match(/\.form-aviso\.fallo\{[^}]*background:(#[0-9a-fA-F]{6})/)?.[1];
+if (formFalloBg) {
+  const r = contraste(hexA('C0402F'), hexA(formFalloBg));
+  r >= 4.5 ? ok(`mensaje de error del formulario: ${r.toFixed(2)}:1`)
+           : fallo(`mensaje de error del formulario: ${r.toFixed(2)}:1 (min 4.5)`);
+} else {
+  aviso('no se encontró el fondo de .form-aviso.fallo para verificar su contraste');
+}
+
 const eyebrowHero = cssInline.match(/\.hero__contenido \.eyebrow\{color:var\(--(\S+?)\)/)?.[1];
 eyebrowHero === 'accent-100' || eyebrowHero === 'accent-500' || eyebrowHero === 'green-300'
   ? (eyebrowHero === 'accent-100'

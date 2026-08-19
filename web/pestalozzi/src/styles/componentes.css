@@ -817,7 +817,9 @@
   font-size: var(--fs-small);
 }
 .form-aviso.exito { display: block; background: var(--green-100); color: var(--green-900); }
-.form-aviso.fallo { display: block; background: #FBE9E7; color: var(--error); }
+/* #FBE9E7 daba 4.46:1 con --error — por debajo de AA. Este rosa un
+   poco más claro sube a 4.77:1 sin perder el color de "error". */
+.form-aviso.fallo { display: block; background: #FDF2F0; color: var(--error); }
 
 @keyframes sacudir {
   0%, 100% { transform: translateX(0); }
