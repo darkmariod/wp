@@ -485,6 +485,36 @@
       setTimeout(rotar, tiempo);
     }
 
+    // Titulares de sección: entran por palabra al llegar con el scroll
+    // (mismo split que la rotación del hero). "Quiénes somos" entra
+    // letra por letra, como el titular principal — pedido explícito
+    // del cliente para ese bloque.
+    function iniciarTitulosSeccion(gsap) {
+      document.querySelectorAll('.enc-seccion h2').forEach(function (h2) {
+        if (!h2.dataset.split) { dividirEnPalabras(h2); h2.dataset.split = '1'; }
+        gsap.from(h2.querySelectorAll('.palabra-int'), {
+          yPercent: 100,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power3.out',
+          stagger: 0.04,
+          scrollTrigger: { trigger: h2, start: 'top 85%', toggleActions: 'play none none none' }
+        });
+      });
+
+      var tituloQuienesSomos = document.querySelector('.partido__texto h2');
+      if (tituloQuienesSomos) {
+        if (!tituloQuienesSomos.dataset.split) { dividirEnLetras(tituloQuienesSomos); tituloQuienesSomos.dataset.split = '1'; }
+        gsap.from(tituloQuienesSomos.querySelectorAll('.letra'), {
+          opacity: 0,
+          duration: 0.01,
+          stagger: 0.028,
+          ease: 'none',
+          scrollTrigger: { trigger: tituloQuienesSomos, start: 'top 85%', toggleActions: 'play none none none' }
+        });
+      }
+    }
+
     function iniciarMovimiento() {
       var gsap = window.gsap;
       if (!gsap || !window.ScrollTrigger) return;
@@ -493,19 +523,13 @@
       // El hero (entrada + rotación) corre en TODAS las pantallas.
       iniciarEntradaHero(gsap);
       iniciarRotacionTitulo(gsap);
+      iniciarTitulosSeccion(gsap);
 
-      // Galería estilo Centeno: las fotos entran deslizándose alternadas.
+      // La entrada de las fotos ahora la hace [data-revelar="zoom"] (motor
+      // base, funciona en todas las pantallas). Aquí solo queda el
+      // parallax por columna, que es un efecto de scroll continuo y
+      // exclusivo de escritorio, no una entrada.
       if (document.querySelector('.mosaico')) {
-        gsap.from('.mosaico .foto', {
-          opacity: 0,
-          x: function (i) { return (i % 2 === 0 ? -70 : 70); },
-          y: 24,
-          duration: 0.8,
-          ease: 'power3.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: '.mosaico', start: 'top 80%', toggleActions: 'play none none none' }
-        });
-
       // Parallax por columna: cada columna se desplaza distinto, asi el
       // mosaico se siente con profundidad al scrollear en vez de moverse
       // en bloque. Solo transform, y solo escritorio.

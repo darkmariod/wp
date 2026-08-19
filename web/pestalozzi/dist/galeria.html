@@ -15,9 +15,9 @@
 <link rel="icon" href="img/marca/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Piazzolla:wght@500;600;700&family=Karla:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Piazzolla:wght@500;600;700&family=Karla:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Piazzolla:wght@500;600;700&family=Karla:wght@400;500;600&display=swap"></noscript>
 <link rel="preload" as="image" href="img/hero/galeria.webp">
 
 <style>
@@ -27,7 +27,7 @@
 :root{--bg:#FAFAF7;--ink-900:#14261C;--header-h:84px}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink-900);
-     font-family:'Work Sans',system-ui,-apple-system,sans-serif;
+     font-family:'Karla',system-ui,-apple-system,sans-serif;
      line-height:1.65;overflow-x:hidden}
 img,video{display:block;max-width:100%;height:auto}
 .header{position:fixed;inset:0 0 auto 0;z-index:100;padding-block:1rem;
@@ -69,8 +69,8 @@ img,video{display:block;max-width:100%;height:auto}
  --error: #C0402F;
  --info: #2F6FB0;
  
- --font-display: 'Lora', Georgia, 'Times New Roman', serif;
- --font-body: 'Work Sans', system-ui, -apple-system, sans-serif;
+ --font-display: 'Piazzolla', Georgia, 'Times New Roman', serif;
+ --font-body: 'Karla', system-ui, -apple-system, sans-serif;
  --fs-display: clamp(2.5rem, 5vw, 4rem);
  --fs-h1: clamp(2rem, 4vw, 3rem);
  --fs-h2: clamp(1.5rem, 3vw, 2rem);
@@ -1264,22 +1264,22 @@ ul { list-style: none; padding: 0; }
       </p>
 
       <div class="mosaico">
-        <button class="foto" data-col="0" data-categoria="deportes" aria-label="Ampliar: niños corriendo en el patio">
+        <button class="foto" data-col="0" data-categoria="deportes" aria-label="Ampliar: niños corriendo en el patio" data-revelar="zoom">
           <img src="img/galeria/g01.webp" alt="Niños corriendo en el patio de césped de la institución" width="640" height="1138">
         </button>
-        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: casita de madera del patio">
+        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: casita de madera del patio" data-revelar="zoom" data-retraso="80">
           <img src="img/galeria/g02.webp" alt="Niño asomado en la casita de madera del patio" width="640" height="1138">
         </button>
-        <button class="foto" data-col="2" data-categoria="actividades" aria-label="Ampliar: clase en el aula">
+        <button class="foto" data-col="2" data-categoria="actividades" aria-label="Ampliar: clase en el aula" data-revelar="zoom" data-retraso="160">
           <img src="img/galeria/g03.webp" alt="Estudiante escribiendo números en la pizarra digital del aula" width="640" height="427">
         </button>
-        <button class="foto" data-col="0" data-categoria="actividades" aria-label="Ampliar: taller de construcción">
+        <button class="foto" data-col="0" data-categoria="actividades" aria-label="Ampliar: taller de construcción" data-revelar="zoom" data-retraso="220">
           <img src="img/galeria/g04.webp" alt="Estudiante armando una estructura con piezas de construcción" width="640" height="1138" loading="lazy">
         </button>
-        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: fachada de la institución">
+        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: fachada de la institución" data-revelar="zoom" data-retraso="280">
           <img src="img/galeria/g05.webp" alt="Fachada del plantel con la bandera del Ecuador" width="640" height="1138" loading="lazy">
         </button>
-        <button class="foto" data-col="2" data-categoria="deportes" aria-label="Ampliar: juegos del patio">
+        <button class="foto" data-col="2" data-categoria="deportes" aria-label="Ampliar: juegos del patio" data-revelar="zoom" data-retraso="340">
           <img src="img/galeria/g06.webp" alt="Estudiante jugando en la resbaladera del patio" width="640" height="1138" loading="lazy">
         </button>
       </div>
@@ -1344,6 +1344,7 @@ ul { list-style: none; padding: 0; }
         <ul style="margin-top:var(--space-4)">
           <li><a href="https://facebook.com/pestalozziambato" target="_blank" rel="noopener">Facebook</a></li>
           <li><a href="https://wa.me/593998246396" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://www.tiktok.com/@pestalozziambato" target="_blank" rel="noopener">TikTok</a></li>
         </ul>
       </div>
     </div>

@@ -36,8 +36,8 @@
   --info:    #2F6FB0;
 
   /* --- Tipografía --- */
-  --font-display: 'Lora', Georgia, 'Times New Roman', serif;
-  --font-body:    'Work Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Piazzolla', Georgia, 'Times New Roman', serif;
+  --font-body:    'Karla', system-ui, -apple-system, sans-serif;
 
   --fs-display: clamp(2.5rem, 5vw, 4rem);
   --fs-h1:      clamp(2rem, 4vw, 3rem);
