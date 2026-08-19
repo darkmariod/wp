@@ -1,0 +1,142 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Contacto | Unidad Educativa Pestalozzi Ambato"
+  description="Tiwinza #95 y Etza, Ambato. Teléfono 099 824 6396. Escríbenos por WhatsApp o agenda una visita a la Unidad Educativa Pestalozzi."
+  ogTitle="Contacto | Pestalozzi Ambato"
+  ogDescription="Tiwinza #95 y Etza, Ambato. Teléfono 099 824 6396. Escríbenos por WhatsApp o agenda una visita a la Unidad Educativa Pestalozzi."
+  ogImage="/img/hero/contacto.webp"
+  canonicalPath="/contacto"
+  current="contacto"
+  ctaContacto={false}
+  preloadImage="/img/hero/contacto.webp"
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src="/img/hero/contacto.webp" alt="Estudiante sonriendo en la casita del patio" width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href="/">Inicio</a> / Contacto</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Hablemos</h1>
+      <p class="hero__bajada">Respondemos en el día. También puedes visitarnos sin cita previa.</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor contacto-grid">
+
+      <!-- Datos -->
+      <div data-revelar="izq">
+        <span class="eyebrow">Datos de contacto</span>
+        <h2 style="margin-bottom:var(--space-8)">Dónde estamos</h2>
+
+        <dl>
+          <div class="dato">
+            <div>
+              <dt>Dirección</dt>
+              <dd>Tiwinza #95 y Etza
+                <small>Parroquia Atahualpa, Ambato, Ecuador</small>
+              </dd>
+            </div>
+          </div>
+
+          <div class="dato">
+            <div>
+              <dt>Teléfono</dt>
+              <dd><a href="tel:+593998246396">099 824 6396</a>
+                <small>Llamadas y mensajes</small>
+              </dd>
+            </div>
+          </div>
+
+          <div class="dato">
+            <div>
+              <dt>Correo</dt>
+              <dd><a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+                <small>Secretaría</small>
+              </dd>
+            </div>
+          </div>
+        </dl>
+
+        <div class="aviso-matriculas">
+          <div>
+            <strong>Matrículas abiertas</strong>
+            <span>Ciclo lectivo 2026 – 2027</span>
+          </div>
+        </div>
+
+        <p style="margin-top:var(--space-8)">
+          <a href="https://wa.me/593998246396" class="btn btn--primario" target="_blank" rel="noopener">
+            Escribir por WhatsApp
+          </a>
+        </p>
+      </div>
+
+      <!-- Formulario -->
+      <div data-revelar="der">
+        <form class="formulario" id="form-contacto" novalidate>
+          <h2 style="margin-bottom:var(--space-6)">Envíanos un mensaje</h2>
+
+          <div class="campo" data-validar>
+            <label for="nombre">Nombre y apellido</label>
+            <input type="text" id="nombre" name="nombre" data-min="3" autocomplete="name" required>
+            <span class="campo__error">Escribe tu nombre completo.</span>
+          </div>
+
+          <div class="campo" data-validar>
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" data-min="5" autocomplete="email" required>
+            <span class="campo__error">Revisa el formato del correo.</span>
+          </div>
+
+          <div class="campo">
+            <label for="telefono">Teléfono <span style="font-weight:400;text-transform:none">(opcional)</span></label>
+            <input type="tel" id="telefono" name="telefono" autocomplete="tel">
+          </div>
+
+          <div class="campo">
+            <label for="nivel">Nivel de interés</label>
+            <select id="nivel" name="nivel">
+              <option value="">Selecciona una opción</option>
+              <option>Inicial 1</option>
+              <option>Inicial 2</option>
+              <option>Primero de Básica</option>
+              <option>Segundo de Básica</option>
+              <option>Aún no lo sé</option>
+            </select>
+          </div>
+
+          <div class="campo" data-validar>
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" data-min="10" required></textarea>
+            <span class="campo__error">Cuéntanos en qué podemos ayudarte (mínimo 10 caracteres).</span>
+          </div>
+
+          <!-- Trampa antispam: invisible para personas, tentadora para bots -->
+          <div class="trampa" aria-hidden="true">
+            <label for="sitio">No llenar</label>
+            <input type="text" id="sitio" name="sitio" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button type="submit" class="btn btn--primario" style="width:100%">Enviar mensaje</button>
+
+          <p class="form-aviso" aria-live="polite"></p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Mapa -->
+  <section class="seccion seccion--suave" style="padding-top:0">
+    <div class="contenedor" data-revelar>
+      <iframe
+        class="mapa"
+        title="Ubicación de la Unidad Educativa Pestalozzi en Ambato"
+        src="https://www.google.com/maps?q=Tiwinza%20y%20Etza,%20Ambato,%20Ecuador&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+</Layout>

@@ -146,9 +146,49 @@
   var botonesFiltro = Array.prototype.slice.call(document.querySelectorAll('.filtro'));
   var fotos = Array.prototype.slice.call(document.querySelectorAll('.foto'));
   var contador = document.getElementById('cuenta-fotos');
+  var descripcionGaleria = document.getElementById('galeria-desc');
 
   function plural(n) {
     return n + ' ' + (n === 1 ? 'fotografía' : 'fotografías');
+  }
+
+  // Un texto propio por categoría: no es la misma frase repetida con
+  // otro título, describe lo que realmente hay en esa sección.
+  var DESCRIPCIONES_GALERIA = {
+    todas: 'Un vistazo a la vida diaria del plantel: instalaciones, actividades, deportes y eventos del año lectivo.',
+    instalaciones: 'El espacio donde los niños pasan el día: patio, aulas y áreas comunes del plantel.',
+    actividades: 'Momentos de aprendizaje dentro y fuera del aula, con la metodología Montessori.',
+    deportes: 'Movimiento y juego al aire libre — parte del aprendizaje, no un premio aparte.',
+    eventos: 'Celebraciones y actividades especiales del año lectivo. Se suman fotos aquí en cuanto el colegio las entregue.'
+  };
+
+  function envolverEnPalabras(el, texto) {
+    el.textContent = '';
+    var frag = document.createDocumentFragment();
+    texto.split(' ').forEach(function (palabra, i) {
+      if (i > 0) frag.appendChild(document.createTextNode(' '));
+      var span = document.createElement('span');
+      span.className = 'galeria-desc__palabra';
+      span.textContent = palabra;
+      frag.appendChild(span);
+    });
+    el.appendChild(frag);
+  }
+
+  function actualizarDescripcionGaleria(categoria) {
+    if (!descripcionGaleria) return;
+    var texto = DESCRIPCIONES_GALERIA[categoria] || DESCRIPCIONES_GALERIA.todas;
+    if (descripcionGaleria.dataset.texto === texto) return;
+    descripcionGaleria.dataset.texto = texto;
+    if (reducir) { descripcionGaleria.textContent = texto; return; }
+    envolverEnPalabras(descripcionGaleria, texto);
+    var palabras = Array.prototype.slice.call(descripcionGaleria.querySelectorAll('.galeria-desc__palabra'));
+    palabras.forEach(function (p, i) { p.style.transitionDelay = (i * 30) + 'ms'; });
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        palabras.forEach(function (p) { p.classList.add('visible'); });
+      });
+    });
   }
 
   function aplicarFiltro(categoria) {
@@ -159,6 +199,7 @@
       if (coincide) visibles += 1;
     });
     if (contador) contador.textContent = plural(visibles);
+    actualizarDescripcionGaleria(categoria);
   }
 
   botonesFiltro.forEach(function (boton) {
@@ -170,6 +211,11 @@
       aplicarFiltro(boton.getAttribute('data-categoria'));
     });
   });
+
+  // Entrada inicial de la descripción: mismo efecto de palabra por
+  // palabra que al cambiar de filtro, para que no aparezca "muerta"
+  // apenas se carga la página.
+  actualizarDescripcionGaleria('todas');
 
   /* ------------------------------------------------------------
      7. LIGHTBOX
@@ -326,8 +372,13 @@
      celular. Si GSAP falla, el sitio sigue completo: la capa
      base ya animó todo.
      ------------------------------------------------------------ */
-  var punteroFino = window.matchMedia('(pointer: fine)').matches;
-  var pantallaAncha = window.matchMedia('(min-width: 1024px)').matches;
+  // Funciones, no booleanos fijos: capturar el valor una sola vez aquí
+  // arriba se leyó falso en algún momento durante la carga (el layout
+  // todavía no había asentado el ancho real), y esa lectura equivocada
+  // quedaba pegada para toda la sesión — GSAP nunca llegaba a pedirse
+  // ni en escritorio. Se evalúa en el momento real de cada decisión.
+  var esPunteroFino = function () { return window.matchMedia('(pointer: fine)').matches; };
+  var esPantallaAncha = function () { return window.matchMedia('(min-width: 1024px)').matches; };
 
   if (!reducir) {
     var cargarScript = function (src) {
@@ -551,7 +602,7 @@
       }
 
       // Parallax: solo escritorio con mouse fino y pantalla amplia.
-      if (!punteroFino || !pantallaAncha) return;
+      if (!esPunteroFino() || !esPantallaAncha()) return;
 
       // P1 — foto de portada/interiores se mueve más lento (sin huecos: scale).
       if (document.querySelector('.hero__foto')) {
@@ -605,6 +656,19 @@
         });
       }
 
+      // P4b — fondo "fijo" de la franja con scroll real: el marco se
+      // mueve más lento que el texto, en vez del truco
+      // background-attachment:fixed que usan los builders tipo
+      // Elementor. El zoom de kb-zoom sigue corriendo aparte, en la
+      // foto de adentro, sin pisarse con este scrub.
+      if (document.querySelector('.franja__marco')) {
+        gsap.fromTo('.franja__marco', { yPercent: -8 }, {
+          yPercent: 8,
+          ease: 'none',
+          scrollTrigger: { trigger: '.franja', start: 'top bottom', end: 'bottom top', scrub: true }
+        });
+      }
+
       // P6 — zoom lento de la fachada (Nosotros).
       if (document.querySelector('.partido__foto img')) {
         gsap.fromTo('.partido__foto img', { scale: 1 }, {
@@ -615,20 +679,32 @@
       }
     }
 
-    // La condición de escritorio se evalúa AQUÍ, no solo al declarar las
-    // variables. Antes se calculaban punteroFino y pantallaAncha y luego
-    // no se usaban: GSAP terminaba bajando también en celular, que es
-    // justo lo que el presupuesto de rendimiento prohíbe.
-    if (punteroFino && pantallaAncha) {
-      window.addEventListener('load', function () {
-        Promise.all([
-          cargarScript('js/vendor/gsap.min.js'),
-          cargarScript('js/vendor/ScrollTrigger.min.js')
-        ]).then(iniciarMovimiento).catch(function () {
-          // Sin GSAP el sitio sigue completo: nada que hacer.
-        });
+    // La condición de escritorio se evalúa DENTRO del listener de load,
+    // no antes de registrarlo: evaluarla al declarar las variables (más
+    // arriba en el archivo) a veces leía el ancho de pantalla antes de
+    // que el layout terminara de asentarse, daba falso en escritorio
+    // real y GSAP nunca se pedía — ni el listener llegaba a registrarse.
+    var yaSePidioGsap = false;
+    var pedirGsapSiCorresponde = function () {
+      if (yaSePidioGsap) return;
+      if (!esPunteroFino() || !esPantallaAncha()) return;
+      yaSePidioGsap = true;
+      Promise.all([
+        cargarScript('/js/vendor/gsap.min.js'),
+        cargarScript('/js/vendor/ScrollTrigger.min.js')
+      ]).then(iniciarMovimiento).catch(function () {
+        // Sin GSAP el sitio sigue completo: nada que hacer.
       });
-    }
+    };
+    window.addEventListener('load', function () {
+      // En algunos casos innerWidth todavía no está asentado justo en el
+      // instante del evento load (se vio 0 ahí mismo aunque la pantalla
+      // sí era de escritorio un instante después). Un reintento corto
+      // cubre esa ventana sin agregar peso: si el primer chequeo ya
+      // pasó, el segundo no hace nada (yaSePidioGsap corta el resto).
+      pedirGsapSiCorresponde();
+      setTimeout(pedirGsapSiCorresponde, 150);
+    });
   }
 
   /* ------------------------------------------------------------

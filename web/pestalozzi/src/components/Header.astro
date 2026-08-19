@@ -1,0 +1,53 @@
+---
+// current: 'inicio' | 'nosotros' | 'galeria' | 'contacto'
+// ctaContacto: false en la página de Contacto — ahí el botón manda
+// directo a WhatsApp en vez de repetir el enlace a sí misma.
+interface Props {
+  current: 'inicio' | 'nosotros' | 'galeria' | 'contacto';
+  ctaContacto?: boolean;
+}
+const { current, ctaContacto = true } = Astro.props;
+
+const enlaces = [
+  { id: 'inicio', href: '/', texto: 'Inicio' },
+  { id: 'nosotros', href: '/nosotros', texto: 'Nosotros' },
+  { id: 'galeria', href: '/galeria', texto: 'Galería' },
+  { id: 'contacto', href: '/contacto', texto: 'Contacto' },
+];
+---
+<header class="header">
+  <div class="contenedor header__inner">
+    <a href="/" class="header__logo" aria-label="Pestalozzi Ambato, inicio">
+      <img src="/img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+    </a>
+    <nav class="nav" aria-label="Navegación principal">
+      {enlaces.map((e) => (
+        e.id === current
+          ? <a href={e.href} class="activo" aria-current="page">{e.texto}</a>
+          : <a href={e.href}>{e.texto}</a>
+      ))}
+    </nav>
+    {ctaContacto ? (
+      <a href="/contacto" class="btn btn--acento header__cta">Admisiones 2026–2027</a>
+    ) : (
+      <a href="https://wa.me/593998246396" class="btn btn--acento header__cta" target="_blank" rel="noopener">Escríbenos</a>
+    )}
+    <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="velo"></div>
+<nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
+  {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+  {ctaContacto ? (
+    <a href="/contacto" class="btn btn--acento">Admisiones 2026–2027</a>
+  ) : (
+    <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos</a>
+  )}
+  <div class="menu-movil__datos">
+    <a href="tel:+593998246396">099 824 6396</a><br>
+    <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+  </div>
+</nav>

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://pestalozzi-opal.vercel.app/sitemap.xml

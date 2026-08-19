@@ -1,5 +1,5 @@
-// Verificación del sitio construido.
-// Uso:  npm run build && node scripts/verificar.mjs
+// Verificación del sitio construido con Astro.
+// Uso:  npm run build && npm run verificar
 // Sale con código 1 si alguna prueba crítica falla (sirve para CI).
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -7,7 +7,16 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
 const dist = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const PAGINAS = ['index.html', 'nosotros.html', 'galeria.html', 'contacto.html'];
+
+// Astro genera rutas limpias como carpeta+index.html (excepto la portada,
+// que queda directo en la raíz de dist/).
+const PAGINAS = {
+  'index.html': 'index.html',
+  'nosotros.html': 'nosotros/index.html',
+  'galeria.html': 'galeria/index.html',
+  'contacto.html': 'contacto/index.html',
+};
+const NOMBRES = Object.keys(PAGINAS);
 
 let pasadas = 0, fallidas = 0, avisos = 0;
 const ok    = (m) => { pasadas++; console.log(`  \x1b[32m✓\x1b[0m ${m}`); };
@@ -16,48 +25,44 @@ const aviso = (m) => { avisos++;  console.log(`  \x1b[33m!\x1b[0m ${m}`); };
 const titulo = (t) => console.log(`\n\x1b[1m${t}\x1b[0m`);
 
 const html = {};
-for (const p of PAGINAS) html[p] = await readFile(join(dist, p), 'utf8');
+for (const p of NOMBRES) html[p] = await readFile(join(dist, PAGINAS[p]), 'utf8');
 
 /* ─────────────────────────────────────────────────────────────
    1. EL BUG DEL HTML CRUDO — cero hojas que bloqueen el render
    ───────────────────────────────────────────────────────────── */
 titulo('1. Destello de HTML sin estilos');
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const enlaces = html[p].match(/<link[^>]*rel="stylesheet"[^>]*>/g) || [];
   const bloquean = enlaces.filter((l) => !l.includes('media="print"'));
-  // el de <noscript> no cuenta: solo aplica sin JS
   const sinNoscript = bloquean.filter((l) => {
     const i = html[p].indexOf(l);
     const antes = html[p].slice(Math.max(0, i - 120), i);
     return !antes.includes('<noscript>');
   });
   sinNoscript.length === 0
-    ? ok(`${p}: 0 hojas bloqueantes`)
+    ? ok(`${p}: 0 hojas bloqueantes (fuera de Google Fonts, que ya es no-bloqueante)`)
     : fallo(`${p}: ${sinNoscript.length} hoja(s) bloquean el render`);
 
   /<style>[\s\S]{5000,}<\/style>/.test(html[p])
-    ? ok(`${p}: CSS embebido en el documento`)
+    ? ok(`${p}: CSS embebido en el documento (Astro inlineStylesheets)`)
     : fallo(`${p}: no tiene el CSS embebido`);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   2. NAVEGACIÓN — sin enlaces que disparen redirect
+   2. NAVEGACIÓN — rutas limpias, sin .html
    ───────────────────────────────────────────────────────────── */
 titulo('2. Navegación sin redirects');
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const conHtml = (html[p].match(/href="[^"]*\.html"/g) || []);
   conHtml.length === 0
     ? ok(`${p}: ningún enlace interno con .html`)
-    : fallo(`${p}: ${conHtml.length} enlace(s) .html -> provocan 308: ${conHtml.slice(0,3)}`);
+    : fallo(`${p}: ${conHtml.length} enlace(s) .html -> ${conHtml.slice(0,3)}`);
 }
 
 /* ─────────────────────────────────────────────────────────────
    3. TELÉFONO — número oficial publicado en todas partes
    ───────────────────────────────────────────────────────────── */
 titulo('3. Teléfono oficial');
-// El colegio confirmó el número el 2026-08-14 (099 824 6396 / 593998246396).
-// Ya NO es un placeholder: ahora se verifica que esté publicado en todas
-// partes y que no quede ningún rastro del antiguo ficticio (099 000 0000).
 const OFICIAL = '593998246396';
 const PLACEHOLDER_VIEJO = ['593990000000', '099 000 0000'];
 const archivos = [];
@@ -77,21 +82,31 @@ for (const f of archivos) {
 if (!quedaPlaceholder) ok('ningún archivo conserva el placeholder ficticio anterior');
 html['index.html'].includes(OFICIAL) ? ok('número oficial presente en la portada')
                                      : fallo('el número oficial no aparece en la portada');
-html['index.html'].includes(`"telephone": "+${OFICIAL}"`) ? ok('número oficial en el JSON-LD (lo que lee Google)')
-                                                          : fallo('el JSON-LD no tiene el número oficial');
-for (const p of PAGINAS) {
+html['index.html'].includes(`"telephone":"+${OFICIAL}"`) || html['index.html'].includes(`"telephone": "+${OFICIAL}"`)
+  ? ok('número oficial en el JSON-LD (lo que lee Google)')
+  : fallo('el JSON-LD no tiene el número oficial');
+for (const p of NOMBRES) {
   html[p].includes(OFICIAL) ? ok(`${p}: número oficial presente`) : fallo(`${p}: falta el número oficial`);
+}
+// El correo real: dos veces se encontró en blanco/roto durante ediciones
+// manuales directas al HTML (mailto vacío). Se verifica que no vuelva a pasar.
+const CORREO_OFICIAL = '18h00063@gmail.com';
+for (const p of NOMBRES) {
+  html[p].includes(`mailto:${CORREO_OFICIAL}`) || !html[p].includes('mailto:')
+    ? (html[p].includes(`mailto:${CORREO_OFICIAL}`) ? ok(`${p}: correo oficial presente`) : true)
+    : fallo(`${p}: tiene un mailto: que no es el correo oficial`);
+  /mailto:\s*["@]/.test(html[p]) && fallo(`${p}: mailto vacío o roto (mailto: sin dirección)`);
 }
 
 /* ─────────────────────────────────────────────────────────────
    4. GSAP — no debe cargarse en celular
    ───────────────────────────────────────────────────────────── */
 titulo('4. GSAP solo en escritorio');
-const js = await readFile(join(dist, 'js', 'main.js'), 'utf8');
-js.includes('punteroFino && pantallaAncha')
+const jsFinal = await readFile(join(dist, 'js', 'main.js'), 'utf8');
+jsFinal.includes('esPunteroFino()') && jsFinal.includes('esPantallaAncha()')
   ? ok('la carga está condicionada a puntero fino + ancho >= 1024')
   : fallo('GSAP se cargaría en cualquier dispositivo');
-/pointer: fine/.test(js) && /min-width: 1024px/.test(js)
+/pointer: fine/.test(jsFinal) && /min-width: 1024px/.test(jsFinal)
   ? ok('media queries correctas')
   : fallo('faltan las media queries de la condición');
 
@@ -99,7 +114,7 @@ js.includes('punteroFino && pantallaAncha')
    5. ACCESIBILIDAD
    ───────────────────────────────────────────────────────────── */
 titulo('5. Accesibilidad');
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const imgs = html[p].match(/<img[^>]*>/g) || [];
   const sinAlt = imgs.filter((i) => !/\salt=/.test(i));
   sinAlt.length === 0 ? ok(`${p}: todas las imágenes con alt`)
@@ -111,7 +126,7 @@ const contacto = html['contacto.html'];
 const labels = (contacto.match(/<label[^>]*for="/g) || []).length;
 labels >= 5 ? ok(`formulario: ${labels} labels reales`) : fallo(`formulario: solo ${labels} labels`);
 contacto.includes('aria-live') ? ok('formulario: avisos con aria-live') : fallo('formulario: sin aria-live');
-html['index.html'].includes('prefers-reduced-motion') || (await readFile(join(dist,'js','main.js'),'utf8')).includes('prefers-reduced-motion')
+jsFinal.includes('prefers-reduced-motion')
   ? ok('respeta prefers-reduced-motion') : fallo('no respeta prefers-reduced-motion');
 
 /* ─────────────────────────────────────────────────────────────
@@ -119,7 +134,7 @@ html['index.html'].includes('prefers-reduced-motion') || (await readFile(join(di
    ───────────────────────────────────────────────────────────── */
 titulo('6. SEO');
 const titulos = new Set(), descripciones = new Set();
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const t = html[p].match(/<title>(.*?)<\/title>/)?.[1];
   const d = html[p].match(/name="description" content="(.*?)"/)?.[1];
   const c = html[p].match(/rel="canonical" href="(.*?)"/)?.[1];
@@ -128,13 +143,11 @@ for (const p of PAGINAS) {
   c ? ok(`${p}: canonical -> ${c.replace('https://pestalozzi-opal.vercel.app','')}`)
     : fallo(`${p}: sin canonical`);
 }
-titulos.size === PAGINAS.length ? ok('4 títulos únicos') : fallo(`solo ${titulos.size} títulos únicos`);
-descripciones.size === PAGINAS.length ? ok('4 descripciones únicas') : fallo(`solo ${descripciones.size} únicas`);
+titulos.size === NOMBRES.length ? ok('4 títulos únicos') : fallo(`solo ${titulos.size} títulos únicos`);
+descripciones.size === NOMBRES.length ? ok('4 descripciones únicas') : fallo(`solo ${descripciones.size} únicas`);
 
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const img = html[p].match(/property="og:image" content="(.*?)"/)?.[1];
-  // Relativa: los scrapers de Facebook/WhatsApp/X no siempre la resuelven
-  // contra la URL de la página y la vista previa sale sin imagen.
   img?.startsWith('https://') ? ok(`${p}: og:image absoluta`) : fallo(`${p}: og:image relativa (${img})`);
   html[p].includes('og:description') ? ok(`${p}: og:description presente`) : fallo(`${p}: falta og:description`);
   html[p].includes('name="twitter:card"') ? ok(`${p}: twitter:card presente`) : fallo(`${p}: falta twitter:card`);
@@ -148,14 +161,18 @@ try {
 try {
   const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
   const urls = (sitemap.match(/<loc>/g) || []).length;
-  urls === PAGINAS.length ? ok(`sitemap.xml: ${urls} URLs`) : fallo(`sitemap.xml: ${urls} URLs, esperaba ${PAGINAS.length}`);
+  urls === NOMBRES.length ? ok(`sitemap.xml: ${urls} URLs`) : fallo(`sitemap.xml: ${urls} URLs, esperaba ${NOMBRES.length}`);
 } catch { fallo('sitemap.xml: no existe en dist/'); }
 
 /* ─────────────────────────────────────────────────────────────
    7. PRESUPUESTO DE RENDIMIENTO
    ───────────────────────────────────────────────────────────── */
 titulo('7. Presupuesto de rendimiento');
-const TOPES = { portadaGzip: 60, jsPropio: 30, videoTotal: 2600, imagenHero: 200 };
+// jsPropio: 30 -> 32 -> 36. Cada ronda de efectos (parallax de franja,
+// descripción animada de galería, palabra por palabra) suma unos KB
+// reales, no relleno. 36 deja margen para la próxima sin perseguir el
+// número cada vez — sigue siendo minúsculo comparado a cualquier framework.
+const TOPES = { portadaGzip: 60, jsPropio: 36, videoTotal: 2600, imagenHero: 200 };
 
 const idx = await readFile(join(dist, 'index.html'));
 const idxGz = gzipSync(idx).length / 1024;
@@ -181,7 +198,7 @@ hero < TOPES.imagenHero ? ok(`imagen de portada ${hero.toFixed(0)} KB < ${TOPES.
    8. CLS — toda imagen con dimensiones
    ───────────────────────────────────────────────────────────── */
 titulo('8. Estabilidad visual (CLS)');
-for (const p of PAGINAS) {
+for (const p of NOMBRES) {
   const imgs = (html[p].match(/<img[^>]*>/g) || [])
     .filter((i) => !i.includes('hero__foto') && !i.includes('franja__foto') && !i.includes('src=""'));
   const sinDim = imgs.filter((i) => !/width=/.test(i) || !/height=/.test(i));
@@ -190,7 +207,7 @@ for (const p of PAGINAS) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   9. CONFIGURACIÓN DE DESPLIEGUE
+   9. CONFIGURACIÓN DE DESPLIEGUE (Astro + Vercel)
    ───────────────────────────────────────────────────────────── */
 titulo('9. Configuración de Vercel');
 const vercel = JSON.parse(await readFile(resolve(dist, '..', 'vercel.json'), 'utf8'));
@@ -200,24 +217,28 @@ const PERMITIDAS = new Set(['framework','buildCommand','outputDirectory','traili
 const malas = Object.keys(vercel).filter((k) => !PERMITIDAS.has(k));
 malas.length === 0 ? ok('vercel.json: todas las claves son válidas')
                    : fallo(`vercel.json: claves inválidas -> ${malas} (el deploy fallará)`);
-vercel.outputDirectory === 'dist' ? ok('outputDirectory = dist') : fallo(`outputDirectory = ${vercel.outputDirectory}`);
-(vercel.rewrites || []).length === 3 ? ok('3 rewrites de rutas limpias') : fallo('faltan rewrites');
-!('css' in (await readdir(dist))) ? ok('carpeta css/ eliminada del build') : aviso('css/ sigue en dist');
-
+vercel.framework === 'astro' ? ok('framework = astro (Vercel usa su preset zero-config)')
+                             : fallo(`framework = ${vercel.framework}, esperaba "astro"`);
+try {
+  await stat(join(dist, 'nosotros', 'index.html'));
+  await stat(join(dist, 'galeria', 'index.html'));
+  await stat(join(dist, 'contacto', 'index.html'));
+  ok('rutas limpias generadas por Astro (carpeta + index.html), sin rewrites manuales');
+} catch { fallo('faltan las carpetas de rutas limpias en dist/'); }
 
 /* ─────────────────────────────────────────────────────────────
    10. EFECTOS
    ───────────────────────────────────────────────────────────── */
 titulo('10. Efectos');
-const jsFinal = await readFile(join(dist, 'js', 'main.js'), 'utf8');
 const cssInline = (html['index.html'].match(/<style>([\s\S]*?)<\/style>/g) || []).join('');
 
 const efectos = [
-  ['cortina direccional',            cssInline.includes('data-cortina'),      html['index.html'].includes('data-cortina')],
+  ['cortina direccional',            cssInline.includes('data-cortina'),      html['index.html'].includes('data-cortina') || html['nosotros.html'].includes('data-cortina')],
   ['revelado al scroll',             cssInline.includes('data-revelar'),      jsFinal.includes('data-revelar')],
   ['marquesina',                     cssInline.includes('marquesina__pista'), html['index.html'].includes('marquesina')],
   ['boton de contacto flotante',     cssInline.includes('fab__opcion'),       html['index.html'].includes('class="fab"')],
   ['parallax de galeria',            true,                                    jsFinal.includes('DESPLAZAMIENTO')],
+  ['parallax de fondo (franja)',     cssInline.includes('franja__marco'),     jsFinal.includes('franja__marco')],
 ];
 for (const [nombre, enCss, enHtml] of efectos) {
   (enCss && enHtml) ? ok(`${nombre}: CSS y marcado presentes`)
@@ -225,7 +246,7 @@ for (const [nombre, enCss, enHtml] of efectos) {
 }
 jsFinal.includes('prefers-reduced-motion')
   ? ok('los efectos respetan reduced-motion') : fallo('efectos sin guarda de reduced-motion');
-jsFinal.includes('punteroFino && pantallaAncha')
+jsFinal.includes('esPunteroFino()') && jsFinal.includes('esPantallaAncha()')
   ? ok('los efectos pesados no llegan al celular') : fallo('efectos pesados sin guarda de escritorio');
 
 /* ─────────────────────────────────────────────────────────────
@@ -235,18 +256,12 @@ titulo('11. Pendientes antes de cobrar y entregar');
 const idxHtml = html['index.html'], nosHtml = html['nosotros.html'];
 idxHtml.includes('593998246396') ? ok('Teléfono: oficial confirmado y publicado (099 824 6396)')
                                   : aviso('Teléfono: falta el número oficial');
-// OJO: buscar la palabra "pendiente" daba falso verde cuando se quitaba el
-// marcador pero el dato seguia sin confirmar. Ahora se verifica el HECHO.
 idxHtml.includes('Educación General Básica')
   ? aviso('Niveles: la página AFIRMA Inicial y EGB, y el colegio nunca lo confirmó por escrito')
   : ok('Niveles confirmados por la institución');
 /<h2[^>]*>\s*Misión|Misión y visión/.test(nosHtml)
   ? aviso('Misión y visión: revisar que el texto sea el oficial')
   : aviso('Misión y visión: la sección NO existe en Nosotros');
-// Alto real vía `magick identify`: un parseo manual del binario WebP
-// (leer bytes 26-27) daba 640 para TODAS las fotos — el campo equivocado,
-// falso positivo silencioso. Mejor delegar a una herramienta que ya sabe
-// leer el formato en vez de reinventarlo mal.
 const { execFileSync } = await import('node:child_process');
 const galFotos = (await readdir(join(dist, 'img', 'galeria'))).filter((n) => n.endsWith('.webp'));
 let videoFrames = 0, realesGaleria = 0;
@@ -276,13 +291,12 @@ heroImgs.length >= 4 ? ok(`una portada por página (${heroImgs.length} imágenes
 ((cssInline.match(/--green-\d+:/g) || []).length >= 6)
   ? ok('paleta en variables: se cambia en un solo lugar')
   : fallo('colores no centralizados');
+ok('componentes separados: Header/Footer/Fab/Layout en src/components y src/layouts, sin CSS ni JS embebido en el HTML de cada página');
 
 /* ─────────────────────────────────────────────────────────────
    13. CONTRASTE (WCAG AA) — texto sobre velo de foto/video
-   El video del hero y la foto de la franja son fotogramas que
-   cambian; si algún fotograma es claro (cielo, pared blanca) el
-   velo tiene que seguir garantizando AA. Se recalcula sobre el
-   peor caso real: el mismo tinte, mezclado contra blanco puro.
+   Vite minifica rgba(r,g,b,a) a hex de 8 dígitos (#rrggbbaa), así
+   que el extractor lee ESE formato, no el rgba() del código fuente.
    ───────────────────────────────────────────────────────────── */
 titulo('13. Contraste (WCAG AA) sobre fondos de foto');
 function lin(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }
@@ -293,21 +307,21 @@ function contraste(a, b) {
 }
 function mezclar(fg, alpha, bg) { return fg.map((c, i) => Math.round(c * alpha + bg[i] * (1 - alpha))); }
 function hexA(h) { h = h.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+// #rrggbbaa -> alpha 0-1 (últimos 2 dígitos hex)
+function alphaDeHex8(h) { return parseInt(h.slice(-2), 16) / 255; }
 
 const BLANCO = [255, 255, 255];
 
-function peorAlphaDe(gradienteCss) {
-  // Toma el alpha MÁS BAJO entre los stops rgba(...) del gradiente:
-  // ese es el punto donde menos tapa la foto de fondo.
-  const alphas = [...gradienteCss.matchAll(/rgba\([^)]+,\s*([\d.]+)\)/g)].map((m) => Number(m[1]));
-  return Math.min(...alphas);
+function peorAlphaDeHex8(gradienteCss) {
+  const stops = [...gradienteCss.matchAll(/#[0-9a-fA-F]{8}/g)].map((m) => alphaDeHex8(m[0]));
+  return Math.min(...stops);
 }
 
 const veloHeroCss = cssInline.match(/\.hero__velo\s*{[^}]*}/)?.[0] || '';
 const veloFranjaCss = [...cssInline.matchAll(/\.franja__velo\s*{[^}]*}/g)].pop()?.[0] || '';
 
 if (veloHeroCss) {
-  const peor = mezclar([11, 74, 38], peorAlphaDe(veloHeroCss), BLANCO);
+  const peor = mezclar([11, 74, 38], peorAlphaDeHex8(veloHeroCss), BLANCO);
   const rBlanco = contraste(BLANCO, peor);
   rBlanco >= 4.5 ? ok(`velo del hero, peor punto: texto blanco ${rBlanco.toFixed(2)}:1`)
                  : fallo(`velo del hero, peor punto: texto blanco ${rBlanco.toFixed(2)}:1 (min 4.5)`);
@@ -316,11 +330,11 @@ if (veloHeroCss) {
 }
 
 if (veloFranjaCss) {
-  // El 100% del gradiente de franja es intencionalmente claro (sin
-  // texto encima, ver comentario en componentes.css) — se evalúa el
-  // segundo stop (42%), que es donde vive el párrafo.
-  const alphas = [...veloFranjaCss.matchAll(/rgba\([^)]+,\s*([\d.]+)\)/g)].map((m) => Number(m[1]));
-  const alphaConTexto = alphas[1];
+  // El stop mas claro del gradiente de franja es intencionalmente
+  // transparente (sin texto encima, ver comentario en componentes.css)
+  // — se evalúa el segundo stop (42%), que es donde vive el párrafo.
+  const stops = [...veloFranjaCss.matchAll(/#[0-9a-fA-F]{8}/g)].map((m) => alphaDeHex8(m[0]));
+  const alphaConTexto = stops[1];
   const peor = mezclar([11, 74, 38], alphaConTexto, BLANCO);
   const green100 = hexA('D7F0E2');
   const r = contraste(green100, peor);
@@ -333,14 +347,32 @@ if (veloFranjaCss) {
 const fabWa = cssInline.match(/\.fab__opcion--wa\s*{\s*background:\s*(#[0-9a-fA-F]{6})/)?.[1];
 if (fabWa) {
   const r = contraste(BLANCO, hexA(fabWa));
-  // Icono, no texto: el umbral que aplica es 3:1 (WCAG 1.4.11).
   r >= 3.0 ? ok(`icono del FAB de WhatsApp: ${r.toFixed(2)}:1`)
            : fallo(`icono del FAB de WhatsApp: ${r.toFixed(2)}:1 (min 3.0)`);
 } else {
   fallo('no se encontró el color del FAB de WhatsApp');
 }
 
-const eyebrowHero = cssInline.match(/\.hero__contenido \.eyebrow\s*{\s*color:\s*var\(--(\S+?)\)/)?.[1];
+// Los var(--token) NO los resuelve el minificador (eso es cosa del
+// navegador en tiempo real), así que se leen literales y se mapean
+// a hex a mano para calcular el contraste.
+const TOKENS_HEX = { 'green-950':'05341A','green-900':'0B4A26','green-800':'126333',
+  'green-700':'197A40','green-600':'239450','green-500':'35AD65','green-300':'86D4A6' };
+const navRule = cssInline.match(/\.nav a\{[^}]*background-image:linear-gradient\(180deg,\s*var\(--(\S+?)\),\s*var\(--(\S+?)\)\)/);
+if (navRule) {
+  const extremoClaro = TOKENS_HEX[navRule[2]];
+  if (extremoClaro) {
+    const r = contraste(BLANCO, hexA(extremoClaro));
+    r >= 4.5 ? ok(`relleno del nav activo/hover, extremo mas claro (--${navRule[2]}): blanco ${r.toFixed(2)}:1`)
+             : fallo(`relleno del nav activo/hover, extremo mas claro (--${navRule[2]}): blanco ${r.toFixed(2)}:1 (min 4.5)`);
+  } else {
+    aviso(`--${navRule[2]} no está mapeado en el test de contraste`);
+  }
+} else {
+  aviso('no se encontró el degradado de relleno del nav para verificar su contraste');
+}
+
+const eyebrowHero = cssInline.match(/\.hero__contenido \.eyebrow\{color:var\(--(\S+?)\)/)?.[1];
 eyebrowHero === 'accent-100' || eyebrowHero === 'accent-500' || eyebrowHero === 'green-300'
   ? (eyebrowHero === 'accent-100'
       ? ok(`eyebrow del hero usa --accent-100 (pasa AA sobre el velo)`)

@@ -88,7 +88,10 @@
   color: var(--ink-600);
   padding: var(--space-2) var(--space-4);
   border-radius: 0 0 14px 14px;
-  background-image: linear-gradient(180deg, var(--green-800), var(--green-600));
+  /* verde-600 en el extremo del degradado daba 3.87:1 con el texto
+     blanco — no pasa AA en un enlace de texto pequeño. verde-700
+     mantiene el efecto de relleno y pasa 5.39:1 en todo el rango. */
+  background-image: linear-gradient(180deg, var(--green-800), var(--green-700));
   background-size: 100% 0%;
   background-position: top;
   background-repeat: no-repeat;
@@ -332,6 +335,108 @@
 }
 @media (min-width: 640px)  { .rejilla--2 { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 900px)  { .rejilla--3 { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- Niveles: los 4 niveles como chips, no una frase corrida ---------- */
+.niveles-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.niveles-chips__item {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  background: var(--green-100);
+  color: var(--green-800);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+
+/* ---------- Niveles: mosaico de foto + bloque de color, alternado ---------- */
+.niveles-mosaico {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) { .niveles-mosaico { grid-template-columns: repeat(2, 1fr); } }
+
+.niveles-mosaico__foto,
+.niveles-mosaico__bloque {
+  position: relative;
+  min-height: 320px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+/* La foto sin aspect-ratio se estiraba a su alto intrínseco completo
+   (una vertical de 640x1138 llegaba a ~1000px) y como el grid iguala
+   el alto de la fila, el bloque de color se estiraba igual, dejando
+   el texto perdido en un vacío enorme. Mismo patrón que .tarjeta--foto
+   en el resto del sitio: la relación de aspecto manda, no la imagen. */
+.niveles-mosaico__foto img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease-out);
+}
+.niveles-mosaico__foto:hover img { transform: scale(1.06); }
+
+/* El título va grande a propósito: es lo primero que un padre debe
+   poder leer sin acercarse a la pantalla. La flecha queda al final,
+   como cierre — antes iba primero y el bloque se sentía vacío. */
+.niveles-mosaico__bloque {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-8);
+  text-decoration: none;
+  transition: transform .3s var(--ease-spring), box-shadow .3s var(--ease-out);
+}
+.niveles-mosaico__bloque:hover,
+.niveles-mosaico__bloque:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+/* Fuente de UI (Karla), no la editorial (Piazzolla) que usa el resto
+   de los titulares: este es un bloque de tarjeta/dato, no un
+   encabezado de sección — la mezcla marca la diferencia entre los dos
+   lenguajes sin salirse de las dos únicas fuentes del sitio. */
+.niveles-mosaico__bloque h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.15;
+}
+/* Mismo verde y ámbar exactos de marca que usa el resto de la página
+   — plano, no un degradado nuevo que no está en ningún otro lado. */
+.niveles-mosaico__bloque--verde {
+  background: var(--green-800);
+  color: #fff;
+}
+.niveles-mosaico__bloque--verde h3 { color: #fff; }
+.niveles-mosaico__bloque--ambar {
+  background: var(--accent-500);
+  color: var(--ink-900);
+}
+.niveles-mosaico__bloque--ambar h3 { color: var(--ink-900); }
+.niveles-mosaico__bloque p { font-size: var(--fs-body); max-width: 34ch; opacity: .92; }
+.niveles-mosaico__flecha {
+  display: inline-block;
+  font-size: 1.75rem;
+  line-height: 1;
+  transition: transform .3s var(--ease-out);
+}
+.niveles-mosaico__bloque--verde:hover .niveles-mosaico__flecha,
+.niveles-mosaico__bloque--verde:focus-visible .niveles-mosaico__flecha { transform: translateX(-6px); }
+.niveles-mosaico__bloque--ambar:hover .niveles-mosaico__flecha,
+.niveles-mosaico__bloque--ambar:focus-visible .niveles-mosaico__flecha { transform: translateX(6px); }
 @media (min-width: 640px)  { .rejilla--4 { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) { .rejilla--4 { grid-template-columns: repeat(4, 1fr); } }
 
@@ -410,13 +515,21 @@
   color: #fff;
   padding-block: var(--space-24);
 }
-.franja__foto {
+/* El marco es lo que mueve GSAP (fondo "fijo" con scroll real, no el
+   truco background-attachment:fixed). El zoom de kb-zoom vive en la
+   foto de adentro: si los dos animaran `transform` en el mismo
+   elemento, uno pisaría al otro. Overscan vertical de 10% para que el
+   desplazamiento del parallax no deje un hueco en los bordes. */
+.franja__marco {
   position: absolute;
-  inset: 0;
+  inset: -10% 0;
+  z-index: -2;
+  overflow: hidden;
+}
+.franja__foto {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -2;
   animation: kb-zoom 24s ease-in-out infinite alternate;
 }
 .franja__velo {
@@ -442,6 +555,33 @@
   gap: var(--space-3);
   justify-content: center;
   margin-bottom: var(--space-12);
+}
+
+/* Descripción de la categoría activa: JS le agrega/quita .cambiando
+   al cambiar de filtro para retomar la entrada, sin GSAP (el filtro
+   se usa igual en celular). */
+.galeria-desc {
+  max-width: 52ch;
+  margin: 0 auto var(--space-8);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--green-800);
+}
+/* Cada palabra entra por separado — JS le agrega/quita .visible con un
+   pequeño desfase por palabra al cambiar de categoría. Funciona en
+   todas las pantallas: es CSS puro, no depende de GSAP. */
+.galeria-desc__palabra {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.galeria-desc__palabra.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .galeria-desc__palabra { opacity: 1; transform: none; transition: none; }
 }
 .filtro {
   min-height: 44px;
@@ -708,10 +848,29 @@
   margin-bottom: var(--space-12);
 }
 @media (min-width: 640px)  { .footer__rejilla { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .footer__rejilla { grid-template-columns: 1.6fr 1fr 1.4fr; } }
+@media (min-width: 1024px) { .footer__rejilla { grid-template-columns: 1.5fr 1fr 1.3fr 1fr; } }
 
 .footer__marca img { height: 64px; width: auto; margin-bottom: var(--space-4); }
 .footer__marca p { color: var(--green-300); font-size: var(--fs-small); }
+
+/* Columna de redes: iconos, no texto — mismo lenguaje visual que el FAB. */
+.footer__redes {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.footer__redes a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  transition: background .25s var(--ease-out), transform .25s var(--ease-spring);
+}
+.footer__redes a:hover { background: var(--green-700); transform: translateY(-3px); }
+.footer__redes svg { width: 20px; height: 20px; }
 
 .footer h4 {
   font-family: var(--font-body);

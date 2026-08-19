@@ -14,3 +14,11 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 _media-originales/
+
+# Astro: dist/ y node_modules/ se regeneran en cada build de Vercel,
+# nunca deben ir al repo (antes dist/ sí se commiteaba a mano; ya no
+# hace falta, Vercel corre "astro build" solo).
+node_modules/
+dist/
+.astro/
+
