@@ -458,16 +458,30 @@
     // Pedido explicito del cliente: "que parezca que se escriben al
     // recargar". Solo opacity (sin transform): no necesita mascara ni
     // perspectiva 3D, que sí usa la rotacion posterior de titulares.
+    //
+    // Portada: el titular vive en .hero__titulo--texto (hay dos, para
+    // la rotación). Páginas interiores: no hay ese span, el texto está
+    // directo en .hero__titulo — antes esta función cortaba en seco
+    // ahí mismo y ni migas ni bajada llegaban a animarse en esas 3
+    // páginas.
     function iniciarEntradaHero(gsap) {
-      var primero = document.querySelector('.hero__titulo--texto');
-      if (!primero) return;
-      if (!primero.dataset.split) { dividirEnLetras(primero); primero.dataset.split = '1'; }
-      gsap.from(primero.querySelectorAll('.letra'), {
-        opacity: 0,
-        duration: 0.01,
-        stagger: 0.032,
-        ease: 'none'
-      });
+      var tituloPortada = document.querySelector('.hero__titulo--texto');
+      var elementoTitulo = tituloPortada || document.querySelector('.hero__titulo');
+      if (elementoTitulo) {
+        if (!elementoTitulo.dataset.split) { dividirEnLetras(elementoTitulo); elementoTitulo.dataset.split = '1'; }
+        gsap.from(elementoTitulo.querySelectorAll('.letra'), {
+          opacity: 0,
+          duration: 0.01,
+          stagger: 0.032,
+          ease: 'none'
+        });
+      }
+      if (document.querySelector('.hero__migas')) {
+        gsap.fromTo('.hero__migas',
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+            clearProps: 'opacity,transform' });
+      }
       if (document.querySelector('.hero__bajada')) {
         // fromTo y no from: from fija el estado inicial de inmediato y, si el
         // tween se interrumpe, el elemento queda invisible para siempre.
