@@ -466,7 +466,23 @@
     // páginas.
     function iniciarEntradaHero(gsap) {
       var tituloPortada = document.querySelector('.hero__titulo--texto');
-      var elementoTitulo = tituloPortada || document.querySelector('.hero__titulo');
+      var h1Interior = !tituloPortada && document.querySelector('.hero__titulo');
+      var elementoTitulo = tituloPortada;
+      if (h1Interior) {
+        // .hero__titulo es display:grid. Partir las letras directo ahí
+        // las vuelve items del grid (cada una en su propia fila: el
+        // titular salía apilado letra por letra, una por línea). Se
+        // envuelve primero en un span, igual que hace la portada con
+        // .hero__titulo--texto, para que el grid solo vea un item.
+        if (!h1Interior.dataset.split) {
+          var envoltorio = document.createElement('span');
+          envoltorio.className = 'hero__titulo--texto';
+          while (h1Interior.firstChild) envoltorio.appendChild(h1Interior.firstChild);
+          h1Interior.appendChild(envoltorio);
+          h1Interior.dataset.split = '1';
+        }
+        elementoTitulo = h1Interior.querySelector('.hero__titulo--texto');
+      }
       if (elementoTitulo) {
         if (!elementoTitulo.dataset.split) { dividirEnLetras(elementoTitulo); elementoTitulo.dataset.split = '1'; }
         gsap.from(elementoTitulo.querySelectorAll('.letra'), {
