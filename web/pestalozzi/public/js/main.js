@@ -25,6 +25,23 @@
      ------------------------------------------------------------ */
   var reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ------------------------------------------------------------
+     DATOS DEL SITIO
+     El Layout imprime un <script type="application/json"> con lo que
+     este archivo necesita del CMS (teléfono, textos de la galería).
+     Si por lo que sea no está, se usan los valores de respaldo: el
+     sitio nunca se queda sin número de contacto.
+     ------------------------------------------------------------ */
+  var DATOS = (function () {
+    var nodo = document.getElementById('datos-sitio');
+    if (!nodo) return {};
+    try {
+      return JSON.parse(nodo.textContent) || {};
+    } catch (e) {
+      return {};
+    }
+  })();
+
   function revelarTodo() {
     document.querySelectorAll('[data-revelar]').forEach(function (el) {
       el.classList.add('visible');
@@ -154,7 +171,9 @@
 
   // Un texto propio por categoría: no es la misma frase repetida con
   // otro título, describe lo que realmente hay en esa sección.
-  var DESCRIPCIONES_GALERIA = {
+  // Los edita el colegio desde el CMS; el objeto de acá abajo solo
+  // entra en juego si por algo no llegaron.
+  var DESCRIPCIONES_GALERIA = DATOS.galeria || {
     todas: 'Un vistazo a la vida diaria del plantel: instalaciones, actividades, deportes y eventos del año lectivo.',
     instalaciones: 'El espacio donde los niños pasan el día: patio, aulas y áreas comunes del plantel.',
     actividades: 'Momentos de aprendizaje dentro y fuera del aula, con la metodología Montessori.',
@@ -288,7 +307,9 @@
   if (formulario) {
     var aviso = formulario.querySelector('.form-aviso');
     var campos = Array.prototype.slice.call(formulario.querySelectorAll('.campo[data-validar]'));
-    var TELEFONO_WHATSAPP = '593998246396';   // Numero oficial confirmado el 2026-08-14
+    // Lo edita el colegio en el CMS ("Datos del colegio"). El número de
+    // respaldo es el oficial confirmado el 2026-08-14.
+    var TELEFONO_WHATSAPP = DATOS.whatsapp || '593998246396';
 
     var esValidoEmail = function (valor) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);

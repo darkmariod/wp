@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Fab from '../components/Fab.astro';
+import { traerConfiguracion } from '../sanity/consultas';
 
 // Astro con inlineStylesheets:'always' mete este CSS en un <style>
 // dentro del documento en el build — es la razón real por la que ya
@@ -22,17 +23,51 @@ interface Props {
   current: 'inicio' | 'nosotros' | 'galeria' | 'contacto';
   ctaContacto?: boolean;
   preloadImage?: string;
-  jsonLd?: object;
+  conJsonLd?: boolean;
+  datosGaleria?: Record<string, string>;
 }
 
 const {
   title, description, ogTitle, ogDescription, ogImage,
-  canonicalPath, current, ctaContacto = true, preloadImage, jsonLd,
+  canonicalPath, current, ctaContacto = true, preloadImage,
+  conJsonLd = false, datosGaleria,
 } = Astro.props;
+
+// Los datos del colegio se leen una sola vez acá y bajan a los tres
+// componentes: así el teléfono vive en un único lugar del CMS y no hay
+// forma de que el pie y el botón flotante queden diciendo cosas
+// distintas.
+const config = await traerConfiguracion();
 
 const sitio = 'https://pestalozzi-opal.vercel.app';
 const canonical = canonicalPath === '/' ? `${sitio}/` : `${sitio}${canonicalPath}`;
 const imagenAbsoluta = ogImage.startsWith('http') ? ogImage : `${sitio}${ogImage}`;
+
+// Lo que main.js necesita saber del CMS. Va como JSON y no como
+// atributos sueltos para no repetir el mismo dato en varios lugares.
+const datosSitio = {
+  whatsapp: config.telefonoInternacional,
+  ...(datosGaleria ? { galeria: datosGaleria } : {}),
+};
+
+const jsonLd = conJsonLd
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'EducationalOrganization',
+      name: 'Unidad Educativa Pestalozzi Ambato',
+      alternateName: 'Mi escuelita Pestalozzi',
+      description,
+      telephone: `+${config.telefonoInternacional}`,
+      email: config.correo,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: `${config.direccionCalle}, ${config.direccionSector}`,
+        addressLocality: config.ciudad,
+        addressCountry: 'EC',
+      },
+      sameAs: [config.facebook, config.tiktok].filter(Boolean),
+    }
+  : null;
 ---
 <!DOCTYPE html>
 <html lang="es-EC">
@@ -69,16 +104,18 @@ const imagenAbsoluta = ogImage.startsWith('http') ? ogImage : `${sitio}${ogImage
 </head>
 <body>
 
+<script type="application/json" id="datos-sitio" set:html={JSON.stringify(datosSitio)} />
+
 <a class="saltar" href="#principal">Saltar al contenido</a>
 
-<Header current={current} ctaContacto={ctaContacto} />
+<Header current={current} ctaContacto={ctaContacto} config={config} />
 
 <main id="principal">
   <slot />
 </main>
 
-<Footer />
-<Fab />
+<Footer config={config} />
+<Fab config={config} />
 
 <script src="/js/main.js" defer></script>
 </body>

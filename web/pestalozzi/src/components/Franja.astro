@@ -1,0 +1,23 @@
+---
+import { urlImagen, type ImagenSanity } from '../sanity/imagen';
+
+interface Props {
+  franja: { titulo: string; texto: string; textoBoton: string; foto: ImagenSanity };
+  whatsapp: string;
+}
+const { franja, whatsapp } = Astro.props;
+---
+<section class="franja">
+  <div class="franja__marco">
+    <img class="franja__foto" src={urlImagen(franja.foto, 1600)} alt="" loading="lazy">
+  </div>
+  <div class="franja__velo"></div>
+  <div class="contenedor">
+    <h2>{franja.titulo}</h2>
+    <p>{franja.texto}</p>
+    <div class="franja__acciones">
+      <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">{franja.textoBoton}</a>
+      <slot />
+    </div>
+  </div>
+</section>

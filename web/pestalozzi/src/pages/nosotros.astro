@@ -1,23 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerNosotros } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+
+const p = await traerNosotros();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 ---
 <Layout
   title="Nosotros | Unidad Educativa Pestalozzi Ambato"
   description="Quiénes somos, la filosofía Pestalozzi en el aula, misión y visión de la Unidad Educativa Pestalozzi de Ambato."
   ogTitle="Nosotros | Pestalozzi Ambato"
-  ogDescription="Quiénes somos, la filosofía Pestalozzi en el aula, misión y visión de la Unidad Educativa Pestalozzi de Ambato."
-  ogImage="/img/hero/nosotros.webp"
+  ogDescription={p.portada.bajada}
+  ogImage={urlImagen(p.portada.foto, 1200)}
   canonicalPath="/nosotros"
   current="nosotros"
-  preloadImage="/img/hero/nosotros.webp"
+  preloadImage={urlImagen(p.portada.foto, 720)}
 >
   <section class="hero hero--interior">
-    <img class="hero__foto" src="/img/hero/nosotros.webp" alt="Fachada de la Unidad Educativa Pestalozzi con la bandera del Ecuador" width="720" height="1280" fetchpriority="high">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <p class="hero__migas"><a href="/">Inicio</a> / Nosotros</p>
-      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Conócenos</h1>
-      <p class="hero__bajada">Una escuelita de barrio en Ambato, con la filosofía que puso al niño primero.</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">{p.portada.titulo}</h1>
+      <p class="hero__bajada">{p.portada.bajada}</p>
     </div>
   </section>
 
@@ -25,17 +32,12 @@ import Layout from '../layouts/Layout.astro';
   <section class="seccion seccion--clara">
     <div class="contenedor partido partido--texto-primero">
       <div class="partido__texto" data-revelar="izq">
-        <span class="eyebrow">Quiénes somos</span>
-        <h2>Mi escuelita Pestalozzi</h2>
-        <p>Somos una unidad educativa de la ciudad de Ambato dedicada a la formación
-           integral de niñas y niños. Trabajamos con grupos reducidos, seguimiento
-           individual y una relación cercana con cada familia.</p>
-        <p>Nuestro plantel está en una ladera con patio de césped, huerto, juegos y
-           vista a la ciudad. Los niños salen a correr todos los días: aquí el
-           movimiento es parte del aprendizaje, no un premio.</p>
+        <span class="eyebrow">{p.quienesEyebrow}</span>
+        <h2>{p.quienesTitulo}</h2>
+        {p.quienesParrafos.map((parrafo: string) => <p>{parrafo}</p>)}
       </div>
       <div class="partido__foto" data-revelar="der" data-cortina="der">
-        <img src="/img/galeria/g05.webp" alt="Edificio de la institución visto desde el patio" width="640" height="1138" loading="lazy">
+        <img src={urlImagen(p.quienesFoto, 640)} alt={p.quienesFoto.alt} {...dimensiones(p.quienesFoto, 640)} loading="lazy">
       </div>
     </div>
   </section>
@@ -44,44 +46,23 @@ import Layout from '../layouts/Layout.astro';
   <section class="seccion seccion--suave">
     <div class="contenedor">
       <div class="enc-seccion" data-revelar>
-        <span class="eyebrow">El método</span>
-        <h2>La filosofía Pestalozzi en el aula</h2>
-        <p>Johann Heinrich Pestalozzi propuso que el niño debe ser el centro de su propio
-           aprendizaje, formándose en tres dimensiones a la vez.</p>
+        <span class="eyebrow">{p.filosofiaEyebrow}</span>
+        <h2>{p.filosofiaTitulo}</h2>
+        <p>{p.filosofiaTexto}</p>
       </div>
 
       <div class="pilares">
-        <article data-revelar>
-          <h3>Cabeza</h3>
-          <p>El pensamiento se construye desde la observación directa. Primero el niño
-             mira y describe con sus palabras; recién después llega el concepto.</p>
-        </article>
-        <article data-revelar data-retraso="100">
-          <h3>Corazón</h3>
-          <p>La formación moral y afectiva no es una materia aparte. Se aprende en el
-             trato diario, en cómo se resuelve un conflicto y en cómo se celebra un logro.</p>
-        </article>
-        <article data-revelar data-retraso="200">
-          <h3>Manos</h3>
-          <p>La habilidad práctica cierra el círculo. Dibujar, construir, sembrar y
-             experimentar fijan lo aprendido mejor que cualquier repetición.</p>
-        </article>
+        {p.filosofiaPilares.map((pilar: any, i: number) => (
+          <article data-revelar data-retraso={i > 0 ? i * 100 : undefined}>
+            <h3>{pilar.titulo}</h3>
+            <p>{pilar.texto}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="franja">
-    <div class="franja__marco">
-      <img class="franja__foto" src="/img/galeria/g06.webp" alt="" loading="lazy">
-    </div>
-    <div class="franja__velo"></div>
-    <div class="contenedor">
-      <h2>¿Te gustaría conocernos en persona?</h2>
-      <p>Agenda una visita guiada y recorre las aulas y el patio con nosotros.</p>
-      <div class="franja__acciones">
-        <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
-        <a href="/contacto" class="enlace-flecha">Ver datos de contacto</a>
-      </div>
-    </div>
-  </section>
+  <Franja franja={p.franja} whatsapp={whatsapp}>
+    <a href="/contacto" class="enlace-flecha">Ver datos de contacto</a>
+  </Franja>
 </Layout>

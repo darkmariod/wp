@@ -5,8 +5,9 @@
 interface Props {
   current: 'inicio' | 'nosotros' | 'galeria' | 'contacto';
   ctaContacto?: boolean;
+  config: any;
 }
-const { current, ctaContacto = true } = Astro.props;
+const { current, ctaContacto = true, config } = Astro.props;
 
 const enlaces = [
   { id: 'inicio', href: '/', texto: 'Inicio' },
@@ -14,6 +15,8 @@ const enlaces = [
   { id: 'galeria', href: '/galeria', texto: 'Galería' },
   { id: 'contacto', href: '/contacto', texto: 'Contacto' },
 ];
+
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 ---
 <header class="header">
   <div class="contenedor header__inner">
@@ -28,9 +31,9 @@ const enlaces = [
       ))}
     </nav>
     {ctaContacto ? (
-      <a href="/contacto" class="btn btn--acento header__cta">Admisiones 2026–2027</a>
+      <a href="/contacto" class="btn btn--acento header__cta">{config.textoBotonAdmisiones}</a>
     ) : (
-      <a href="https://wa.me/593998246396" class="btn btn--acento header__cta" target="_blank" rel="noopener">Escríbenos</a>
+      <a href={whatsapp} class="btn btn--acento header__cta" target="_blank" rel="noopener">Escríbenos</a>
     )}
     <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
       <span></span><span></span><span></span>
@@ -42,12 +45,12 @@ const enlaces = [
 <nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
   {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
   {ctaContacto ? (
-    <a href="/contacto" class="btn btn--acento">Admisiones 2026–2027</a>
+    <a href="/contacto" class="btn btn--acento">{config.textoBotonAdmisiones}</a>
   ) : (
-    <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos</a>
+    <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">Escríbenos</a>
   )}
   <div class="menu-movil__datos">
-    <a href="tel:+593998246396">099 824 6396</a><br>
-    <a href="mailto:18h00063@gmail.com">18h00063@gmail.com</a>
+    <a href={`tel:+${config.telefonoInternacional}`}>{config.telefono}</a><br>
+    <a href={`mailto:${config.correo}`}>{config.correo}</a>
   </div>
 </nav>

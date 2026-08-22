@@ -1,48 +1,40 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerInicio } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'EducationalOrganization',
-  name: 'Unidad Educativa Pestalozzi Ambato',
-  alternateName: 'Mi escuelita Pestalozzi',
-  description: 'Unidad educativa en Ambato con la filosofía Pestalozzi: el niño en el centro de su aprendizaje. Matrículas abiertas ciclo 2026 – 2027.',
-  telephone: '+593998246396',
-  email: '18h00063@gmail.com',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Tiwinza #95 y Etza, Parroquia Atahualpa',
-    addressLocality: 'Ambato',
-    addressCountry: 'EC',
-  },
-  sameAs: ['https://facebook.com/pestalozziambato', 'https://www.tiktok.com/@pestalozziambato'],
-};
+const p = await traerInicio();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+const medidasTarjeta = (img: any) => dimensiones(img, 640);
 ---
 <Layout
   title="Unidad Educativa Pestalozzi Ambato | Matrículas 2026 – 2027"
   description="Escuela en Ambato con la filosofía Pestalozzi: el niño en el centro de su aprendizaje. Matrículas abiertas ciclo 2026 – 2027."
   ogTitle="Unidad Educativa Pestalozzi Ambato"
-  ogDescription="Mi escuelita Pestalozzi. Aquí crezco creando y aprendiendo a hacer, con confianza y autonomía."
-  ogImage="/img/hero/portada.webp"
+  ogDescription={p.bajada}
+  ogImage={urlImagen(p.fotoPortada, 1200)}
   canonicalPath="/"
   current="inicio"
-  preloadImage="/img/hero/portada.webp"
-  jsonLd={jsonLd}
+  preloadImage={urlImagen(p.fotoPortada, 720)}
+  conJsonLd
 >
   <!-- ============ PORTADA ============ -->
   <section class="hero">
-    <img class="hero__foto" src="/img/hero/portada.webp" alt="Estudiantes de Pestalozzi jugando en el patio de la institución" width="720" height="1280" fetchpriority="high">
-    <video class="hero__video" autoplay muted loop playsinline preload="none" poster="/img/hero/portada.webp" aria-hidden="true" tabindex="-1">
+    <img class="hero__foto" src={urlImagen(p.fotoPortada, 720)} alt={p.fotoPortada.alt} width="720" height="1280" fetchpriority="high">
+    <video class="hero__video" autoplay muted loop playsinline preload="none" poster={urlImagen(p.fotoPortada, 720)} aria-hidden="true" tabindex="-1">
       <source src="/img/hero/hero-escritorio.mp4" media="(min-width: 1024px)">
       <source src="/img/hero/hero-movil.mp4">
     </video>
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <h1 class="hero__titulo">
-        <span class="hero__titulo--texto">Mi Escuelita<br><em>Pestalozzi</em></span>
-        <span class="hero__titulo--texto escondido" hidden>Un camino para<br>cada <em>etapa</em></span>
+        <span class="hero__titulo--texto">{p.tituloLinea1}<br><em>{p.tituloLinea2}</em></span>
+        <span class="hero__titulo--texto escondido" hidden>{p.nivelesTitulo}</span>
       </h1>
-      <p class="hero__bajada">Aquí crezco creando y aprendiendo a hacer, con confianza y autonomía.</p>
+      <p class="hero__bajada">{p.bajada}</p>
       <div class="hero__acciones">
         <a href="/contacto" class="btn btn--primario">Agenda tu visita</a>
         <a href="/nosotros" class="enlace-flecha">Conoce la propuesta</a>
@@ -58,26 +50,17 @@ const jsonLd = {
   <section class="seccion seccion--clara" id="propuesta">
     <div class="contenedor">
       <div class="enc-partido" data-revelar>
-        <h2>Educar la cabeza,<br>el corazón y las manos</h2>
-        <p>Pestalozzi no es solo el nombre de la institución: es una forma en la que
-           el niño es dueño de su propio aprendizaje.</p>
+        <h2>{p.propuestaTitulo}</h2>
+        <p>{p.propuestaTexto}</p>
       </div>
 
       <div class="pilares">
-        <article data-revelar>
-          <h3>Cabeza</h3>
-          <p>Observación, razonamiento y lenguaje propio. El estudiante entiende antes
-             de memorizar, y pregunta sin miedo a equivocarse.</p>
-        </article>
-        <article data-revelar data-retraso="100">
-          <h3>Corazón</h3>
-          <p>Cada día crecemos con alegría, con amor y con valor.</p>
-        </article>
-        <article data-revelar data-retraso="200">
-          <h3>Manos</h3>
-          <p>Se aprende haciendo: dibujar, construir, experimentar y jugar. El
-             conocimiento se fija cuando pasa por las manos.</p>
-        </article>
+        {p.propuestaPilares.map((pilar: any, i: number) => (
+          <article data-revelar data-retraso={i > 0 ? i * 100 : undefined}>
+            <h3>{pilar.titulo}</h3>
+            <p>{pilar.texto}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
@@ -86,62 +69,45 @@ const jsonLd = {
   <section class="seccion seccion--suave" id="niveles">
     <div class="contenedor">
       <div class="enc-seccion enc-seccion--izq" data-revelar>
-        <span class="eyebrow">Oferta educativa</span>
-        <h2>Un camino para cada etapa</h2>
-        <p>Metodología Montessori, grupos reducidos y acompañamiento cercano
-           en cada nivel:</p>
+        <span class="eyebrow">{p.nivelesEyebrow}</span>
+        <h2>{p.nivelesTitulo}</h2>
+        <p>{p.nivelesTexto}</p>
         <ul class="niveles-chips">
-          <li class="niveles-chips__item" data-revelar="zoom">Inicial 1</li>
-          <li class="niveles-chips__item" data-revelar="zoom" data-retraso="60">Inicial 2</li>
-          <li class="niveles-chips__item" data-revelar="zoom" data-retraso="120">Primero de Básica</li>
-          <li class="niveles-chips__item" data-revelar="zoom" data-retraso="180">Segundo de Básica</li>
+          {p.nivelesChips.map((chip: string, i: number) => (
+            <li class="niveles-chips__item" data-revelar="zoom" data-retraso={i > 0 ? i * 60 : undefined}>{chip}</li>
+          ))}
         </ul>
       </div>
 
       <div class="niveles-mosaico">
         <div class="niveles-mosaico__foto" data-revelar="zoom">
-          <img src="/img/galeria/g02.webp" alt="Niño asomado en la casita de madera del patio" width="640" height="1138" loading="lazy">
+          <img src={urlImagen(p.nivelesFotoIzquierda, 640)} alt={p.nivelesFotoIzquierda.alt} {...medidasTarjeta(p.nivelesFotoIzquierda)} loading="lazy">
         </div>
         <a href="/contacto" class="niveles-mosaico__bloque niveles-mosaico__bloque--verde" data-revelar="der">
-          <h3>Educación Inicial</h3>
-          <p>Inicial 1 e Inicial 2. Los primeros años son los que más pesan:
-             espacios seguros y lúdicos para explorar el mundo con confianza.</p>
+          <h3>{p.nivelesBloqueVerde.titulo}</h3>
+          <p>{p.nivelesBloqueVerde.texto}</p>
           <span class="niveles-mosaico__flecha" aria-hidden="true">&rarr;</span>
         </a>
         <a href="/contacto" class="niveles-mosaico__bloque niveles-mosaico__bloque--ambar" data-revelar="izq">
-          <h3>Primero y Segundo de Básica</h3>
-          <p>Formación con metodología Montessori, en grupos reducidos y con
-             acompañamiento cercano en cada etapa.</p>
+          <h3>{p.nivelesBloqueAmbar.titulo}</h3>
+          <p>{p.nivelesBloqueAmbar.texto}</p>
           <span class="niveles-mosaico__flecha" aria-hidden="true">&rarr;</span>
         </a>
         <div class="niveles-mosaico__foto" data-revelar="zoom" data-retraso="120">
-          <img src="/img/galeria/g03.webp" alt="Estudiante escribiendo números en la pizarra digital del aula" width="640" height="427" loading="lazy">
+          <img src={urlImagen(p.nivelesFotoDerecha, 640)} alt={p.nivelesFotoDerecha.alt} {...medidasTarjeta(p.nivelesFotoDerecha)} loading="lazy">
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============ MARQUESINA ============ -->
-  <!-- El texto es del video institucional. Se duplica el contenido porque
-       la animación desplaza -50%: así el bucle empalma sin salto. -->
+  <!-- Las frases se duplican porque la animación desplaza -50%: así el
+       bucle empalma sin salto. -->
   <section class="marquesina" aria-hidden="true">
     <div class="marquesina__pista">
-        <span class="marquesina__item">Cada día crezco<span>&bull;</span></span>
-        <span class="marquesina__item">con alegría<span>&bull;</span></span>
-        <span class="marquesina__item">con amor<span>&bull;</span></span>
-        <span class="marquesina__item">y con valor<span>&bull;</span></span>
-        <span class="marquesina__item">creando<span>&bull;</span></span>
-        <span class="marquesina__item">aprendiendo a hacer<span>&bull;</span></span>
-        <span class="marquesina__item">con confianza<span>&bull;</span></span>
-        <span class="marquesina__item">y autonomía<span>&bull;</span></span>
-        <span class="marquesina__item">Cada día crezco<span>&bull;</span></span>
-        <span class="marquesina__item">con alegría<span>&bull;</span></span>
-        <span class="marquesina__item">con amor<span>&bull;</span></span>
-        <span class="marquesina__item">y con valor<span>&bull;</span></span>
-        <span class="marquesina__item">creando<span>&bull;</span></span>
-        <span class="marquesina__item">aprendiendo a hacer<span>&bull;</span></span>
-        <span class="marquesina__item">con confianza<span>&bull;</span></span>
-        <span class="marquesina__item">y autonomía<span>&bull;</span></span>
+      {[...p.marquesinaFrases, ...p.marquesinaFrases].map((frase: string) => (
+        <span class="marquesina__item">{frase}<span>&bull;</span></span>
+      ))}
     </div>
   </section>
 
@@ -149,15 +115,12 @@ const jsonLd = {
   <section class="seccion seccion--clara seccion--compacta">
     <div class="contenedor partido">
       <div class="partido__foto" data-revelar="izq" data-cortina="izq">
-        <img src="/img/galeria/g04.webp" alt="Estudiante armando una estructura con piezas de construcción" width="640" height="1138" loading="lazy">
+        <img src={urlImagen(p.porQueFoto, 640)} alt={p.porQueFoto.alt} {...medidasTarjeta(p.porQueFoto)} loading="lazy">
       </div>
       <div class="partido__texto" data-revelar="der">
-        <span class="eyebrow">Por qué Pestalozzi</span>
-        <h2>Una escuelita donde a cada niño se lo conoce por su nombre</h2>
-        <p>No somos el nombre de un pedagogo colgado en la fachada. Aplicamos su
-           método: el niño observa, comprende y hace.</p>
-        <p>Estamos en una ladera de Ambato, con amplios espacios verdes, huerto y vista a la ciudad.
-           Aquí los niños salen a correr todos los días.</p>
+        <span class="eyebrow">{p.porQueEyebrow}</span>
+        <h2>{p.porQueTitulo}</h2>
+        {p.porQueParrafos.map((parrafo: string) => <p>{parrafo}</p>)}
         <p style="margin-top:var(--space-8)">
           <a href="/nosotros" class="btn btn--secundario">Conócenos</a>
         </p>
@@ -169,15 +132,17 @@ const jsonLd = {
   <section class="seccion seccion--clara seccion--amplia">
     <div class="contenedor">
       <div class="enc-numerado" data-revelar>
-        <span>Vida escolar</span>
-        <h2>La vida en Pestalozzi</h2>
-        <p>Instalaciones, actividades, deportes y eventos del año lectivo.</p>
+        <span>{p.galeriaEyebrow}</span>
+        <h2>{p.galeriaTitulo}</h2>
+        <p>{p.galeriaTexto}</p>
       </div>
 
       <div class="galeria-mini">
-        <a class="galeria-mini__item" href="/galeria"><img src="/img/galeria/g01.webp" alt="Niños corriendo en el patio de césped" width="640" height="1138" loading="lazy" data-revelar></a>
-        <a class="galeria-mini__item" href="/galeria"><img src="/img/galeria/g05.webp" alt="Fachada de la institución con la bandera del Ecuador" width="640" height="1138" loading="lazy" data-revelar data-retraso="100"></a>
-        <a class="galeria-mini__item" href="/galeria"><img src="/img/galeria/g06.webp" alt="Estudiante jugando en la resbaladera del patio" width="640" height="1138" loading="lazy" data-revelar data-retraso="200"></a>
+        {[p.franja.foto, p.nivelesFotoIzquierda, p.porQueFoto].map((foto: any, i: number) => (
+          <a class="galeria-mini__item" href="/galeria">
+            <img src={urlImagen(foto, 640)} alt={foto.alt} {...medidasTarjeta(foto)} loading="lazy" data-revelar data-retraso={i > 0 ? i * 100 : undefined}>
+          </a>
+        ))}
       </div>
 
       <p class="centro" style="margin-top:var(--space-12)" data-revelar>
@@ -186,18 +151,5 @@ const jsonLd = {
     </div>
   </section>
 
-  <!-- ============ FRANJA CTA ============ -->
-  <section class="franja">
-    <div class="franja__marco">
-      <img class="franja__foto" src="/img/galeria/g01.webp" alt="" loading="lazy">
-    </div>
-    <div class="franja__velo"></div>
-    <div class="contenedor">
-      <h2>Matrículas abiertas · Ciclo 2026 – 2027</h2>
-      <p>Conoce la institución antes de decidir. Agenda una visita y recorre las aulas con nosotros.</p>
-      <div class="franja__acciones">
-        <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
-      </div>
-    </div>
-  </section>
+  <Franja franja={p.franja} whatsapp={whatsapp} />
 </Layout>

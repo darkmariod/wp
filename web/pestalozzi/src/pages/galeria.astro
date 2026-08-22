@@ -1,23 +1,51 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+
+const p = await traerGaleria();
+const fotos = await traerFotos();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+const FILTROS = [
+  { valor: 'todas', texto: 'Todas' },
+  { valor: 'instalaciones', texto: 'Instalaciones' },
+  { valor: 'actividades', texto: 'Actividades' },
+  { valor: 'deportes', texto: 'Deportes' },
+  { valor: 'eventos', texto: 'Eventos' },
+];
+
+// main.js las usa para cambiar el texto al tocar cada filtro.
+const descripciones = {
+  todas: p.descTodas,
+  instalaciones: p.descInstalaciones,
+  actividades: p.descActividades,
+  deportes: p.descDeportes,
+  eventos: p.descEventos,
+};
+
+const plural = (n: number) => `${n} ${n === 1 ? 'fotografía' : 'fotografías'}`;
 ---
 <Layout
   title="Galería | Unidad Educativa Pestalozzi Ambato"
   description="Instalaciones, actividades, deportes y eventos de la Unidad Educativa Pestalozzi de Ambato."
   ogTitle="Galería | Pestalozzi Ambato"
-  ogDescription="Instalaciones, actividades, deportes y eventos de la Unidad Educativa Pestalozzi de Ambato."
-  ogImage="/img/hero/galeria.webp"
+  ogDescription={p.portada.bajada}
+  ogImage={urlImagen(p.portada.foto, 1200)}
   canonicalPath="/galeria"
   current="galeria"
-  preloadImage="/img/hero/galeria.webp"
+  preloadImage={urlImagen(p.portada.foto, 720)}
+  datosGaleria={descripciones}
 >
   <section class="hero hero--interior">
-    <img class="hero__foto" src="/img/hero/galeria.webp" alt="Estudiantes en el aula de la institución" width="720" height="1280" fetchpriority="high">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <p class="hero__migas"><a href="/">Inicio</a> / Galería</p>
-      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">Galería</h1>
-      <p class="hero__bajada">Instalaciones, actividades, deportes y eventos del año lectivo.</p>
+      <h1 class="hero__titulo" style="font-size:var(--fs-h1)">{p.portada.titulo}</h1>
+      <p class="hero__bajada">{p.portada.bajada}</p>
     </div>
   </section>
 
@@ -25,63 +53,33 @@ import Layout from '../layouts/Layout.astro';
     <div class="contenedor">
 
       <div class="filtros" role="group" aria-label="Filtrar fotografías por categoría">
-        <button class="filtro" data-categoria="todas" aria-pressed="true">Todas</button>
-        <button class="filtro" data-categoria="instalaciones" aria-pressed="false">Instalaciones</button>
-        <button class="filtro" data-categoria="actividades" aria-pressed="false">Actividades</button>
-        <button class="filtro" data-categoria="deportes" aria-pressed="false">Deportes</button>
-        <button class="filtro" data-categoria="eventos" aria-pressed="false">Eventos</button>
+        {FILTROS.map((f) => (
+          <button class="filtro" data-categoria={f.valor} aria-pressed={f.valor === 'todas' ? 'true' : 'false'}>{f.texto}</button>
+        ))}
       </div>
 
-      <p class="galeria-desc" id="galeria-desc">Un vistazo a la vida diaria del plantel: instalaciones, actividades, deportes y eventos del año lectivo.</p>
+      <p class="galeria-desc" id="galeria-desc">{p.descTodas}</p>
 
       <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
-        <span id="cuenta-fotos">6 fotografías</span>
+        <span id="cuenta-fotos">{plural(fotos.length)}</span>
       </p>
 
       <div class="mosaico">
-        <button class="foto" data-col="0" data-categoria="deportes" aria-label="Ampliar: niños corriendo en el patio" data-revelar="zoom">
-          <img src="/img/galeria/g01.webp" alt="Niños corriendo en el patio de césped de la institución" width="640" height="1138">
-        </button>
-        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: casita de madera del patio" data-revelar="zoom" data-retraso="80">
-          <img src="/img/galeria/g02.webp" alt="Niño asomado en la casita de madera del patio" width="640" height="1138">
-        </button>
-        <button class="foto" data-col="2" data-categoria="actividades" aria-label="Ampliar: clase en el aula" data-revelar="zoom" data-retraso="160">
-          <img src="/img/galeria/g03.webp" alt="Estudiante escribiendo números en la pizarra digital del aula" width="640" height="427">
-        </button>
-        <button class="foto" data-col="0" data-categoria="actividades" aria-label="Ampliar: taller de construcción" data-revelar="zoom" data-retraso="220">
-          <img src="/img/galeria/g04.webp" alt="Estudiante armando una estructura con piezas de construcción" width="640" height="1138" loading="lazy">
-        </button>
-        <button class="foto" data-col="1" data-categoria="instalaciones" aria-label="Ampliar: fachada de la institución" data-revelar="zoom" data-retraso="280">
-          <img src="/img/galeria/g05.webp" alt="Fachada del plantel con la bandera del Ecuador" width="640" height="1138" loading="lazy">
-        </button>
-        <button class="foto" data-col="2" data-categoria="deportes" aria-label="Ampliar: juegos del patio" data-revelar="zoom" data-retraso="340">
-          <img src="/img/galeria/g06.webp" alt="Estudiante jugando en la resbaladera del patio" width="640" height="1138" loading="lazy">
-        </button>
-      </div>
-
-      <div class="centro" style="margin-top:var(--space-16)" data-revelar>
-        <p style="color:var(--ink-400);max-width:46ch;margin-inline:auto">
-          Estas 6 fotografías provienen del video institucional. La galería final se arma
-          con las fotos en alta resolución que entregue la institución.
-        </p>
+        {fotos.map((f: any, i: number) => (
+          <button class="foto" data-col={i % 3} data-categoria={f.categoria}
+                  aria-label={`Ampliar: ${f.imagen.alt}`}
+                  data-revelar="zoom" data-retraso={i > 0 ? 80 + i * 60 : undefined}>
+            <img src={urlImagen(f.imagen, 640)} alt={f.imagen.alt}
+                 {...dimensiones(f.imagen, 640)}
+                 loading={i < 3 ? undefined : 'lazy'}>
+          </button>
+        ))}
       </div>
 
     </div>
   </section>
 
-  <section class="franja">
-    <div class="franja__marco">
-      <img class="franja__foto" src="/img/galeria/g02.webp" alt="" loading="lazy">
-    </div>
-    <div class="franja__velo"></div>
-    <div class="contenedor">
-      <h2>¿Quieres conocer el plantel en persona?</h2>
-      <p>Las fotos ayudan, pero recorrer el patio y las aulas convence más.</p>
-      <div class="franja__acciones">
-        <a href="https://wa.me/593998246396" class="btn btn--acento" target="_blank" rel="noopener">Agenda tu visita</a>
-      </div>
-    </div>
-  </section>
+  <Franja franja={p.franja} whatsapp={whatsapp} />
 
   <!-- Lightbox: position:fixed, su lugar en el DOM no afecta el layout -->
   <div class="lightbox" role="dialog" aria-modal="true" aria-label="Fotografía ampliada" aria-hidden="true">
@@ -89,6 +87,6 @@ import Layout from '../layouts/Layout.astro';
     <button class="lightbox__btn lightbox__ant" aria-label="Anterior">&#8249;</button>
     <img src="" alt="">
     <button class="lightbox__btn lightbox__sig" aria-label="Siguiente">&#8250;</button>
-    <p class="lightbox__cuenta">1 / 6</p>
+    <p class="lightbox__cuenta">1 / {fotos.length}</p>
   </div>
 </Layout>
