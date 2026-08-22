@@ -15,10 +15,12 @@ export default defineConfig({
     sanity({
       projectId: '513m7736',
       dataset: 'production',
-      // El sitio se construye en Vercel y se sirve como HTML estático:
-      // el contenido se lee en el build, no en cada visita. Por eso la
-      // CDN de Sanity está bien (más rápida y más barata que la API).
-      useCdn: true,
+      // false a propósito. El contenido se lee UNA vez por build, no en
+      // cada visita, así que la CDN no ahorra nada — y sí rompe: cachea
+      // unos segundos, y como el webhook dispara el build apenas se
+      // publica, el build alcanzaba a leer la versión anterior. El
+      // cambio quedaba congelado hasta la siguiente publicación.
+      useCdn: false,
       // Studio embebido en /admin — es donde entra el colegio a editar.
       studioBasePath: '/admin',
     }),
