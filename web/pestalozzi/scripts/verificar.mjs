@@ -88,14 +88,29 @@ html['index.html'].includes(`"telephone":"+${OFICIAL}"`) || html['index.html'].i
 for (const p of NOMBRES) {
   html[p].includes(OFICIAL) ? ok(`${p}: número oficial presente`) : fallo(`${p}: falta el número oficial`);
 }
-// El correo real: dos veces se encontró en blanco/roto durante ediciones
-// manuales directas al HTML (mailto vacío). Se verifica que no vuelva a pasar.
-const CORREO_OFICIAL = '18h00063@gmail.com';
-for (const p of NOMBRES) {
-  html[p].includes(`mailto:${CORREO_OFICIAL}`) || !html[p].includes('mailto:')
-    ? (html[p].includes(`mailto:${CORREO_OFICIAL}`) ? ok(`${p}: correo oficial presente`) : true)
-    : fallo(`${p}: tiene un mailto: que no es el correo oficial`);
-  /mailto:\s*["@]/.test(html[p]) && fallo(`${p}: mailto vacío o roto (mailto: sin dirección)`);
+// El correo lo edita el colegio desde el CMS, así que la prueba ya no
+// puede exigir una dirección fija: antes tenía una escrita a mano y
+// empezó a fallar apenas el cliente cambió la suya, que es exactamente
+// lo que el CMS existe para permitir. Lo que sí se verifica es que la
+// dirección publicada llegue completa a las 4 páginas — dos veces
+// apareció un `mailto:` vacío por ediciones manuales al HTML.
+const correoPublicado = (
+  await (await fetch(
+    'https://513m7736.api.sanity.io/v2024-01-01/data/query/production?query=' +
+      encodeURIComponent('*[_id=="configuracion"][0].correo')
+  )).json()
+).result;
+
+if (!correoPublicado || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoPublicado)) {
+  fallo(`el correo publicado en el CMS no es una dirección válida: ${correoPublicado}`);
+} else {
+  ok(`correo publicado en el CMS: ${correoPublicado}`);
+  for (const p of NOMBRES) {
+    html[p].includes(`mailto:${correoPublicado}`)
+      ? ok(`${p}: usa el correo del CMS`)
+      : fallo(`${p}: no tiene el correo publicado en el CMS`);
+    /mailto:\s*["@]/.test(html[p]) && fallo(`${p}: mailto vacío o roto (mailto: sin dirección)`);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
