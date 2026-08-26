@@ -1,0 +1,87 @@
+# Bot de WhatsApp — Pestalozzi Ambato
+#
+# Pensado para desplegarse desde Dokploy en el VPS que ya tenés.
+#
+# Dos servicios:
+#   postgres   → guarda la sesión de WhatsApp (sin esto el QR se pide de
+#                nuevo en cada reinicio del servidor)
+#   evolution  → conecta con WhatsApp, sin la API de Meta
+#   bot        → responde el menú (código propio, en ./bot). Reemplaza a
+#                n8n: mismo trabajo, una fracción de la memoria.
+#
+# NOTA sobre puertos: no se publican al host. El 8080 ya lo usa
+# contable-frontend y el 80/443 son de Traefik. Dokploy enruta por la red
+# interna, así que los servicios se hablan por nombre (evolution, bot).
+#
+# Límites de memoria puestos a propósito: el servidor comparte RAM con
+# contable y garantías.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: evolution
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 320M
+
+  evolution:
+    image: atendai/evolution-api:v2.1.1
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8080"
+    environment:
+      SERVER_URL: https://${DOMINIO_BOT}
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY}
+
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/evolution
+      DATABASE_SAVE_DATA_INSTANCE: "true"
+
+      # Sin esto los mensajes entrantes no llegan al bot.
+      WEBHOOK_GLOBAL_ENABLED: "true"
+      WEBHOOK_GLOBAL_URL: http://bot:3000/webhook/whatsapp
+      WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+
+      LOG_LEVEL: ERROR
+    volumes:
+      - evolution_instances:/evolution/instances
+    deploy:
+      resources:
+        limits:
+          memory: 700M
+
+  bot:
+    build: ./bot
+    restart: unless-stopped
+    depends_on:
+      - evolution
+    expose:
+      - "3000"
+    environment:
+      EVOLUTION_URL: http://evolution:8080
+      EVOLUTION_API_KEY: ${EVOLUTION_API_KEY}
+      EVOLUTION_INSTANCE: pestalozzi
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+
+volumes:
+  postgres_data:
+  evolution_instances:
