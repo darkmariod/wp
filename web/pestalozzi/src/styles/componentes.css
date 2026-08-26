@@ -101,6 +101,30 @@
 .nav a.activo { color: #fff; background-size: 100% 100%; }
 .nav a.activo { font-weight: 600; }
 
+/* Aula virtual: es un sistema externo, no una sección del sitio. Se
+   distingue del menú a propósito — sin el relleno verde de .nav a — para
+   que se lea como "esto te lleva afuera". */
+.header__aula {
+  display: none;
+  align-items: center;
+  gap: .4rem;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--green-800);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: border-color .25s var(--ease-out), background .25s var(--ease-out);
+}
+.header__aula:hover,
+.header__aula:focus-visible {
+  background: var(--green-50);
+  border-color: var(--green-300);
+}
+@media (min-width: 1024px) { .header__aula { display: inline-flex; } }
+
 .header__cta { display: none; }
 
 /* Botón hamburguesa */

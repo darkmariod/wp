@@ -17,6 +17,13 @@ const enlaces = [
 ];
 
 const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+// El aula virtual es un sistema aparte del colegio (Moodle), no una sección
+// del sitio: por eso va separada del menú y abre en otra pestaña. Si el
+// colegio todavía no cargó la dirección, el enlace simplemente no aparece.
+const aula = config.moodleUrl
+  ? { url: config.moodleUrl, texto: config.moodleTexto || 'Aula virtual' }
+  : null;
 ---
 <header class="header">
   <div class="contenedor header__inner">
@@ -30,6 +37,16 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
           : <a href={e.href}>{e.texto}</a>
       ))}
     </nav>
+    {aula && (
+      <a href={aula.url} class="header__aula" target="_blank" rel="noopener">
+        {aula.texto}
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <path d="M15 3h6v6"/><path d="M10 14 21 3"/>
+        </svg>
+      </a>
+    )}
     {ctaContacto ? (
       <a href="/contacto" class="btn btn--acento header__cta">{config.textoBotonAdmisiones}</a>
     ) : (
@@ -44,6 +61,7 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 <div class="velo"></div>
 <nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
   {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+  {aula && <a href={aula.url} target="_blank" rel="noopener">{aula.texto} &nearr;</a>}
   {ctaContacto ? (
     <a href="/contacto" class="btn btn--acento">{config.textoBotonAdmisiones}</a>
   ) : (

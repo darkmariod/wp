@@ -11,6 +11,7 @@ export const configuracion = defineType({
     { name: 'contacto', title: 'Contacto', default: true },
     { name: 'redes', title: 'Redes sociales' },
     { name: 'matriculas', title: 'Matrículas' },
+    { name: 'aulaVirtual', title: 'Aula virtual' },
   ],
   fields: [
     defineField({
@@ -97,6 +98,25 @@ export const configuracion = defineType({
       group: 'matriculas',
       initialValue: 'Admisiones 2026–2027',
       validation: (r) => r.required(),
+    }),
+    // Si este campo queda vacío, el enlace no aparece en ningún lado del
+    // sitio. Así el colegio puede publicar la página antes de tener el
+    // Moodle listo, sin que quede un botón roto a la vista.
+    defineField({
+      name: 'moodleUrl',
+      title: 'Dirección del aula virtual (Moodle)',
+      type: 'url',
+      group: 'aulaVirtual',
+      description:
+        'Si se deja vacío, el enlace no se muestra en el sitio. Ej: https://aula.pestalozzi.edu.ec',
+    }),
+    defineField({
+      name: 'moodleTexto',
+      title: 'Texto del enlace',
+      type: 'string',
+      group: 'aulaVirtual',
+      initialValue: 'Aula virtual',
+      description: 'Cómo se llama el enlace en el menú y en el pie de página.',
     }),
   ],
   preview: {

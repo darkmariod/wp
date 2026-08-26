@@ -40,6 +40,13 @@ const redes = [
           <li><a href="/#niveles">Niveles</a></li>
           <li><a href="/nosotros">Filosofía</a></li>
           <li><a href="/contacto">Admisiones</a></li>
+          {config.moodleUrl && (
+            <li>
+              <a href={config.moodleUrl} target="_blank" rel="noopener">
+                {config.moodleTexto || 'Aula virtual'} &nearr;
+              </a>
+            </li>
+          )}
         </ul>
       </div>
       <div>
