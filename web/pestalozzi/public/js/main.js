@@ -581,7 +581,11 @@
             rotationX: function () { return gsap.utils.random(-90, 90); },
             z: function () { return gsap.utils.random(300, 500); } },
           { duration: 0.8, ease: 'power3.out', opacity: 1, xPercent: 0, yPercent: 0, rotationX: 0, z: 0,
-            stagger: { each: 0.02, from: 'random' } }, 0.42);   // el viejo ya salio: sin solape legible
+            // 0.65s, no 0.42s: con stagger por palabra, una frase de
+            // varias palabras tarda duration(0.5) + (n-1)*0.02 en
+            // desvanecerse del todo. A los 0.42s el texto viejo todavía
+            // se veía, superpuesto con el que entraba — se veía roto.
+            stagger: { each: 0.02, from: 'random' } }, 0.65);
       }
 
       setTimeout(rotar, tiempo);

@@ -532,6 +532,11 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
+  /* Sin esto, el ancho intrínseco de la imagen (el atributo width del
+     HTML) fuerza la columna del grid a ese tamaño, más ancha que el
+     contenedor, y empuja toda la sección — el clásico problema de
+     "imagen desborda el grid" pese a tener width:100%. */
+  min-width: 0;
 }
 .partido__foto img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
 .partido__texto p { color: var(--ink-600); margin-top: var(--space-4); }
