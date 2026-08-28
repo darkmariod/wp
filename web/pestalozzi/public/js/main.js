@@ -557,8 +557,16 @@
         nuevo.classList.remove('escondido');
         if (!nuevo.dataset.split) { dividirEnPalabras(nuevo); nuevo.dataset.split = '1'; }
 
-        var viejas = viejo.querySelectorAll('.palabra-int');
-        var nuevas = nuevo.querySelectorAll('.palabra-int');
+        // .palabra-int, .letra: el titular principal (textos[0]) ya
+        // llega dividido en LETRAS, no en palabras — lo divide
+        // iniciarEntradaHero para el efecto de máquina de escribir, y
+        // usa la misma bandera dataset.split que este código, así que
+        // nunca se vuelve a dividir en palabras. Sin buscar también
+        // .letra, viejas quedaba vacío la primera vez que ese titular
+        // salía de rotación: no había nada que animar, así que nunca
+        // se desvanecía y quedaba superpuesto con el texto entrante.
+        var viejas = viejo.querySelectorAll('.palabra-int, .letra');
+        var nuevas = nuevo.querySelectorAll('.palabra-int, .letra');
         gsap.set(nuevas, { opacity: 0, xPercent: 0, yPercent: 0, rotationX: 0, z: 0 });
 
         var tl = gsap.timeline({ onComplete: function () {
