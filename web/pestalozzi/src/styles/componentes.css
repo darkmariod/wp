@@ -277,6 +277,11 @@
   font-size: var(--fs-display);
   line-height: 1.12;
   margin-bottom: var(--space-6);
+  /* Sin esto, el vuelo 3D de la rotación de título (main.js,
+     iniciarRotacionTitulo) se sale de su caja durante la transición y
+     tapa los botones de "Agenda tu visita" en móvil, un instante cada
+     9 segundos. */
+  overflow: hidden;
 }
 .hero__titulo--texto { grid-area: 1 / 1; }
 .hero__titulo--texto.escondido { visibility: hidden; }
