@@ -65,6 +65,12 @@
     document.querySelectorAll('[data-revelar]').forEach(function (el) {
       observador.observe(el);
     });
+
+    // Red de seguridad: si por lo que sea el observador no dispara para
+    // algún elemento (encontramos casos reales, sin causa clara), que no
+    // se quede invisible para siempre. Nadie nota 4 segundos de más;
+    // todos notarían una foto que nunca aparece.
+    setTimeout(revelarTodo, 4000);
   } else {
     // Sin IntersectionObserver (navegadores muy viejos): contenido visible.
     revelarTodo();
@@ -862,6 +868,12 @@
         });
       }, { threshold: 0.2, rootMargin: '0px 0px -60px 0px' });
       cortinas.forEach(function (c) { obsCortina.observe(c); });
+
+      // Misma red de seguridad que el revelado general: si el
+      // observador no dispara, la foto no se queda invisible.
+      setTimeout(function () {
+        cortinas.forEach(function (c) { c.classList.add('visible'); });
+      }, 4000);
     }
   }
 
