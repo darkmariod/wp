@@ -1,6 +1,6 @@
 import type { SchemaTypeDefinition } from 'sanity';
 
-import { franja, imagenConAlt, pilar, portada } from './objetos';
+import { datoPractico, franja, imagenConAlt, pilar, portada, programa } from './objetos';
 import { configuracion } from './configuracion';
 import { foto } from './foto';
 import { paginaContacto, paginaGaleria, paginaInicio, paginaNosotros } from './paginas';
@@ -8,6 +8,8 @@ import { paginaContacto, paginaGaleria, paginaInicio, paginaNosotros } from './p
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Bloques reutilizables
   pilar,
+  programa,
+  datoPractico,
   imagenConAlt,
   franja,
   portada,

@@ -1,4 +1,6 @@
 ---
+import Magnet from './reactbits/Magnet.jsx';
+
 // current: 'inicio' | 'nosotros' | 'galeria' | 'contacto'
 // ctaContacto: false en la página de Contacto — ahí el botón manda
 // directo a WhatsApp en vez de repetir el enlace a sí misma.
@@ -47,11 +49,13 @@ const aula = config.moodleUrl
         </svg>
       </a>
     )}
-    {ctaContacto ? (
-      <a href="/contacto" class="btn btn--acento header__cta">{config.textoBotonAdmisiones}</a>
-    ) : (
-      <a href={whatsapp} class="btn btn--acento header__cta" target="_blank" rel="noopener">Escríbenos</a>
-    )}
+    <Magnet padding={40} magnetStrength={6} wrapperClassName="header__cta-imantado" client:visible>
+      {ctaContacto ? (
+        <a href="/contacto" class="btn btn--acento header__cta">{config.textoBotonAdmisiones}</a>
+      ) : (
+        <a href={whatsapp} class="btn btn--acento header__cta" target="_blank" rel="noopener">Escríbenos</a>
+      )}
+    </Magnet>
     <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
       <span></span><span></span><span></span>
     </button>

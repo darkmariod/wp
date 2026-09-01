@@ -1,0 +1,10 @@
+/* De reactbits.dev, recortado: sin tamaño/peso de fuente fijos — los
+   títulos de sección ya traen su propia tipografía (Piazzolla) vía la
+   clase que les pasamos por containerClassName/textClassName. */
+.scroll-reveal {
+  margin: 0;
+}
+
+.word {
+  display: inline-block;
+}

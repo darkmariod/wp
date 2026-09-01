@@ -27,6 +27,83 @@ export const pilar = defineType({
   },
 });
 
+// Lo que un padre pregunta antes de decidir: qué edad, qué incluye. El
+// bloque de niveles antes solo tenía el nombre ("Inicial 1") — esto le
+// agrega la información concreta que hace falta para elegir.
+export const programa = defineType({
+  name: 'programa',
+  title: 'Nivel educativo',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'nombre',
+      title: 'Nombre del nivel',
+      type: 'string',
+      description: 'Ej: Inicial 1',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'edades',
+      title: 'Edades',
+      type: 'string',
+      description: 'Ej: 3 a 4 años',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'descripcion',
+      title: 'Descripción',
+      type: 'text',
+      rows: 3,
+      description: 'Una o dos frases sobre qué se trabaja en este nivel.',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'incluye',
+      title: 'Qué incluye',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description:
+        'Puntos concretos, no frases largas. Ej: "Grupos de hasta 12 niños", "Informe diario a la familia".',
+      validation: (r) => r.required().min(1),
+    }),
+  ],
+  preview: {
+    select: { title: 'nombre', subtitle: 'edades' },
+  },
+});
+
+// Un dato suelto y verificable (horario, años de experiencia, cupos).
+export const datoPractico = defineType({
+  name: 'datoPractico',
+  title: 'Dato práctico',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'etiqueta',
+      title: 'Qué es',
+      type: 'string',
+      description: 'Ej: Horario de atención',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'valor',
+      title: 'El dato',
+      type: 'string',
+      description: 'Ej: Lunes a viernes, 07:30 a 13:00',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'detalle',
+      title: 'Aclaración (opcional)',
+      type: 'string',
+      description: 'Una línea corta debajo, si hace falta.',
+    }),
+  ],
+  preview: {
+    select: { title: 'etiqueta', subtitle: 'valor' },
+  },
+});
+
 export const imagenConAlt = defineType({
   name: 'imagenConAlt',
   title: 'Imagen',

@@ -492,8 +492,18 @@
     // ahí mismo y ni migas ni bajada llegaban a animarse en esas 3
     // páginas.
     function iniciarEntradaHero(gsap) {
+      // Inicio: React maneja título, bajada Y botones (SplitText +
+      // FadeContent) — no queda nada de este código para correr ahí.
+      if (document.querySelector('.hero[data-anim="react"]')) return;
+
+      // Nosotros: React solo maneja el título (BlurText) — la bajada y
+      // las migas siguen siendo de este código vainilla, así que NO se
+      // corta la función entera, solo el bloque que animaría el título
+      // por segunda vez y movería el nodo donde vive el componente React.
+      var soloTitulo = !!document.querySelector('.hero[data-anim="react-titulo"]');
+
       var tituloPortada = document.querySelector('.hero__titulo--texto');
-      var h1Interior = !tituloPortada && document.querySelector('.hero__titulo');
+      var h1Interior = !soloTitulo && !tituloPortada && document.querySelector('.hero__titulo');
       var elementoTitulo = tituloPortada;
       if (h1Interior) {
         // .hero__titulo es display:grid. Partir las letras directo ahí
@@ -510,7 +520,7 @@
         }
         elementoTitulo = h1Interior.querySelector('.hero__titulo--texto');
       }
-      if (elementoTitulo) {
+      if (elementoTitulo && !soloTitulo) {
         if (!elementoTitulo.dataset.split) { dividirEnLetras(elementoTitulo); elementoTitulo.dataset.split = '1'; }
         gsap.from(elementoTitulo.querySelectorAll('.letra'), {
           opacity: 0,
@@ -540,69 +550,6 @@
           { y: 0, opacity: 1, duration: 0.9, delay: 0.35, ease: 'power3.out',
             clearProps: 'opacity,transform' });
       }
-    }
-
-    // Rotación del titular al estilo Centeno: las palabras del mensaje
-    // actual salen en 3D mientras entran las del siguiente (cada 9 s).
-    function iniciarRotacionTitulo(gsap) {
-      var textos = document.querySelectorAll('.hero__titulo--texto');
-      if (textos.length < 2) return;
-      gsap.set(textos, { perspective: 1000 });
-      var actual = 0;
-      var corriendo = false;
-      var tiempo = 9000;
-
-      function rotar() {
-        if (corriendo) return;
-        corriendo = true;
-        var viejo = textos[actual];
-        var nuevo = textos[(actual + 1) % textos.length];
-        actual = (actual + 1) % textos.length;
-
-        nuevo.hidden = false;
-        nuevo.classList.remove('escondido');
-        if (!nuevo.dataset.split) { dividirEnPalabras(nuevo); nuevo.dataset.split = '1'; }
-
-        // .palabra-int, .letra: el titular principal (textos[0]) ya
-        // llega dividido en LETRAS, no en palabras — lo divide
-        // iniciarEntradaHero para el efecto de máquina de escribir, y
-        // usa la misma bandera dataset.split que este código, así que
-        // nunca se vuelve a dividir en palabras. Sin buscar también
-        // .letra, viejas quedaba vacío la primera vez que ese titular
-        // salía de rotación: no había nada que animar, así que nunca
-        // se desvanecía y quedaba superpuesto con el texto entrante.
-        var viejas = viejo.querySelectorAll('.palabra-int, .letra');
-        var nuevas = nuevo.querySelectorAll('.palabra-int, .letra');
-        gsap.set(nuevas, { opacity: 0, xPercent: 0, yPercent: 0, rotationX: 0, z: 0 });
-
-        var tl = gsap.timeline({ onComplete: function () {
-          viejo.classList.add('escondido');
-          viejo.hidden = true;
-          corriendo = false;
-          setTimeout(rotar, tiempo);
-        }});
-        tl.fromTo(viejas,
-          { opacity: 1, xPercent: 0, yPercent: 0, rotationX: 0, z: 0 },
-          { duration: 0.5, ease: 'power3.in', opacity: 0,
-            xPercent: function () { return gsap.utils.random(-40, 40); },
-            yPercent: function () { return gsap.utils.random(-8, 8); },
-            rotationX: function () { return gsap.utils.random(-90, 90); },
-            z: function () { return gsap.utils.random(-500, -300); },
-            stagger: { each: 0.02, from: 'random' } }, 0)
-        .fromTo(nuevas,
-          { opacity: 0, xPercent: function () { return gsap.utils.random(-40, 40); },
-            yPercent: function () { return gsap.utils.random(-8, 8); },
-            rotationX: function () { return gsap.utils.random(-90, 90); },
-            z: function () { return gsap.utils.random(300, 500); } },
-          { duration: 0.8, ease: 'power3.out', opacity: 1, xPercent: 0, yPercent: 0, rotationX: 0, z: 0,
-            // 0.65s, no 0.42s: con stagger por palabra, una frase de
-            // varias palabras tarda duration(0.5) + (n-1)*0.02 en
-            // desvanecerse del todo. A los 0.42s el texto viejo todavía
-            // se veía, superpuesto con el que entraba — se veía roto.
-            stagger: { each: 0.02, from: 'random' } }, 0.65);
-      }
-
-      setTimeout(rotar, tiempo);
     }
 
     // Titulares de sección: entran por palabra al llegar con el scroll
@@ -640,9 +587,9 @@
       if (!gsap || !window.ScrollTrigger) return;
       gsap.registerPlugin(window.ScrollTrigger);
 
-      // El hero (entrada + rotación) corre en TODAS las pantallas.
+      // El hero corre en TODAS las pantallas (la portada la lleva React
+      // ahora — ver el corte data-anim="react" en iniciarEntradaHero).
       iniciarEntradaHero(gsap);
-      iniciarRotacionTitulo(gsap);
       iniciarTitulosSeccion(gsap);
 
       // La entrada de las fotos ahora la hace [data-revelar="zoom"] (motor

@@ -1,6 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
+import SplitText from '../components/reactbits/SplitText.jsx';
+import FadeContent from '../components/reactbits/FadeContent.jsx';
+import AnimatedContent from '../components/reactbits/AnimatedContent.jsx';
+import ScrollReveal from '../components/reactbits/ScrollReveal.jsx';
+import SpotlightCard from '../components/reactbits/SpotlightCard.jsx';
 import { traerConfiguracion, traerInicio } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -22,7 +27,7 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
   conJsonLd
 >
   <!-- ============ PORTADA ============ -->
-  <section class="hero">
+  <section class="hero" data-anim="react">
     <img class="hero__foto" src={urlImagen(p.fotoPortada, 720)} alt={p.fotoPortada.alt} width="720" height="1280" fetchpriority="high">
     <video class="hero__video" autoplay muted loop playsinline preload="none" poster={urlImagen(p.fotoPortada, 720)} aria-hidden="true" tabindex="-1">
       <source src="/img/hero/hero-escritorio.mp4" media="(min-width: 1024px)">
@@ -31,14 +36,39 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <h1 class="hero__titulo">
-        <span class="hero__titulo--texto">{p.tituloLinea1}<br><em>{p.tituloLinea2}</em></span>
-        <span class="hero__titulo--texto escondido" hidden>{p.nivelesTitulo}</span>
+        <SplitText
+          text={p.tituloLinea1}
+          tag="span"
+          className="hero__titulo--texto"
+          splitType="words"
+          delay={40}
+          duration={0.7}
+          from={{ opacity: 0, y: 24 }}
+          to={{ opacity: 1, y: 0 }}
+          client:visible
+        />
+        <br />
+        <SplitText
+          text={p.tituloLinea2}
+          tag="span"
+          className="hero__titulo--texto hero__titulo--acento"
+          splitType="words"
+          delay={40}
+          duration={0.7}
+          from={{ opacity: 0, y: 24 }}
+          to={{ opacity: 1, y: 0 }}
+          client:visible
+        />
       </h1>
-      <p class="hero__bajada">{p.bajada}</p>
-      <div class="hero__acciones">
-        <a href="/contacto" class="btn btn--primario">Agenda tu visita</a>
-        <a href="/nosotros" class="enlace-flecha">Conoce la propuesta</a>
-      </div>
+      <FadeContent duration={600} delay={100} threshold={0.1} client:visible>
+        <p class="hero__bajada">{p.bajada}</p>
+      </FadeContent>
+      <FadeContent duration={600} delay={250} threshold={0.1} client:visible>
+        <div class="hero__acciones">
+          <a href="/contacto" class="btn btn--primario">Agenda tu visita</a>
+          <a href="/nosotros" class="enlace-flecha">Conoce la propuesta</a>
+        </div>
+      </FadeContent>
     </div>
     <a href="#propuesta" class="bajar" aria-label="Ir al contenido">
       <span>Desliza</span>
@@ -56,10 +86,13 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
 
       <div class="pilares">
         {p.propuestaPilares.map((pilar: any, i: number) => (
-          <article data-revelar data-retraso={i > 0 ? i * 100 : undefined}>
-            <h3>{pilar.titulo}</h3>
-            <p>{pilar.texto}</p>
-          </article>
+          <AnimatedContent distance={40} duration={0.6} delay={i * 0.12} threshold={0.2} client:visible>
+            <article class="pilar-tarjeta">
+              <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{pilar.titulo}</h3>
+              <p>{pilar.texto}</p>
+            </article>
+          </AnimatedContent>
         ))}
       </div>
     </div>
@@ -100,6 +133,60 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
     </div>
   </section>
 
+  <!-- ============ QUÉ OFRECE CADA NIVEL ============
+       Solo aparece si el colegio cargó los niveles en el CMS: sin datos
+       reales de edades y cupos, es preferible que no exista a que
+       muestre información inventada que un padre podría usar. -->
+  {p.programas?.length > 0 && (
+    <section class="seccion seccion--clara" id="programas">
+      <div class="contenedor">
+        <div class="enc-seccion" data-revelar>
+          <h2>{p.programasTitulo}</h2>
+          {p.programasTexto && <p>{p.programasTexto}</p>}
+        </div>
+
+        <div class="programas">
+          {p.programas.map((prog: any, i: number) => (
+            <AnimatedContent distance={40} duration={0.6} delay={i * 0.1} threshold={0.15} client:visible>
+              <article class="programa">
+                <span class="programa__edades">{prog.edades}</span>
+                <h3>{prog.nombre}</h3>
+                <p>{prog.descripcion}</p>
+                {prog.incluye?.length > 0 && (
+                  <ul class="programa__incluye">
+                    {prog.incluye.map((punto: string) => <li>{punto}</li>)}
+                  </ul>
+                )}
+              </article>
+            </AnimatedContent>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ DATOS PRÁCTICOS ============ -->
+  {p.practicoDatos?.length > 0 && (
+    <section class="seccion seccion--suave">
+      <div class="contenedor">
+        <div class="enc-seccion" data-revelar>
+          <h2>{p.practicoTitulo}</h2>
+        </div>
+        <dl class="datos-practicos">
+          {p.practicoDatos.map((dato: any, i: number) => (
+            <AnimatedContent distance={30} duration={0.5} delay={i * 0.08} threshold={0.15} client:visible>
+              <div class="dato-practico">
+                <dt>{dato.etiqueta}</dt>
+                <dd>{dato.valor}</dd>
+                {dato.detalle && <p class="dato-practico__detalle">{dato.detalle}</p>}
+              </div>
+            </AnimatedContent>
+          ))}
+        </dl>
+      </div>
+    </section>
+  )}
+
   <!-- ============ MARQUESINA ============ -->
   <!-- Las frases se duplican porque la animación desplaza -50%: así el
        bucle empalma sin salto. -->
@@ -119,9 +206,9 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
       </div>
       <div class="partido__texto" data-revelar="der">
         <span class="eyebrow">{p.porQueEyebrow}</span>
-        <h2>{p.porQueTitulo}</h2>
+        <ScrollReveal text={p.porQueTitulo} containerClassName="porque__titulo" client:visible />
         {p.porQueParrafos.map((parrafo: string) => <p>{parrafo}</p>)}
-        <p style="margin-top:var(--space-8)">
+        <p class="mt-8">
           <a href="/nosotros" class="btn btn--secundario">Conócenos</a>
         </p>
       </div>

@@ -45,6 +45,12 @@
   box-shadow: var(--shadow-md);
 }
 
+/* ---------- Utilidades de espaciado ---------- */
+/* Reemplaza el style="margin-top:var(--space-8)" repetido a mano en
+   los párrafos que envuelven una llamada a la acción después de texto
+   corrido (index, contacto). */
+.mt-8 { margin-top: var(--space-8); }
+
 /* ---------- Header ---------- */
 .header {
   position: fixed;
@@ -126,6 +132,12 @@
 @media (min-width: 1024px) { .header__aula { display: inline-flex; } }
 
 .header__cta { display: none; }
+/* Antes el CTA solo aparecía junto con el menú completo en 1024px:
+   entre 768 y 1023px el header se quedaba en solo logo + hamburguesa,
+   un salto de densidad brusco. Se adelanta a 900px (el mismo quiebre
+   que ya usan .pilares, .partido y .contacto-grid) para que la acción
+   principal esté visible antes de llegar al menú de escritorio. */
+@media (min-width: 900px) { .header__cta { display: inline-flex; } }
 
 /* Botón hamburguesa */
 .hamburguesa {
@@ -206,6 +218,10 @@
   isolation: isolate;
 }
 .hero--interior { min-height: 58svh; }
+/* Las páginas interiores (nosotros, galería, contacto) llevan un
+   título de portada más chico que el de inicio: fs-h1 en vez del
+   fs-display de .hero__titulo. */
+.hero--interior .hero__titulo { font-size: var(--fs-h1); }
 
 /* La foto SIEMPRE se queda debajo del video: es la capa de respaldo.
    No se oculta aunque exista el <video>, porque el video arranca en
@@ -273,22 +289,16 @@
 .hero__contenido .eyebrow { color: var(--accent-100); }
 
 .hero__titulo {
-  display: grid;
   font-size: var(--fs-display);
   line-height: 1.12;
   margin-bottom: var(--space-6);
-  /* Sin esto, el vuelo 3D de la rotación de título (main.js,
-     iniciarRotacionTitulo) se sale de su caja durante la transición y
-     tapa los botones de "Agenda tu visita" en móvil, un instante cada
-     9 segundos. */
   overflow: hidden;
 }
-.hero__titulo--texto { grid-area: 1 / 1; }
-.hero__titulo--texto.escondido { visibility: hidden; }
-.hero__titulo em {
-  font-style: normal;
-  color: var(--accent-100);
-}
+/* SplitText (ReactBits) parte el texto en .split-word/.split-char por
+   dentro — acá solo damos el color de cada línea. La segunda usa el
+   acento, reemplazando al <em> que tenía el título antes de pasar a
+   SplitText (SplitText solo acepta texto plano, no HTML anidado). */
+.hero__titulo--acento { color: var(--accent-100); }
 
 .hero__bajada {
   max-width: 46ch;
@@ -517,10 +527,125 @@
 }
 .pilares h3 { margin-bottom: var(--space-3); }
 .pilares p { color: var(--ink-600); }
+/* ============================================================
+   QUÉ OFRECE CADA NIVEL
+   Tarjetas con la información concreta que un padre necesita para
+   decidir: edad, qué se trabaja, qué incluye. Borde de 1px, sin
+   sombras difusas ni bordes de color al costado.
+   ============================================================ */
+.programas {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: var(--space-12);
+}
+@media (min-width: 720px) {
+  .programas { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
+.programa {
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-8);
+}
+.programa__edades {
+  display: inline-block;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--green-700);
+  background: var(--green-50);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+.programa h3 { margin-bottom: var(--space-3); }
+.programa p { color: var(--ink-600); }
+.programa__incluye {
+  list-style: none;
+  margin-top: var(--space-6);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.programa__incluye li {
+  position: relative;
+  padding-left: var(--space-6);
+  font-size: var(--fs-small);
+  color: var(--ink-600);
+}
+/* Punto de color en vez de un ícono genérico. */
+.programa__incluye li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .5em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-500);
+}
+
+/* ============================================================
+   DATOS PRÁCTICOS
+   Horario, cupos, requisitos: lo que un padre pregunta por teléfono.
+   ============================================================ */
+.datos-practicos {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(0, 1fr);
+  margin: var(--space-12) 0 0;
+}
+@media (min-width: 720px) {
+  .datos-practicos { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+.dato-practico {
+  height: 100%;
+  border-top: 2px solid var(--green-800);
+  padding-top: var(--space-4);
+}
+.dato-practico dt {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+  margin-bottom: var(--space-2);
+}
+.dato-practico dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.dato-practico__detalle {
+  margin-top: var(--space-2);
+  font-size: var(--fs-small);
+  color: var(--ink-600);
+}
+
+.porque__titulo { margin-bottom: var(--space-4); }
+.pilar-tarjeta__numero {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--green-300);
+  margin-bottom: var(--space-2);
+}
 
 /* ---------- Bloque partido ---------- */
 .partido {
   display: grid;
+  /* Sin esto, la columna implícita (abajo de 900px, una sola) se
+     achica al tamaño que "prefiere" su contenido en vez de ocupar el
+     100% del contenedor — con min-width:0 ya no se desborda, pero
+     tampoco se estiraba, y quedaba una columna de ancho fijo pegada a
+     la izquierda con espacio libre a la derecha. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-12);
   align-items: center;
 }
@@ -566,14 +691,20 @@
   object-fit: cover;
   animation: kb-zoom 24s ease-in-out infinite alternate;
 }
+/* El velo baja para que la fotografía respire. El lado izquierdo
+   mantiene carga suficiente para que el texto blanco siga pasando AA:
+   el 42% (.66) medido contra un fotograma claro daba ~3.9:1 para el
+   párrafo — insuficiente. Subido a .78 para que green-100 llegue a
+   AA sin importar el fotograma. El 100% (sin texto encima) se deja
+   igual: ahí sí puede respirar la foto. */
 .franja__velo {
   position: absolute;
   inset: 0;
   z-index: -1;
   background: linear-gradient(100deg,
-    rgba(5, 52, 26, .94) 0%,
-    rgba(11, 74, 38, .82) 45%,
-    rgba(5, 52, 26, .55) 100%);
+    rgba(5, 52, 26, .90) 0%,
+    rgba(11, 74, 38, .78) 42%,
+    rgba(5, 52, 26, .28) 100%);
 }
 .franja h2 { margin-bottom: var(--space-4); max-width: 22ch; }
 .franja p { color: var(--green-100); max-width: 46ch; }
@@ -664,6 +795,12 @@
 .foto img {
   width: 100%;
   height: auto;
+  /* "auto <ratio>": si el <img> trae width/height (los pone
+     dimensiones() en imagen.ts), esa relación real manda y no se
+     recorta nada. Si ese cálculo llega a fallar y el atributo no
+     está, esta relación (la de las fotos verticales del demo) evita
+     que el bloque salte de tamaño cuando la imagen termina de cargar. */
+  aspect-ratio: auto 640 / 1138;
   object-fit: cover;
   transition: transform .5s var(--ease-out);
 }
@@ -872,10 +1009,15 @@
 }
 
 /* ---------- Footer ---------- */
+/* Sube un escalón de tono desde el negro-verde puro (--green-950) para
+   separarse del velo oscuro de la franja anterior, y lleva un filete de
+   acento arriba para que los dos verdes oscuros no se fundan en una
+   sola mancha. */
 .footer {
-  background: var(--green-950);
+  background: var(--green-900);
   color: #fff;
   padding-block: var(--space-16) var(--space-8);
+  border-top: 3px solid var(--accent-500);
 }
 .footer__rejilla {
   display: grid;
@@ -1076,7 +1218,7 @@
    que ya definiste — esa decisión es tuya y se respeta. */
 .foto,
 .partido__foto,
-.tarjeta--foto img { border-radius: 3px; }
+.tarjeta--foto img { border-radius: var(--radius-photo); }
 
 /* La tarjeta se define por su borde, no por una sombra difusa */
 .tarjeta { box-shadow: none; }
@@ -1094,12 +1236,19 @@
    vertical. El del medio baja; el tercero baja un poco más. */
 @media (min-width: 900px) {
   .pilares {
-    grid-template-columns: 1.15fr .95fr .9fr;
+    /* auto-fit en vez de columnas fijas: con exactamente 3 pilares se
+       ven 3 columnas iguales (el escalonado de abajo aporta la
+       asimetría), pero si el CMS entrega 2 o 4 no se rompe el grid. */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--space-12);
     align-items: start;
   }
-  .pilares article:nth-child(2) { margin-top: var(--space-12); }
-  .pilares article:nth-child(3) { margin-top: calc(var(--space-12) * 2); }
+  /* astro-island, no article: cada pilar ahora es una isla de React
+     (AnimatedContent) — el hijo directo de .pilares es el wrapper que
+     genera Astro, no el <article> de adentro. El nth-child tiene que
+     apuntar ahí para seguir escalonando. */
+  .pilares astro-island:nth-child(2) { margin-top: var(--space-12); }
+  .pilares astro-island:nth-child(3) { margin-top: calc(var(--space-12) * 2); }
 }
 
 /* La galería deja de ser tres miniaturas idénticas: una manda. */
@@ -1160,28 +1309,6 @@
   margin-right: var(--space-3);
 }
 
-/* ============================================================
-   CORRECCIÓN — la franja se veía como un muro verde
-   Dos causas reales:
-   1. El velo estaba al 94% de opacidad: tapaba la foto por completo,
-      así que la franja no leía como imagen sino como bloque plano.
-   2. Pegada al footer (--green-950) formaba una sola masa oscura de
-      más de 700px sin ningún corte.
-   ============================================================ */
-
-/* El velo baja para que la fotografía respire. El lado izquierdo
-   mantiene carga suficiente para que el texto blanco siga pasando AA:
-   el 42% (.66) medido contra un fotograma claro daba ~3.9:1 para el
-   párrafo — insuficiente. Subido a .78 para que green-100 llegue a
-   AA sin importar el fotograma. El 100% (sin texto encima) se deja
-   igual: ahí sí puede respirar la foto. */
-.franja__velo {
-  background: linear-gradient(100deg,
-    rgba(5, 52, 26, .90) 0%,
-    rgba(11, 74, 38, .78) 42%,
-    rgba(5, 52, 26, .28) 100%);
-}
-
 /* Sobre fondo oscuro el enlace tiene que ser claro.
    Estaba heredando --green-800 sobre verde oscuro: ilegible. */
 .franja .enlace-flecha,
@@ -1190,13 +1317,6 @@
 }
 .franja .enlace-flecha::after,
 .hero .enlace-flecha::after { background: var(--accent-500); }
-
-/* Corte entre la franja y el footer: un filete de acento evita que
-   los dos verdes oscuros se fundan en una sola mancha. */
-.footer { border-top: 3px solid var(--accent-500); }
-
-/* Y el footer se separa del negro-verde: sube un escalón de tono */
-.footer { background: var(--green-900); }
 
 /* ============================================================
    BOTÓN DE CONTACTO FLOTANTE (speed dial)

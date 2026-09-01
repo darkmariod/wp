@@ -12,6 +12,8 @@ export const paginaInicio = defineType({
     { name: 'portada', title: 'Portada', default: true },
     { name: 'propuesta', title: 'Propuesta' },
     { name: 'niveles', title: 'Niveles' },
+    { name: 'programas', title: 'Qué ofrece cada nivel' },
+    { name: 'practico', title: 'Datos prácticos' },
     { name: 'marquesina', title: 'Frase deslizante' },
     { name: 'porQue', title: 'Por qué Pestalozzi' },
     { name: 'galeria', title: 'Vida escolar' },
@@ -135,6 +137,52 @@ export const paginaInicio = defineType({
       type: 'imagenConAlt',
       group: 'niveles',
       validation: (r) => r.required(),
+    }),
+
+    // --- Qué ofrece cada nivel ---
+    // Sin required: si el colegio todavía no cargó nada, la sección
+    // entera no se muestra en el sitio. Mejor que aparezca vacía o con
+    // datos de relleno inventados.
+    defineField({
+      name: 'programasTitulo',
+      title: 'Título de la sección',
+      type: 'string',
+      group: 'programas',
+      initialValue: 'Qué ofrece cada nivel',
+    }),
+    defineField({
+      name: 'programasTexto',
+      title: 'Texto de la sección',
+      type: 'text',
+      rows: 2,
+      group: 'programas',
+    }),
+    defineField({
+      name: 'programas',
+      title: 'Niveles',
+      type: 'array',
+      of: [{ type: 'programa' }],
+      group: 'programas',
+      description:
+        'Un bloque por nivel, con la edad y qué incluye. Si se deja vacío, la sección no aparece en el sitio.',
+    }),
+
+    // --- Datos prácticos ---
+    defineField({
+      name: 'practicoTitulo',
+      title: 'Título de la sección',
+      type: 'string',
+      group: 'practico',
+      initialValue: 'Horarios y admisiones',
+    }),
+    defineField({
+      name: 'practicoDatos',
+      title: 'Datos',
+      type: 'array',
+      of: [{ type: 'datoPractico' }],
+      group: 'practico',
+      description:
+        'Horario de atención, cupos por aula, requisitos de matrícula… lo que un padre pregunta antes de llamar. Si se deja vacío, la sección no aparece.',
     }),
 
     defineField({
