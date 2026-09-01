@@ -12,6 +12,7 @@ export const paginaInicio = defineType({
     { name: 'portada', title: 'Portada', default: true },
     { name: 'propuesta', title: 'Propuesta' },
     { name: 'niveles', title: 'Niveles' },
+    { name: 'destacados', title: 'Lo que nos distingue' },
     { name: 'programas', title: 'Qué ofrece cada nivel' },
     { name: 'practico', title: 'Datos prácticos' },
     { name: 'marquesina', title: 'Frase deslizante' },
@@ -137,6 +138,20 @@ export const paginaInicio = defineType({
       type: 'imagenConAlt',
       group: 'niveles',
       validation: (r) => r.required(),
+    }),
+
+    // --- Lo que nos distingue ---
+    // Va apenas debajo de la portada: lo primero que ve un padre después
+    // del título. Cuatro razones cortas, no párrafos.
+    defineField({
+      name: 'destacados',
+      title: 'Razones',
+      type: 'array',
+      of: [{ type: 'pilar' }],
+      group: 'destacados',
+      description:
+        'Cuatro como máximo, y bien cortas: un título de dos o tres palabras y una línea de explicación. Si se deja vacío, la sección no aparece.',
+      validation: (r) => r.max(4),
     }),
 
     // --- Qué ofrece cada nivel ---

@@ -21,6 +21,7 @@ export async function traerInicio() {
     nivelesFotoIzquierda ${CAMPOS_IMAGEN},
     nivelesBloqueVerde, nivelesBloqueAmbar,
     nivelesFotoDerecha ${CAMPOS_IMAGEN},
+    destacados,
     programasTitulo, programasTexto, programas,
     practicoTitulo, practicoDatos,
     marquesinaFrases,

@@ -5,7 +5,7 @@ import SplitText from '../components/reactbits/SplitText.jsx';
 import FadeContent from '../components/reactbits/FadeContent.jsx';
 import AnimatedContent from '../components/reactbits/AnimatedContent.jsx';
 import ScrollReveal from '../components/reactbits/ScrollReveal.jsx';
-import SpotlightCard from '../components/reactbits/SpotlightCard.jsx';
+import ProgramaTarjeta from '../components/reactbits/ProgramaTarjeta.jsx';
 import { traerConfiguracion, traerInicio } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -75,6 +75,27 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
       <span class="bajar__linea"></span>
     </a>
   </section>
+
+  <!-- ============ LO QUE NOS DISTINGUE ============
+       Va apenas debajo de la portada, como la fila de razones de la
+       referencia que dio el colegio: lo primero que ve un padre después
+       del título, antes de entrar en la filosofía. -->
+  {p.destacados?.length > 0 && (
+    <section class="destacados-franja">
+      <div class="contenedor">
+        <ul class="destacados">
+          {p.destacados.map((d: any, i: number) => (
+            <AnimatedContent distance={24} duration={0.5} delay={i * 0.08} threshold={0.15} client:visible>
+              <li class="destacado">
+                <h3>{d.titulo}</h3>
+                <p>{d.texto}</p>
+              </li>
+            </AnimatedContent>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
 
   <!-- ============ PROPUESTA ============ -->
   <section class="seccion seccion--clara" id="propuesta">
@@ -147,18 +168,7 @@ const medidasTarjeta = (img: any) => dimensiones(img, 640);
 
         <div class="programas">
           {p.programas.map((prog: any, i: number) => (
-            <AnimatedContent distance={40} duration={0.6} delay={i * 0.1} threshold={0.15} client:visible>
-              <article class="programa">
-                <span class="programa__edades">{prog.edades}</span>
-                <h3>{prog.nombre}</h3>
-                <p>{prog.descripcion}</p>
-                {prog.incluye?.length > 0 && (
-                  <ul class="programa__incluye">
-                    {prog.incluye.map((punto: string) => <li>{punto}</li>)}
-                  </ul>
-                )}
-              </article>
-            </AnimatedContent>
+            <ProgramaTarjeta programa={prog} indice={i} client:visible />
           ))}
         </div>
       </div>

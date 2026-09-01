@@ -528,6 +528,45 @@
 .pilares h3 { margin-bottom: var(--space-3); }
 .pilares p { color: var(--ink-600); }
 /* ============================================================
+   LO QUE NOS DISTINGUE
+   La fila de razones debajo de la portada. Fondo verde profundo para
+   que corte con la foto del hero de arriba y la sección clara de
+   abajo — el mismo rol que cumple la fila de badges en la referencia
+   del colegio, pero con la paleta institucional.
+   ============================================================ */
+.destacados-franja {
+  background: var(--green-900);
+  color: #fff;
+  padding-block: var(--space-12);
+}
+.destacados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-8);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 640px) {
+  .destacados { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .destacados { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-10); }
+}
+.destacado h3 {
+  font-size: var(--fs-h3);
+  margin-bottom: var(--space-2);
+  /* accent-100, no accent-500: sobre el verde profundo el ámbar medio
+     no llega a AA. El claro pasa con margen y mantiene la calidez. */
+  color: var(--accent-100);
+}
+.destacado p {
+  font-size: var(--fs-small);
+  color: rgba(255, 255, 255, .88);
+  margin: 0;
+}
+
+/* ============================================================
    QUÉ OFRECE CADA NIVEL
    Tarjetas con la información concreta que un padre necesita para
    decidir: edad, qué se trabaja, qué incluye. Borde de 1px, sin
@@ -542,12 +581,10 @@
 @media (min-width: 720px) {
   .programas { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 }
+/* El borde, fondo y relleno los pone .card-spotlight (SpotlightCard de
+   ReactBits). Acá solo lo que no trae ese componente. */
 .programa {
   height: 100%;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  padding: var(--space-8);
 }
 .programa__edades {
   display: inline-block;
