@@ -443,10 +443,10 @@
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
 }
-/* Fuente de UI (Karla), no la editorial (Piazzolla) que usa el resto
-   de los titulares: este es un bloque de tarjeta/dato, no un
-   encabezado de sección — la mezcla marca la diferencia entre los dos
-   lenguajes sin salirse de las dos únicas fuentes del sitio. */
+/* Este es un bloque de tarjeta, no un encabezado de sección: usa la
+   fuente de cuerpo para diferenciarlo de los titulares. Desde el paso
+   a DM Sans las dos variables apuntan a la misma familia, así que la
+   distinción la marca el peso y el tamaño, no el tipo de letra. */
 .niveles-mosaico__bloque h3 {
   font-family: var(--font-body);
   font-weight: 700;

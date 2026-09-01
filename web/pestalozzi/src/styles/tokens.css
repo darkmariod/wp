@@ -36,8 +36,11 @@
   --info:    #2F6FB0;
 
   /* --- Tipografía --- */
-  --font-display: 'Piazzolla', Georgia, 'Times New Roman', serif;
-  --font-body:    'Karla', system-ui, -apple-system, sans-serif;
+  /* DM Sans en títulos y cuerpo: la misma familia única que usa la
+     referencia que dio el colegio (growingtreeholmdel.com). Reemplaza
+     al par Piazzolla (serif) + Karla que tenía el sitio antes. */
+  --font-display: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
 
   --fs-display: clamp(2.5rem, 5vw, 4rem);
   --fs-h1:      clamp(2rem, 4vw, 3rem);
