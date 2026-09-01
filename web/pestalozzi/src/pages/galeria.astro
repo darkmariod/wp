@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
-import GaleriaMasonry from '../components/reactbits/GaleriaMasonry.jsx';
+import GaleriaAcordeon from '../components/reactbits/GaleriaAcordeon.jsx';
 import { traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -10,31 +10,16 @@ const fotos = await traerFotos();
 const config = await traerConfiguracion();
 const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 
-const FILTROS = [
-  { valor: 'todas', texto: 'Todas' },
-  { valor: 'instalaciones', texto: 'Instalaciones' },
-  { valor: 'actividades', texto: 'Actividades' },
-  { valor: 'deportes', texto: 'Deportes' },
-  { valor: 'eventos', texto: 'Eventos' },
-];
-
-// main.js las usa para cambiar el texto al tocar cada filtro.
-const descripciones = {
-  todas: p.descTodas,
-  instalaciones: p.descInstalaciones,
-  actividades: p.descActividades,
-  deportes: p.descDeportes,
-  eventos: p.descEventos,
-};
-
-const plural = (n: number) => `${n} ${n === 1 ? 'fotografía' : 'fotografías'}`;
-
-const fotosMasonry = fotos.map((f: any) => ({
+// El acordeon pide "image"; "grande" es la version para el visor.
+const fotosAcordeon = fotos.map((f: any) => ({
   id: f._id ?? f.imagen?.asset?._ref,
-  url: urlImagen(f.imagen, 500),
-  alto: dimensiones(f.imagen, 500).height ?? 500,
+  image: urlImagen(f.imagen, 900),
+  grande: urlImagen(f.imagen, 1600),
+  label: f.imagen.alt,
   alt: f.imagen.alt,
-  categoria: f.categoria,
+  // width/height reales para que el navegador reserve el espacio y la
+  // página no salte mientras cargan las fotos (CLS).
+  ...dimensiones(f.imagen, 900),
 }));
 ---
 <Layout
@@ -46,7 +31,6 @@ const fotosMasonry = fotos.map((f: any) => ({
   canonicalPath="/galeria"
   current="galeria"
   preloadImage={urlImagen(p.portada.foto, 720)}
-  datosGaleria={descripciones}
 >
   <section class="hero hero--interior">
     <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
@@ -61,12 +45,10 @@ const fotosMasonry = fotos.map((f: any) => ({
   <section class="seccion seccion--clara">
     <div class="contenedor">
 
-      {/* client:load, no client:visible: Masonry no calcula su grid en
-          el servidor (depende de medir el ancho real en el navegador),
-          así que sin hidratación inmediata esta sección queda vacía —
-          a diferencia de SplitText/FadeContent, que sí muestran el
-          contenido real antes de animar. */}
-      <GaleriaMasonry fotos={fotosMasonry} descripciones={descripciones} client:load />
+      {/* client:load, no client:visible: el acordeón mide el ancho real
+          en el navegador para repartir los paneles, así que sin
+          hidratación inmediata la sección queda vacía. */}
+      <GaleriaAcordeon fotos={fotosAcordeon} descripcion={p.descTodas} client:load />
 
     </div>
   </section>
