@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pestalozzi-preview",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd pestalozzi && npx astro preview --host"],
+      "port": 4321
+    }
+  ]
+}
