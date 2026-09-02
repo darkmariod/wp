@@ -53,9 +53,9 @@ for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros'
 }
 
 console.log('\n\x1b[1m5. El carrusel y el acordeón reciben fotos\x1b[0m');
-const tarjetas = (inicio.match(/depth-carousel__card/g) || []).length;
+const tarjetas = (inicio.match(/carrusel__tarjeta/g) || []).length;
 check(`carrusel con al menos 4 fotos`, tarjetas >= 4, `(tiene ${tarjetas})`);
-const paneles = (galeria.match(/class="ag-panel[ "]/g) || []).length;
+const paneles = (galeria.match(/acordeon__panel/g) || []).length;
 check(`acordeón con al menos 3 fotos`, paneles >= 3, `(tiene ${paneles})`);
 
 console.log('\n\x1b[1m6. Enlaces del aula virtual\x1b[0m');

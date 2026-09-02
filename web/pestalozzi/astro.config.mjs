@@ -1,6 +1,10 @@
 import { defineConfig } from 'astro/config';
-import sanity from '@sanity/astro';
+// React queda SOLO por el panel del CMS en /admin: Sanity Studio es
+// una aplicación React y no arranca sin esto. Las páginas públicas no
+// llevan un solo componente React — sus animaciones son GSAP directo
+// (ver public/js/componentes.js).
 import react from '@astrojs/react';
+import sanity from '@sanity/astro';
 
 // CSS embebido en cada página: es la razón por la que el sitio no
 // tenía el destello de "HTML sin estilos" al navegar (antes lo hacía
@@ -12,6 +16,7 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   integrations: [
+    react(),
     sanity({
       projectId: '513m7736',
       dataset: 'production',
@@ -24,6 +29,5 @@ export default defineConfig({
       // Studio embebido en /admin — es donde entra el colegio a editar.
       studioBasePath: '/admin',
     }),
-    react(),
   ],
 });

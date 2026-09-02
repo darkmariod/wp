@@ -628,6 +628,12 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
   position: relative;
   height: 460px;
   margin-top: var(--space-12);
+  /* Las tarjetas se abren en abanico más allá del ancho del contenedor:
+     es el efecto buscado, pero sin recortar empujan la página a lo
+     ancho y aparece scroll horizontal en celular. El recorte va acá,
+     en el contenedor de afuera, y no en .carrusel__pista, que lleva el
+     preserve-3d del que depende la profundidad. */
+  overflow: hidden;
 }
 @media (max-width: 640px) {
   .niveles-carrusel { height: 380px; }
@@ -1397,12 +1403,11 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
     gap: var(--space-12);
     align-items: start;
   }
-  /* astro-island, no article: cada pilar ahora es una isla de React
-     (AnimatedContent) — el hijo directo de .pilares es el wrapper que
-     genera Astro, no el <article> de adentro. El nth-child tiene que
-     apuntar ahí para seguir escalonando. */
-  .pilares astro-island:nth-child(2) { margin-top: var(--space-12); }
-  .pilares astro-island:nth-child(3) { margin-top: calc(var(--space-12) * 2); }
+  /* Vuelve a apuntar al <article>: al sacar React los pilares dejaron
+     de estar envueltos en un astro-island y el selector anterior no
+     coincidía con nada, así que el escalonado se había perdido. */
+  .pilares article:nth-child(2) { margin-top: var(--space-12); }
+  .pilares article:nth-child(3) { margin-top: calc(var(--space-12) * 2); }
 }
 
 /* La galería deja de ser tres miniaturas idénticas: una manda. */
@@ -1571,3 +1576,201 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
    mientras carga se ve un bloque verde claro, no un hueco. */
 .foto { background: var(--green-100); }
 .foto img { background: var(--green-100); }
+
+
+/* ============================================================
+   CARRUSEL DE PROFUNDIDAD
+   Antes venía del componente de React. Ahora el marcado sale de
+   Astro y GSAP lo posiciona desde componentes.js.
+   ============================================================ */
+.carrusel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+  touch-action: pan-y;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.carrusel:active { cursor: grabbing; }
+.carrusel:focus-visible { outline: 2px solid var(--green-800); outline-offset: 4px; border-radius: 12px; }
+
+.carrusel__pista { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+.carrusel__tarjeta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 380px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--green-900);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.45), 0 8px 20px -10px rgba(0,0,0,.3);
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  cursor: pointer;
+  /* Sin JavaScript queda la primera tarjeta centrada en vez de un
+     montón apilado: el HTML solo, aunque falle GSAP, se ve bien. */
+  transform: translate(-50%, -50%);
+}
+.carrusel__tarjeta img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.carrusel__tinte {
+  position: absolute; inset: 0;
+  background: var(--green-900);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.carrusel__flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3000;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border: 1px solid var(--green-800);
+  border-radius: 999px;
+  background: var(--green-800);
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s var(--ease-out), transform .2s var(--ease-out);
+}
+.carrusel__flecha:hover { background: var(--green-900); }
+.carrusel__flecha:active { transform: translateY(-50%) scale(.94); }
+.carrusel__flecha--ant { left: 8px; }
+.carrusel__flecha--sig { right: 8px; }
+
+.carrusel__puntos {
+  position: absolute;
+  bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex; gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--green-900) 55%, transparent);
+  backdrop-filter: blur(6px);
+}
+.carrusel__punto {
+  width: 7px; height: 7px;
+  padding: 0; border: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,.45);
+  cursor: pointer;
+  transition: width .25s var(--ease-out), background .25s var(--ease-out);
+}
+.carrusel__punto.activo { width: 20px; background: #fff; }
+
+/* ============================================================
+   GALERÍA EN ACORDEÓN
+   ============================================================ */
+.acordeon {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  height: 480px;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+.acordeon__panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  transform-style: preserve-3d;
+  background: var(--green-900);
+  box-shadow: 0 10px 30px -18px rgba(0,0,0,.8);
+  will-change: flex-grow, transform;
+  -webkit-tap-highlight-color: transparent;
+}
+.acordeon__panel:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-100), 0 10px 30px -18px rgba(0,0,0,.8);
+}
+.acordeon__marco { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.acordeon__medio {
+  --dim: .35;
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 320px; height: 100%;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+.acordeon__medio img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.acordeon__velo {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 45%, color-mix(in srgb, var(--green-900) 78%, transparent) 100%),
+    color-mix(in srgb, var(--green-900) calc(var(--dim, .35) * 100%), transparent);
+}
+.acordeon__etiqueta {
+  position: absolute;
+  left: 20px; bottom: 20px; right: 20px;
+  display: flex; align-items: center; gap: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+.acordeon__barra {
+  flex: 0 0 auto;
+  width: 3px; height: 26px;
+  border-radius: 3px;
+  background: var(--accent-100);
+  opacity: 0;
+}
+.acordeon__texto {
+  color: #fff;
+  font-weight: 600;
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  text-shadow: 0 2px 14px rgba(0,0,0,.55);
+}
+
+@media (max-width: 640px) {
+  .acordeon { flex-direction: column; perspective: none; height: auto; }
+  .acordeon__panel { min-height: 88px; transform: none !important; }
+  .acordeon__medio { width: 100%; height: 240px; }
+}
+
+/* ============================================================
+   FOCO DE LUZ EN TARJETAS (reemplaza a SpotlightCard)
+   El resplandor sigue al cursor; el JS solo escribe las variables.
+   ============================================================ */
+[data-foco] {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-8);
+  overflow: hidden;
+}
+[data-foco]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--foco-op, 0);
+  transition: opacity .4s var(--ease-out);
+  background: radial-gradient(circle 240px at var(--foco-x, 50%) var(--foco-y, 50%),
+              rgba(18, 99, 51, .10), transparent 70%);
+}
+[data-foco] > * { position: relative; z-index: 1; }

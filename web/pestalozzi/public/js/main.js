@@ -9,10 +9,11 @@
      3. Menú móvil               (hamburguesa + velo + Esc)
      4. Año automático           (footer)
      5. Scrollspy de secciones   (solo anclas locales)
-     6. Galería                  (filtros + contador)
-     7. Lightbox                 (teclado + foco atrapado)
-     8. Formulario               (validación + envío por WhatsApp)
-     9. Capa GSAP                (parallax, solo escritorio)
+     6. Formulario               (validación + envío por WhatsApp)
+     7. Capa GSAP                (revelado, parallax, componentes)
+
+   El carrusel, la galería en acordeón, el visor de fotos, el botón
+   imantado y el foco de luz viven en componentes.js.
    ============================================================ */
 
 (function () {
@@ -164,144 +165,13 @@
   }
 
   /* ------------------------------------------------------------
-     6. GALERÍA — filtros + contador
+     6. GALERÍA
+     Los filtros por categoría y el visor de fotos que vivían acá se
+     retiraron al pasar la galería a acordeón: ese marcado ya no
+     existe y el visor nuevo está en componentes.js, junto al
+     acordeón que lo abre. Eran 142 líneas que nunca encontraban
+     un solo elemento.
      ------------------------------------------------------------ */
-  var botonesFiltro = Array.prototype.slice.call(document.querySelectorAll('.filtro'));
-  var fotos = Array.prototype.slice.call(document.querySelectorAll('.foto'));
-  var contador = document.getElementById('cuenta-fotos');
-  var descripcionGaleria = document.getElementById('galeria-desc');
-
-  function plural(n) {
-    return n + ' ' + (n === 1 ? 'fotografía' : 'fotografías');
-  }
-
-  // Un texto propio por categoría: no es la misma frase repetida con
-  // otro título, describe lo que realmente hay en esa sección.
-  // Los edita el colegio desde el CMS; el objeto de acá abajo solo
-  // entra en juego si por algo no llegaron.
-  var DESCRIPCIONES_GALERIA = DATOS.galeria || {
-    todas: 'Un vistazo a la vida diaria del plantel: instalaciones, actividades, deportes y eventos del año lectivo.',
-    instalaciones: 'El espacio donde los niños pasan el día: patio, aulas y áreas comunes del plantel.',
-    actividades: 'Momentos de aprendizaje dentro y fuera del aula, con la metodología Montessori.',
-    deportes: 'Movimiento y juego al aire libre — parte del aprendizaje, no un premio aparte.',
-    eventos: 'Celebraciones y actividades especiales del año lectivo. Se suman fotos aquí en cuanto el colegio las entregue.'
-  };
-
-  function envolverEnPalabras(el, texto) {
-    el.textContent = '';
-    var frag = document.createDocumentFragment();
-    texto.split(' ').forEach(function (palabra, i) {
-      if (i > 0) frag.appendChild(document.createTextNode(' '));
-      var span = document.createElement('span');
-      span.className = 'galeria-desc__palabra';
-      span.textContent = palabra;
-      frag.appendChild(span);
-    });
-    el.appendChild(frag);
-  }
-
-  function actualizarDescripcionGaleria(categoria) {
-    if (!descripcionGaleria) return;
-    var texto = DESCRIPCIONES_GALERIA[categoria] || DESCRIPCIONES_GALERIA.todas;
-    if (descripcionGaleria.dataset.texto === texto) return;
-    descripcionGaleria.dataset.texto = texto;
-    if (reducir) { descripcionGaleria.textContent = texto; return; }
-    envolverEnPalabras(descripcionGaleria, texto);
-    var palabras = Array.prototype.slice.call(descripcionGaleria.querySelectorAll('.galeria-desc__palabra'));
-    palabras.forEach(function (p, i) { p.style.transitionDelay = (i * 30) + 'ms'; });
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        palabras.forEach(function (p) { p.classList.add('visible'); });
-      });
-    });
-  }
-
-  function aplicarFiltro(categoria) {
-    var visibles = 0;
-    fotos.forEach(function (foto) {
-      var coincide = categoria === 'todas' || foto.getAttribute('data-categoria') === categoria;
-      foto.classList.toggle('oculta', !coincide);
-      if (coincide) visibles += 1;
-    });
-    if (contador) contador.textContent = plural(visibles);
-    actualizarDescripcionGaleria(categoria);
-  }
-
-  botonesFiltro.forEach(function (boton) {
-    boton.addEventListener('click', function () {
-      botonesFiltro.forEach(function (otro) {
-        otro.setAttribute('aria-pressed', 'false');
-      });
-      boton.setAttribute('aria-pressed', 'true');
-      aplicarFiltro(boton.getAttribute('data-categoria'));
-    });
-  });
-
-  // Entrada inicial de la descripción: mismo efecto de palabra por
-  // palabra que al cambiar de filtro, para que no aparezca "muerta"
-  // apenas se carga la página.
-  actualizarDescripcionGaleria('todas');
-
-  /* ------------------------------------------------------------
-     7. LIGHTBOX
-     ------------------------------------------------------------ */
-  var lightbox = document.querySelector('.lightbox');
-  if (lightbox && fotos.length) {
-    var lightboxImg = lightbox.querySelector('img');
-    var lightboxCuenta = lightbox.querySelector('.lightbox__cuenta');
-    var botonCerrar = lightbox.querySelector('.lightbox__cerrar');
-    var botonAnt = lightbox.querySelector('.lightbox__ant');
-    var botonSig = lightbox.querySelector('.lightbox__sig');
-
-    var indice = 0;
-    var ultimoFoco = null;
-
-    function mostrarFoto(i) {
-      indice = (i + fotos.length) % fotos.length;
-      var foto = fotos[indice];
-      var fotoImg = foto.querySelector('img');
-      lightboxImg.src = fotoImg.src;
-      lightboxImg.alt = fotoImg.alt;
-      if (lightboxCuenta) {
-        lightboxCuenta.textContent = (indice + 1) + ' / ' + fotos.length;
-      }
-    }
-
-    function abrirLightbox(i) {
-      ultimoFoco = document.activeElement;
-      mostrarFoto(i);
-      lightbox.classList.add('abierto');
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      botonCerrar.focus();
-    }
-
-    function cerrarLightbox() {
-      lightbox.classList.remove('abierto');
-      lightbox.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      if (ultimoFoco) ultimoFoco.focus();
-    }
-
-    fotos.forEach(function (foto, i) {
-      foto.addEventListener('click', function () { abrirLightbox(i); });
-    });
-
-    botonCerrar.addEventListener('click', cerrarLightbox);
-    botonAnt.addEventListener('click', function () { mostrarFoto(indice - 1); });
-    botonSig.addEventListener('click', function () { mostrarFoto(indice + 1); });
-
-    lightbox.addEventListener('click', function (evento) {
-      if (evento.target === lightbox) cerrarLightbox();
-    });
-
-    document.addEventListener('keydown', function (evento) {
-      if (!lightbox.classList.contains('abierto')) return;
-      if (evento.key === 'Escape') cerrarLightbox();
-      if (evento.key === 'ArrowLeft') mostrarFoto(indice - 1);
-      if (evento.key === 'ArrowRight') mostrarFoto(indice + 1);
-    });
-  }
 
   /* ------------------------------------------------------------
      8. FORMULARIO — validación + envío por WhatsApp
@@ -582,6 +452,100 @@
       }
     }
 
+    /* ------------------------------------------------------------
+       REVELADO POR SCROLL — ScrollTrigger.batch
+       Reemplaza a los componentes de React (FadeContent,
+       AnimatedContent, ScrollReveal). El HTML ya viene completo
+       desde el servidor; esto solo le agrega la entrada.
+
+       batch() agrupa los elementos que entran juntos a la pantalla
+       y los escalona entre sí. Con un ScrollTrigger por elemento
+       cada uno entraría por su cuenta y se pierde el ritmo.
+       ------------------------------------------------------------ */
+    function iniciarRevelado(gsap) {
+      var elementos = document.querySelectorAll('[data-entrada]');
+      if (!elementos.length) return;
+
+      if (reducir) {
+        gsap.set(elementos, { opacity: 1, y: 0, filter: 'none' });
+        return;
+      }
+
+      var variantes = {
+        subir:   { y: 40, opacity: 0 },
+        escala:  { scale: 0.92, opacity: 0 },
+        difuso:  { filter: 'blur(10px)', opacity: 0 },
+        aparecer:{ opacity: 0 }
+      };
+
+      // Agrupados por variante: batch escalona los de un mismo lote,
+      // y no tendría sentido mezclar los que entran de formas distintas.
+      Object.keys(variantes).forEach(function (nombre) {
+        var deEsteTipo = document.querySelectorAll('[data-entrada="' + nombre + '"]');
+        if (!deEsteTipo.length) return;
+
+        gsap.set(deEsteTipo, variantes[nombre]);
+
+        window.ScrollTrigger.batch(deEsteTipo, {
+          start: 'top 88%',
+          once: true,
+          onEnter: function (lote) {
+            gsap.to(lote, {
+              opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+              duration: 0.7, ease: 'expo.out', stagger: 0.08, overwrite: true
+            });
+          }
+        });
+      });
+
+      // Red de seguridad, igual que la del motor de revelado de arriba:
+      // si algún trigger no llega a dispararse, nadie se queda mirando
+      // un hueco en blanco.
+      setTimeout(function () {
+        gsap.to(elementos, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.3, overwrite: 'auto' });
+      }, 5000);
+    }
+
+    /* ------------------------------------------------------------
+       HEADER QUE SE ESCONDE
+       Baja del todo al hacer scroll hacia abajo y vuelve al subir,
+       para dejarle la pantalla al contenido. Se queda quieto arriba
+       de todo y mientras el menú móvil está abierto.
+       ------------------------------------------------------------ */
+    function iniciarHeaderQueSeEsconde(gsap) {
+      var barra = document.querySelector('.header');
+      if (!barra || reducir) return;
+
+      var ultimo = window.scrollY;
+      var escondido = false;
+      var UMBRAL = 10;    // ruido de scroll que no cuenta como intención
+      var DESDE = 200;    // arriba de todo el header siempre se ve
+
+      var mover = function (ocultar) {
+        if (ocultar === escondido) return;
+        escondido = ocultar;
+        gsap.to(barra, {
+          yPercent: ocultar ? -100 : 0,
+          duration: 0.45,
+          ease: 'power2.inOut'
+        });
+      };
+
+      window.addEventListener('scroll', function () {
+        var y = window.scrollY;
+        var delta = y - ultimo;
+
+        // El menú abierto ocupa toda la pantalla: esconder el header
+        // ahí se llevaría el botón de cerrar.
+        var menuAbierto = document.querySelector('.menu-movil.abierto');
+
+        if (Math.abs(delta) > UMBRAL && !menuAbierto) {
+          mover(delta > 0 && y > DESDE);
+        }
+        ultimo = y;
+      }, { passive: true });
+    }
+
     function iniciarMovimiento() {
       var gsap = window.gsap;
       if (!gsap || !window.ScrollTrigger) return;
@@ -589,8 +553,13 @@
 
       // El hero corre en TODAS las pantallas (la portada la lleva React
       // ahora — ver el corte data-anim="react" en iniciarEntradaHero).
+      if (window.SplitText) gsap.registerPlugin(window.SplitText);
+
       iniciarEntradaHero(gsap);
       iniciarTitulosSeccion(gsap);
+      iniciarRevelado(gsap);
+      iniciarHeaderQueSeEsconde(gsap);
+      if (window.iniciarComponentes) window.iniciarComponentes(gsap);
 
       // La entrada de las fotos ahora la hace [data-revelar="zoom"] (motor
       // base, funciona en todas las pantallas). Aquí solo queda el
@@ -703,13 +672,18 @@
     var yaSePidioGsap = false;
     var pedirGsapSiCorresponde = function () {
       if (yaSePidioGsap) return;
-      if (!esPunteroFino() || !esPantallaAncha()) return;
+      // Sin filtro de pantalla: antes GSAP era solo para adornos de
+      // escritorio, pero ahora el carrusel y la galería lo necesitan
+      // también en celular. A cambio se sacó React (194 KB), así que
+      // el celular igual descarga bastante menos que antes.
       yaSePidioGsap = true;
       Promise.all([
         cargarScript('/js/vendor/gsap.min.js'),
-        cargarScript('/js/vendor/ScrollTrigger.min.js')
+        cargarScript('/js/vendor/ScrollTrigger.min.js'),
+        cargarScript('/js/vendor/SplitText.min.js')
       ]).then(iniciarMovimiento).catch(function () {
-        // Sin GSAP el sitio sigue completo: nada que hacer.
+        // Sin GSAP el sitio sigue completo: el contenido ya está en el
+        // HTML y los reveals tienen su red de seguridad en CSS.
       });
     };
     window.addEventListener('load', function () {

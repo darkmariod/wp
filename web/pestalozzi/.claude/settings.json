@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(sanity.config.ts)",
+      "Write(sanity.config.ts)",
+      "Edit(sanity.cli.ts)",
+      "Write(sanity.cli.ts)",
+      "Edit(src/sanity/**)",
+      "Write(src/sanity/**)",
+      "Edit(.env)",
+      "Write(.env)",
+      "Edit(.env.*)",
+      "Write(.env.*)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Bash(rm:sanity.config.ts)",
+      "Bash(rm:sanity.cli.ts)"
+    ]
+  }
+}

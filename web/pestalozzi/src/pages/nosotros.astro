@@ -1,8 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
-import BlurText from '../components/reactbits/BlurText.jsx';
-import AnimatedContent from '../components/reactbits/AnimatedContent.jsx';
 import { traerConfiguracion, traerNosotros } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -20,12 +18,12 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
   current="nosotros"
   preloadImage={urlImagen(p.portada.foto, 720)}
 >
-  <section class="hero hero--interior" data-anim="react-titulo">
+  <section class="hero hero--interior">
     <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <p class="hero__migas"><a href="/">Inicio</a> / Nosotros</p>
-      <h1 class="hero__titulo"><BlurText text={p.portada.titulo} animateBy="words" direction="top" client:visible /></h1>
+      <h1 class="hero__titulo">{p.portada.titulo}</h1>
       <p class="hero__bajada">{p.portada.bajada}</p>
     </div>
   </section>
@@ -55,13 +53,11 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 
       <div class="pilares">
         {p.filosofiaPilares.map((pilar: any, i: number) => (
-          <AnimatedContent distance={40} duration={0.6} delay={i * 0.12} threshold={0.2} client:visible>
-            <article class="pilar-tarjeta">
-              <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{pilar.titulo}</h3>
-              <p>{pilar.texto}</p>
-            </article>
-          </AnimatedContent>
+          <article class="pilar-tarjeta" data-entrada="subir">
+            <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{pilar.titulo}</h3>
+            <p>{pilar.texto}</p>
+          </article>
         ))}
       </div>
     </div>

@@ -1,12 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
-import SplitText from '../components/reactbits/SplitText.jsx';
-import FadeContent from '../components/reactbits/FadeContent.jsx';
-import AnimatedContent from '../components/reactbits/AnimatedContent.jsx';
-import ScrollReveal from '../components/reactbits/ScrollReveal.jsx';
-import ProgramaTarjeta from '../components/reactbits/ProgramaTarjeta.jsx';
-import DepthCarousel from '../components/reactbits/DepthCarousel.jsx';
 import { traerConfiguracion, traerFotos, traerInicio } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -47,7 +41,7 @@ const fotosCarrusel = (
   conJsonLd
 >
   <!-- ============ PORTADA ============ -->
-  <section class="hero" data-anim="react">
+  <section class="hero">
     <img class="hero__foto" src={urlImagen(p.fotoPortada, 720)} alt={p.fotoPortada.alt} width="720" height="1280" fetchpriority="high">
     <video class="hero__video" autoplay muted loop playsinline preload="none" poster={urlImagen(p.fotoPortada, 720)} aria-hidden="true" tabindex="-1">
       <source src={videoEscritorio} media="(min-width: 1024px)">
@@ -56,39 +50,15 @@ const fotosCarrusel = (
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">
       <h1 class="hero__titulo">
-        <SplitText
-          text={p.tituloLinea1}
-          tag="span"
-          className="hero__titulo--texto"
-          splitType="words"
-          delay={40}
-          duration={0.7}
-          from={{ opacity: 0, y: 24 }}
-          to={{ opacity: 1, y: 0 }}
-          client:visible
-        />
+        <span class="hero__titulo--texto">{p.tituloLinea1}</span>
         <br />
-        <SplitText
-          text={p.tituloLinea2}
-          tag="span"
-          className="hero__titulo--texto hero__titulo--acento"
-          splitType="words"
-          delay={40}
-          duration={0.7}
-          from={{ opacity: 0, y: 24 }}
-          to={{ opacity: 1, y: 0 }}
-          client:visible
-        />
+        <span class="hero__titulo--texto hero__titulo--acento">{p.tituloLinea2}</span>
       </h1>
-      <FadeContent duration={600} delay={100} threshold={0.1} client:visible>
-        <p class="hero__bajada">{p.bajada}</p>
-      </FadeContent>
-      <FadeContent duration={600} delay={250} threshold={0.1} client:visible>
-        <div class="hero__acciones">
-          <a href="/contacto" class="btn btn--primario">Agenda tu visita</a>
-          <a href="/nosotros" class="enlace-flecha">Conoce la propuesta</a>
-        </div>
-      </FadeContent>
+      <p class="hero__bajada" data-entrada="aparecer">{p.bajada}</p>
+      <div class="hero__acciones" data-entrada="aparecer">
+        <a href="/contacto" class="btn btn--primario">Agenda tu visita</a>
+        <a href="/nosotros" class="enlace-flecha">Conoce la propuesta</a>
+      </div>
     </div>
     <a href="#propuesta" class="bajar" aria-label="Ir al contenido">
       <span>Desliza</span>
@@ -104,13 +74,11 @@ const fotosCarrusel = (
     <section class="destacados-franja">
       <div class="contenedor">
         <ul class="destacados">
-          {p.destacados.map((d: any, i: number) => (
-            <AnimatedContent distance={24} duration={0.5} delay={i * 0.08} threshold={0.15} client:visible>
-              <li class="destacado">
-                <h3>{d.titulo}</h3>
-                <p>{d.texto}</p>
-              </li>
-            </AnimatedContent>
+          {p.destacados.map((d: any) => (
+            <li class="destacado" data-entrada="subir">
+              <h3>{d.titulo}</h3>
+              <p>{d.texto}</p>
+            </li>
           ))}
         </ul>
       </div>
@@ -127,13 +95,11 @@ const fotosCarrusel = (
 
       <div class="pilares">
         {p.propuestaPilares.map((pilar: any, i: number) => (
-          <AnimatedContent distance={40} duration={0.6} delay={i * 0.12} threshold={0.2} client:visible>
-            <article class="pilar-tarjeta">
-              <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{pilar.titulo}</h3>
-              <p>{pilar.texto}</p>
-            </article>
-          </AnimatedContent>
+          <article class="pilar-tarjeta" data-entrada="subir">
+            <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{pilar.titulo}</h3>
+            <p>{pilar.texto}</p>
+          </article>
         ))}
       </div>
     </div>
@@ -157,26 +123,41 @@ const fotosCarrusel = (
           de color bajan debajo: llevan contenido real del CMS y enlazan
           a contacto, así que no se pierden.
 
-          client:load, no client:visible: el carrusel posiciona cada
-          tarjeta por JavaScript. Sin hidratar quedan las seis apiladas
-          en el centro, que se ve roto — no es "sin animar", es mal. */}
+          Lo mueve GSAP desde componentes.js. El HTML llega entero desde
+          el servidor: sin JavaScript se ve la primera foto en lugar de
+          un hueco. */}
       <div class="niveles-carrusel">
-        <DepthCarousel
-          items={fotosCarrusel}
-          cardWidth={300}
-          cardHeight={380}
-          depth={200}
-          spread={80}
-          tilt={20}
-          visibleCards={4}
-          falloff={0.18}
-          blur={5}
-          tint="#0B4A26"
-          autoplay
-          autoplayDelay={4000}
-          loop
-          client:load
-        />
+        <div class="carrusel" data-carrusel role="group" aria-roledescription="carrusel"
+             aria-label="Fotografías del colegio" tabindex="0">
+          <div class="carrusel__pista">
+            {fotosCarrusel.map((f: any, i: number) => (
+              <div class="carrusel__tarjeta" aria-roledescription="diapositiva"
+                   aria-label={`${i + 1} de ${fotosCarrusel.length}`} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <img src={f.image} alt={f.alt} width={f.width} height={f.height}
+                     loading={i < 2 ? undefined : 'lazy'} draggable="false">
+                <span class="carrusel__tinte" aria-hidden="true"></span>
+              </div>
+            ))}
+          </div>
+
+          <button type="button" class="carrusel__flecha carrusel__flecha--ant" aria-label="Foto anterior">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button type="button" class="carrusel__flecha carrusel__flecha--sig" aria-label="Foto siguiente">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="carrusel__puntos" role="tablist" aria-label="Fotos">
+            {fotosCarrusel.map((_: any, i: number) => (
+              <button type="button" role="tab" class="carrusel__punto"
+                      aria-selected={i === 0 ? 'true' : 'false'} aria-label={`Ir a la foto ${i + 1}`}></button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div class="niveles-bloques">
@@ -207,8 +188,17 @@ const fotosCarrusel = (
         </div>
 
         <div class="programas">
-          {p.programas.map((prog: any, i: number) => (
-            <ProgramaTarjeta programa={prog} indice={i} client:visible />
+          {p.programas.map((prog: any) => (
+            <article class="programa" data-entrada="subir" data-foco>
+              <span class="programa__edades">{prog.edades}</span>
+              <h3>{prog.nombre}</h3>
+              <p>{prog.descripcion}</p>
+              {prog.incluye?.length > 0 && (
+                <ul class="programa__incluye">
+                  {prog.incluye.map((punto: string) => <li>{punto}</li>)}
+                </ul>
+              )}
+            </article>
           ))}
         </div>
       </div>
@@ -223,14 +213,12 @@ const fotosCarrusel = (
           <h2>{p.practicoTitulo}</h2>
         </div>
         <dl class="datos-practicos">
-          {p.practicoDatos.map((dato: any, i: number) => (
-            <AnimatedContent distance={30} duration={0.5} delay={i * 0.08} threshold={0.15} client:visible>
-              <div class="dato-practico">
-                <dt>{dato.etiqueta}</dt>
-                <dd>{dato.valor}</dd>
-                {dato.detalle && <p class="dato-practico__detalle">{dato.detalle}</p>}
-              </div>
-            </AnimatedContent>
+          {p.practicoDatos.map((dato: any) => (
+            <div class="dato-practico" data-entrada="subir">
+              <dt>{dato.etiqueta}</dt>
+              <dd>{dato.valor}</dd>
+              {dato.detalle && <p class="dato-practico__detalle">{dato.detalle}</p>}
+            </div>
           ))}
         </dl>
       </div>
@@ -256,7 +244,7 @@ const fotosCarrusel = (
       </div>
       <div class="partido__texto" data-revelar="der">
         <span class="eyebrow">{p.porQueEyebrow}</span>
-        <ScrollReveal text={p.porQueTitulo} containerClassName="porque__titulo" client:visible />
+        <h2 class="porque__titulo" data-entrada="difuso">{p.porQueTitulo}</h2>
         {p.porQueParrafos.map((parrafo: string) => <p>{parrafo}</p>)}
         <p class="mt-8">
           <a href="/nosotros" class="btn btn--secundario">Conócenos</a>

@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
-import GaleriaAcordeon from '../components/reactbits/GaleriaAcordeon.jsx';
 import { traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 
@@ -45,10 +44,43 @@ const fotosAcordeon = fotos.map((f: any) => ({
   <section class="seccion seccion--clara">
     <div class="contenedor">
 
-      {/* client:load, no client:visible: el acordeón mide el ancho real
-          en el navegador para repartir los paneles, así que sin
-          hidratación inmediata la sección queda vacía. */}
-      <GaleriaAcordeon fotos={fotosAcordeon} descripcion={p.descTodas} client:load />
+      <p class="galeria-desc">{p.descTodas}</p>
+
+      <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
+        {fotosAcordeon.length} fotografías<span class="galeria-pista"> · tocá una foto para ampliarla</span>
+      </p>
+
+      {/* El acordeón lo mueve GSAP desde componentes.js. El HTML llega
+          completo desde el servidor: sin JavaScript se ven igual las
+          seis fotos, solo que sin la expansión. */}
+      <div class="acordeon" data-acordeon>
+        {fotosAcordeon.map((f: any) => (
+          <div class="acordeon__panel" role="button" tabindex="0"
+               data-grande={f.grande} aria-label={`Ampliar: ${f.alt}`}>
+            <span class="acordeon__marco">
+              <span class="acordeon__medio">
+                <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" draggable="false">
+              </span>
+              <span class="acordeon__velo" aria-hidden="true"></span>
+            </span>
+            <span class="acordeon__etiqueta" aria-hidden="true">
+              <span class="acordeon__barra"></span>
+              <span class="acordeon__texto">{f.alt}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div class="lightbox" role="dialog" aria-modal="true" aria-label="Fotografía ampliada" aria-hidden="true">
+        <button class="lightbox__btn lightbox__cerrar" aria-label="Cerrar">&times;</button>
+        <button class="lightbox__btn lightbox__ant" aria-label="Anterior">&#8249;</button>
+        {/* Vacía hasta que se abre: la llena componentes.js con la
+            foto elegida. aria-hidden para que el lector no anuncie una
+            imagen que todavía no existe. */}
+        <img src="" alt="" aria-hidden="true">
+        <button class="lightbox__btn lightbox__sig" aria-label="Siguiente">&#8250;</button>
+        <p class="lightbox__cuenta"></p>
+      </div>
 
     </div>
   </section>
