@@ -1,0 +1,31 @@
+# ═══════════════════════════════════════════════════════════════
+#  CONTENIDO DEL SITIO — Unidad Educativa Pestalozzi
+#  Llená lo que te dé el colegio y guardá. Después: ./cargar.sh
+#  Lo que dejes vacío no se toca ni se publica.
+# ═══════════════════════════════════════════════════════════════
+
+
+# ─── NIVELES ───────────────────────────────────────────────────
+# Formato:  Nombre | Edades | Descripción | punto; punto; punto
+# Los "puntos" son lo concreto que incluye ese nivel.
+
+NIVEL: Inicial 1 | 3 a 4 años | | 
+NIVEL: Inicial 2 | 4 a 5 años | | 
+NIVEL: Primero de Básica | 5 a 6 años | | 
+NIVEL: Segundo de Básica | 6 a 7 años | | 
+
+
+# ─── DATOS PRÁCTICOS ───────────────────────────────────────────
+# Formato:  Etiqueta | Valor | Aclaración (opcional)
+
+DATO: Horario de clases |  | 
+DATO: Atención en secretaría |  | 
+DATO: Cupos por aula |  | 
+DATO: Matrículas |  | 
+
+
+# ─── TÍTULOS DE ESAS SECCIONES ─────────────────────────────────
+
+TITULO_NIVELES: Qué ofrece cada nivel
+TEXTO_NIVELES: 
+TITULO_DATOS: Horarios y admisiones
