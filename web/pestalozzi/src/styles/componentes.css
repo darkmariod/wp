@@ -55,7 +55,11 @@
 .header {
   position: fixed;
   inset: 0 0 auto 0;
-  z-index: 100;
+  /* Por encima de la cortina del menú (110). Cuando era un panel
+     lateral esto no importaba, porque el botón quedaba a la vista;
+     con la cortina a pantalla completa, un z-index menor lo tapa y
+     el menú no se puede cerrar. */
+  z-index: 115;
   padding-block: var(--space-4);
   background: rgba(250, 250, 247, .82);
   backdrop-filter: blur(12px);
@@ -161,33 +165,121 @@
 .hamburguesa[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .hamburguesa[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Panel móvil */
+/* Con la cortina abierta el header queda sobre fondo verde: las
+   barras de la hamburguesa pasan a blanco para seguir viéndose. */
+body:has(.menu-movil.abierto) .header {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border-bottom-color: transparent;
+}
+body:has(.menu-movil.abierto) .hamburguesa span { background: #fff; }
+
+/* El logo verde sobre la cortina verde da 1,41:1: no se ve. Se cambia
+   por la versión blanca, que da 10,39:1. */
+.header__logo-blanco { display: none; }
+body:has(.menu-movil.abierto) .header__logo-color { display: none; }
+body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
+
+/* Menú móvil — cortina a pantalla completa
+   Antes era un panel lateral de 380px. Ahora la cortina cubre toda la
+   pantalla y los enlaces entran escalonados desde abajo.
+
+   La animación es CSS puro, no GSAP, y eso es a propósito: GSAP solo se
+   carga desde 1024px (ver esPantallaAncha en main.js) y este menú vive
+   justamente por debajo de ese ancho. Con transition-delay se consigue
+   el mismo escalonado sin depender de que cargue una librería. */
 .menu-movil {
   position: fixed;
-  inset: 0 0 0 auto;
-  width: min(88%, 380px);
+  inset: 0;
+  width: 100%;
   z-index: 110;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
   padding: var(--space-24) var(--space-8) var(--space-8);
   background: var(--green-900);
-  transform: translateX(100%);
-  transition: transform .35s var(--ease-out);
   overflow-y: auto;
+
+  /* La cortina se despliega desde arriba en vez de deslizarse de lado. */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .5s var(--ease-out), visibility .5s;
+  visibility: hidden;
 }
-.menu-movil.abierto { transform: translateX(0); }
+.menu-movil.abierto {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+}
+
 .menu-movil a {
+  position: relative;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
   font-weight: 600;
   color: #fff;
   text-decoration: none;
   padding-block: var(--space-3);
   border-bottom: 1px solid rgba(255, 255, 255, .15);
+
+  /* Cada enlace entra desde abajo. El retraso lo pone la regla de
+     abajo, uno por uno. */
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.menu-movil.abierto a {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* El escalonado: cada elemento arranca 60ms después del anterior, ya
+   empezada la cortina (de ahí los 250ms de base). Al cerrar no hay
+   retraso — se van todos juntos, que es lo que se espera.
+
+   Los enlaces de sección van primero (dentro de __enlaces) y después
+   el aula virtual, el botón y los datos de contacto, que son hijos
+   directos. Sin separar los dos grupos, :nth-of-type los cuenta por
+   separado y los de abajo entrarían ANTES que los de arriba. */
+.menu-movil.abierto .menu-movil__enlaces a:nth-of-type(1) { transition-delay: .25s; }
+.menu-movil.abierto .menu-movil__enlaces a:nth-of-type(2) { transition-delay: .31s; }
+.menu-movil.abierto .menu-movil__enlaces a:nth-of-type(3) { transition-delay: .37s; }
+.menu-movil.abierto .menu-movil__enlaces a:nth-of-type(4) { transition-delay: .43s; }
+
+.menu-movil.abierto > a:nth-of-type(1) { transition-delay: .49s; }
+.menu-movil.abierto > a:nth-of-type(2) { transition-delay: .55s; }
+.menu-movil.abierto .menu-movil__datos { transition-delay: .61s; }
+
+/* Numeración editorial al costado de cada enlace de navegación. */
+.menu-movil__enlaces { counter-reset: enlace; display: flex; flex-direction: column; }
+.menu-movil__enlaces a::before {
+  counter-increment: enlace;
+  content: '0' counter(enlace);
+  margin-right: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  color: var(--accent-100);
+  vertical-align: super;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-movil,
+  .menu-movil a { transition-duration: .01ms; }
+  .menu-movil.abierto a { transition-delay: 0s; }
 }
 .menu-movil .btn { margin-top: var(--space-4); }
-.menu-movil__datos { margin-top: auto; color: var(--green-300); font-size: var(--fs-small); }
+.menu-movil__datos {
+  margin-top: auto;
+  color: var(--green-300);
+  font-size: var(--fs-small);
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .4s var(--ease-out), transform .4s var(--ease-out);
+}
+.menu-movil.abierto .menu-movil__datos { opacity: 1; transform: translateY(0); }
+/* Estos ya entran con su contenedor: sin esto se animarían dos veces. */
+.menu-movil__datos a { opacity: 1; transform: none; transition: none; }
 .menu-movil__datos a { font-size: var(--fs-small); font-family: var(--font-body); border: 0; padding: 0; }
 
 .velo {

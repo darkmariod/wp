@@ -30,7 +30,12 @@ const aula = config.moodleUrl
 <header class="header">
   <div class="contenedor header__inner">
     <a href="/" class="header__logo" aria-label="Pestalozzi Ambato, inicio">
-      <img src="/img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+      {/* Dos versiones: el logo verde sobre el header claro, y el blanco
+          cuando la cortina del menú lo deja sobre fondo verde. El verde
+          sobre verde da 1,41:1 — no se ve. El CSS alterna cuál se
+          muestra; el alt va solo en uno para no repetirlo al lector. */}
+      <img class="header__logo-color" src="/img/marca/logo.png" alt="Unidad Educativa Pestalozzi Ambato" width="287" height="268">
+      <img class="header__logo-blanco" src="/img/marca/logo-blanco.png" alt="" width="287" height="268" aria-hidden="true">
     </a>
     <nav class="nav" aria-label="Navegación principal">
       {enlaces.map((e) => (
@@ -64,7 +69,11 @@ const aula = config.moodleUrl
 
 <div class="velo"></div>
 <nav class="menu-movil" id="menu-movil" aria-label="Navegación móvil">
-  {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+  {/* Agrupados aparte para que la numeración 01, 02… cuente solo los
+      enlaces de sección, sin incluir el aula virtual ni el botón. */}
+  <div class="menu-movil__enlaces">
+    {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+  </div>
   {aula && <a href={aula.url} target="_blank" rel="noopener">{aula.texto} &nearr;</a>}
   {ctaContacto ? (
     <a href="/contacto" class="btn btn--acento">{config.textoBotonAdmisiones}</a>

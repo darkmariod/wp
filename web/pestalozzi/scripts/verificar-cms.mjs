@@ -43,9 +43,13 @@ console.log('\n\x1b[1m4. Imágenes: todas con texto alternativo\x1b[0m');
 for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros', nosotros]]) {
   const imgs = html.match(/<img[^>]*>/g) || [];
   const sinAlt = imgs.filter(i => !/alt="/.test(i));
-  const altVacio = imgs.filter(i => /alt=""/.test(i));
+  // Un alt vacío está BIEN si la imagen es decorativa a propósito y se
+  // marca aria-hidden: por ejemplo el logo blanco del menú, que duplica
+  // al de color. Sin esa distinción, la prueba obliga a describir dos
+  // veces la misma imagen y un lector de pantalla la anuncia repetida.
+  const altVacio = imgs.filter(i => /alt=""/.test(i) && !/aria-hidden="true"/.test(i));
   check(`${nom}: ${imgs.length} imágenes, todas con alt`, sinAlt.length === 0, `(${sinAlt.length} sin alt)`);
-  check(`${nom}: ningún alt vacío`, altVacio.length === 0, `(${altVacio.length} vacíos)`);
+  check(`${nom}: ningún alt vacío sin marcar como decorativa`, altVacio.length === 0, `(${altVacio.length} vacíos)`);
 }
 
 console.log('\n\x1b[1m5. El carrusel y el acordeón reciben fotos\x1b[0m');
