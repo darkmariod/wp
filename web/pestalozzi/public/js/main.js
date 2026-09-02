@@ -486,21 +486,51 @@
 
         gsap.set(deEsteTipo, variantes[nombre]);
 
-        window.ScrollTrigger.batch(deEsteTipo, {
-          start: 'top 88%',
-          once: true,
-          onEnter: function (lote) {
-            gsap.to(lote, {
-              opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
-              duration: 0.7, ease: 'expo.out', stagger: 0.08, overwrite: true
-            });
-          }
+        var revelar = function (lote, retraso) {
+          gsap.to(lote, {
+            opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+            duration: 0.7, ease: 'expo.out', stagger: 0.08,
+            delay: retraso || 0, overwrite: true
+          });
+        };
+
+        // Los que YA están en pantalla al cargar se revelan solos, sin
+        // esperar a un ScrollTrigger.
+        //
+        // Esto no es una precaución de más: onEnter dispara cuando un
+        // elemento ENTRA al viewport, y los del hero ya entraron antes
+        // de que exista el trigger. Sin esto, la bajada y los botones
+        // de la portada quedaban invisibles para siempre — que fue
+        // exactamente lo que pasó en producción.
+        var enPantalla = [];
+        var fueraDePantalla = [];
+        Array.prototype.forEach.call(deEsteTipo, function (el) {
+          var arriba = el.getBoundingClientRect().top;
+          if (arriba < window.innerHeight * 0.88) enPantalla.push(el);
+          else fueraDePantalla.push(el);
         });
+
+        if (enPantalla.length) revelar(enPantalla, 0.15);
+
+        if (fueraDePantalla.length) {
+          window.ScrollTrigger.batch(fueraDePantalla, {
+            start: 'top 88%',
+            once: true,
+            onEnter: function (lote) { revelar(lote); }
+          });
+        }
       });
 
       // Red de seguridad, igual que la del motor de revelado de arriba:
       // si algún trigger no llega a dispararse, nadie se queda mirando
       // un hueco en blanco.
+      // Las fotos y el video cambian la altura de la página al
+      // terminar de cargar; sin recalcular, los triggers quedan
+      // apuntando a posiciones viejas.
+      window.addEventListener('load', function () {
+        window.ScrollTrigger.refresh();
+      });
+
       setTimeout(function () {
         gsap.to(elementos, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.3, overwrite: 'auto' });
       }, 5000);
