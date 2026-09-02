@@ -139,6 +139,15 @@ export const paginaInicio = defineType({
       group: 'niveles',
       validation: (r) => r.required(),
     }),
+    defineField({
+      name: 'nivelesCarrusel',
+      title: 'Fotos del carrusel',
+      type: 'array',
+      of: [{ type: 'imagenConAlt' }],
+      group: 'niveles',
+      description:
+        'Las fotos que giran en el carrusel de esta sección. Conviene de 4 en adelante: con menos no se nota la profundidad. Si se deja vacío, usa las de la galería.',
+    }),
 
     // --- Lo que nos distingue ---
     // Va apenas debajo de la portada: lo primero que ve un padre después

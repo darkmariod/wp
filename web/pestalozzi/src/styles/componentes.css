@@ -528,6 +528,31 @@
 .pilares h3 { margin-bottom: var(--space-3); }
 .pilares p { color: var(--ink-600); }
 /* ============================================================
+   NIVELES — carrusel de profundidad
+   El carrusel usa position:absolute adentro, así que el contenedor
+   necesita alto explícito o colapsa a cero.
+   ============================================================ */
+.niveles-carrusel {
+  position: relative;
+  height: 460px;
+  margin-top: var(--space-12);
+}
+@media (max-width: 640px) {
+  .niveles-carrusel { height: 380px; }
+}
+
+/* Los dos bloques de color, que antes eran parte del mosaico. */
+.niveles-bloques {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: var(--space-10);
+}
+@media (min-width: 720px) {
+  .niveles-bloques { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ============================================================
    LO QUE NOS DISTINGUE
    La fila de razones debajo de la portada. Fondo verde profundo para
    que corte con la foto del hero de arriba y la sección clara de
