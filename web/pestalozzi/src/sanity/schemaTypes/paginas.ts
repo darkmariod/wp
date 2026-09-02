@@ -56,6 +56,23 @@ export const paginaInicio = defineType({
     }),
 
     defineField({
+      name: 'videoEscritorio',
+      title: 'Video de portada — computadora',
+      type: 'videoFondo',
+      group: 'portada',
+      description:
+        'Opcional. Se reproduce detrás del título en pantallas grandes. Si se deja vacío queda la foto de portada, que también funciona bien. Máximo 8 MB.',
+    }),
+    defineField({
+      name: 'videoMovil',
+      title: 'Video de portada — celular',
+      type: 'videoFondo',
+      group: 'portada',
+      description:
+        'Opcional. Conviene uno vertical y más liviano que el de computadora. Si se deja vacío se usa el de computadora.',
+    }),
+
+    defineField({
       name: 'propuestaTitulo',
       title: 'Título',
       type: 'string',

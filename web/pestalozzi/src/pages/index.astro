@@ -16,6 +16,12 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 
 const medidasTarjeta = (img: any) => dimensiones(img, 640);
 
+// Videos de portada: los del CMS mandan; si el colegio no subió ninguno
+// quedan los que ya venían con el sitio. Así nunca se queda sin video
+// por un campo vacío, y el colegio puede cambiarlo sin tocar código.
+const videoEscritorio = p.videoEscritorio || '/img/hero/hero-escritorio.mp4';
+const videoMovil = p.videoMovil || p.videoEscritorio || '/img/hero/hero-movil.mp4';
+
 // El carrusel necesita 4 fotos o más para que se note la profundidad, y
 // esta sección solo tiene dos. Si el colegio no cargó las suyas, se
 // usan las de la galería: son fotos reales del plantel, no relleno.
@@ -44,8 +50,8 @@ const fotosCarrusel = (
   <section class="hero" data-anim="react">
     <img class="hero__foto" src={urlImagen(p.fotoPortada, 720)} alt={p.fotoPortada.alt} width="720" height="1280" fetchpriority="high">
     <video class="hero__video" autoplay muted loop playsinline preload="none" poster={urlImagen(p.fotoPortada, 720)} aria-hidden="true" tabindex="-1">
-      <source src="/img/hero/hero-escritorio.mp4" media="(min-width: 1024px)">
-      <source src="/img/hero/hero-movil.mp4">
+      <source src={videoEscritorio} media="(min-width: 1024px)">
+      <source src={videoMovil}>
     </video>
     <div class="hero__velo"></div>
     <div class="contenedor hero__contenido">

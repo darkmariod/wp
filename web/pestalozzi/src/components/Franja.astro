@@ -9,7 +9,7 @@ const { franja, whatsapp } = Astro.props;
 ---
 <section class="franja">
   <div class="franja__marco">
-    <img class="franja__foto" src={urlImagen(franja.foto, 1600)} alt="" loading="lazy">
+    <img class="franja__foto" src={urlImagen(franja.foto, 1600)} alt={franja.foto.alt} loading="lazy">
   </div>
   <div class="franja__velo"></div>
   <div class="contenedor">

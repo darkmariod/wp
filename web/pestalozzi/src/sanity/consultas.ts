@@ -16,6 +16,8 @@ export async function traerInicio() {
   return sanityClient.fetch(`*[_type == "paginaInicio"][0]{
     tituloLinea1, tituloLinea2, bajada,
     fotoPortada ${CAMPOS_IMAGEN},
+    "videoEscritorio": videoEscritorio.asset->url,
+    "videoMovil": videoMovil.asset->url,
     propuestaTitulo, propuestaTexto, propuestaPilares,
     nivelesEyebrow, nivelesTitulo, nivelesTexto, nivelesChips,
     nivelesFotoIzquierda ${CAMPOS_IMAGEN},

@@ -104,6 +104,27 @@ export const datoPractico = defineType({
   },
 });
 
+// Video de fondo. El límite de peso NO es un capricho: el video de
+// portada se descarga entero antes de reproducirse, y muchas familias
+// entran con datos móviles. Los videos actuales pesan 1,2 MB; de 8 MB
+// para arriba la portada tarda tanto que se ve la foto fija todo el rato.
+export const videoFondo = defineType({
+  name: 'videoFondo',
+  title: 'Video de fondo',
+  type: 'file',
+  options: { accept: 'video/mp4,video/webm' },
+  validation: (r) =>
+    r.custom((valor: any) => {
+      const tam = valor?.asset?.size;
+      if (!tam) return true;              // todavía no subió nada
+      const mb = tam / (1024 * 1024);
+      if (mb > 8) {
+        return `El video pesa ${mb.toFixed(1)} MB. El máximo recomendado es 8 MB: más que eso y la portada tarda demasiado en celulares con datos.`;
+      }
+      return true;
+    }),
+});
+
 export const imagenConAlt = defineType({
   name: 'imagenConAlt',
   title: 'Imagen',
