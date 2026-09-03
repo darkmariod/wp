@@ -43,6 +43,37 @@
     }
   })();
 
+  /* ------------------------------------------------------------
+     IDIOMA
+     Este archivo es UNO SOLO y lo comparten /es y /en: no hay
+     versión "en inglés" de main.js. El idioma se lee del <html
+     lang="…"> que pone Layout.astro, y de ahí sale qué mensajes usar
+     para lo poco que este archivo compone por su cuenta (no viene del
+     CMS ni de la página): validaciones del formulario, aria-labels
+     que cambian de estado, el texto que arma el mensaje de WhatsApp.
+     ------------------------------------------------------------ */
+  var IDIOMA = (document.documentElement.getAttribute('lang') || 'es').indexOf('en') === 0 ? 'en' : 'es';
+  var T = {
+    es: {
+      abrirMenu: 'Abrir menú', cerrarMenu: 'Cerrar menú',
+      abrirOpciones: 'Abrir opciones de contacto', cerrarOpciones: 'Cerrar opciones de contacto',
+      campoObligatorio: 'Este campo es obligatorio.',
+      correoInvalido: 'Revisa el formato del correo.',
+      graciasSpam: 'Gracias por escribirnos. Te contactaremos pronto.',
+      graciasEnviado: 'Gracias por escribirnos. Te abrimos WhatsApp para terminar el envío.',
+      holaSoy: 'Hola, soy ', miCorreoEs: 'Mi correo es ', miTelefonoEs: 'Mi teléfono es ', meInteresa: 'Me interesa: ',
+    },
+    en: {
+      abrirMenu: 'Open menu', cerrarMenu: 'Close menu',
+      abrirOpciones: 'Open contact options', cerrarOpciones: 'Close contact options',
+      campoObligatorio: 'This field is required.',
+      correoInvalido: 'Check the email format.',
+      graciasSpam: 'Thanks for reaching out. We will contact you soon.',
+      graciasEnviado: 'Thanks for reaching out. Opening WhatsApp to finish sending.',
+      holaSoy: 'Hi, I am ', miCorreoEs: 'My email is ', miTelefonoEs: 'My phone is ', meInteresa: 'I am interested in: ',
+    },
+  }[IDIOMA];
+
   function revelarTodo() {
     document.querySelectorAll('[data-revelar]').forEach(function (el) {
       el.classList.add('visible');
@@ -99,7 +130,7 @@
   if (botonMenu && menu) {
     var cerrarMenu = function () {
       botonMenu.setAttribute('aria-expanded', 'false');
-      botonMenu.setAttribute('aria-label', 'Abrir menú');
+      botonMenu.setAttribute('aria-label', T.abrirMenu);
       menu.classList.remove('abierto');
       if (velo) velo.classList.remove('visible');
       document.body.style.overflow = '';
@@ -107,7 +138,7 @@
 
     var abrirMenu = function () {
       botonMenu.setAttribute('aria-expanded', 'true');
-      botonMenu.setAttribute('aria-label', 'Cerrar menú');
+      botonMenu.setAttribute('aria-label', T.cerrarMenu);
       menu.classList.add('abierto');
       if (velo) velo.classList.add('visible');
       document.body.style.overflow = 'hidden';
@@ -233,7 +264,7 @@
 
       var trampa = formulario.querySelector('input[name="sitio"]');
       if (trampa && trampa.value.trim() !== '') {
-        mostrarMensaje('exito', 'Gracias por escribirnos. Te contactaremos pronto.');
+        mostrarMensaje('exito', T.graciasSpam);
         formulario.reset();
         return;
       }
@@ -247,17 +278,17 @@
       var mensaje = formulario.elements.mensaje.value.trim();
 
       var lineas = [
-        'Hola, soy ' + nombre + '.',
-        correo ? 'Mi correo es ' + correo + '.' : '',
-        telefonoCampo ? 'Mi teléfono es ' + telefonoCampo + '.' : '',
-        nivel ? 'Me interesa: ' + nivel + '.' : '',
+        T.holaSoy + nombre + '.',
+        correo ? T.miCorreoEs + correo + '.' : '',
+        telefonoCampo ? T.miTelefonoEs + telefonoCampo + '.' : '',
+        nivel ? T.meInteresa + nivel + '.' : '',
         '',
         mensaje
       ];
       var texto = lineas.filter(Boolean).join('\n');
       var url = 'https://wa.me/' + TELEFONO_WHATSAPP + '?text=' + encodeURIComponent(texto);
 
-      mostrarMensaje('exito', 'Gracias por escribirnos. Te abrimos WhatsApp para terminar el envío.');
+      mostrarMensaje('exito', T.graciasEnviado);
       window.open(url, '_blank', 'noopener');
       formulario.reset();
     });
@@ -392,12 +423,13 @@
       }
       if (elementoTitulo && !soloTitulo) {
         if (!elementoTitulo.dataset.split) { dividirEnLetras(elementoTitulo); elementoTitulo.dataset.split = '1'; }
-        gsap.from(elementoTitulo.querySelectorAll('.letra'), {
-          opacity: 0,
-          duration: 0.01,
-          stagger: 0.032,
-          ease: 'none'
-        });
+        // fromTo y no from: from fija opacity:0 de inmediato y, si el tween
+        // no llega a correr (pestaña en segundo plano, dispositivo lento),
+        // la letra queda invisible para siempre. clearProps devuelve el
+        // control al CSS (opacity:1 por defecto) apenas termina.
+        gsap.fromTo(elementoTitulo.querySelectorAll('.letra'),
+          { opacity: 0 },
+          { opacity: 1, duration: 0.01, stagger: 0.032, ease: 'none', clearProps: 'opacity' });
       }
       if (document.querySelector('.hero__migas')) {
         gsap.fromTo('.hero__migas',
@@ -761,8 +793,7 @@
     var abrirFab = function (abierto) {
       fab.setAttribute('data-abierto', String(abierto));
       disparador.setAttribute('aria-expanded', String(abierto));
-      disparador.setAttribute('aria-label',
-        abierto ? 'Cerrar opciones de contacto' : 'Abrir opciones de contacto');
+      disparador.setAttribute('aria-label', abierto ? T.cerrarOpciones : T.abrirOpciones);
       // Cerradas no deben ser alcanzables con Tab ni por lectores de pantalla
       opciones.forEach(function (o) {
         o.setAttribute('tabindex', abierto ? '0' : '-1');

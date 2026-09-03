@@ -1,0 +1,78 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerVoluntariado } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+import { t, tArray, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ui = UI[locale];
+const uiV = ui.voluntariado;
+
+const p = await traerVoluntariado();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+// El mensaje va prellenado: quien escribe solo aprieta enviar, y el
+// colegio recibe consultas que se distinguen de las de admisiones.
+const whatsappVoluntariado =
+  `${whatsapp}?text=${encodeURIComponent(uiV.mensajeWhatsapp)}`;
+---
+<Layout
+  title={uiV.tituloPagina}
+  description={uiV.descripcionPagina}
+  ogTitle={uiV.tituloPagina}
+  ogDescription={t(p.portada.bajada, locale)}
+  ogImage={urlImagen(p.portada.foto, 1200)}
+  canonicalPath={urlIdioma('/voluntariado', locale)}
+  current="voluntariado"
+  preloadImage={urlImagen(p.portada.foto, 720)}
+  locale={locale}
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href={urlIdioma('/', locale)}>{ui.breadcrumbInicio}</a> / {ui.nav.voluntariado}</p>
+      <h1 class="hero__titulo">{t(p.portada.titulo, locale)}</h1>
+      <p class="hero__bajada">{t(p.portada.bajada, locale)}</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor voluntariado__grid">
+      <div class="voluntariado__texto">
+        <span class="eyebrow">{uiV.eyebrow}</span>
+        <h2 data-entrada="subir">{t(p.introTitulo, locale)}</h2>
+        {tArray(p.introParrafos, locale).map((parrafo: string) => <p>{parrafo}</p>)}
+
+        {p.requisitos?.length > 0 && (
+          <>
+            <h3 class="voluntariado__subtitulo">{t(p.requisitosTitulo, locale) || uiV.requisitosTituloPorDefecto}</h3>
+            <ul class="voluntariado__lista">
+              {tArray(p.requisitos, locale).map((req: string) => (
+                <li data-entrada="subir">{req}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <p class="mt-8">
+          <a href={whatsappVoluntariado} class="btn btn--primario" target="_blank" rel="noopener">
+            {t(p.textoBoton, locale) || uiV.botonPorDefecto}
+          </a>
+        </p>
+      </div>
+
+      {p.foto && (
+        <div class="voluntariado__foto" data-revelar="der">
+          <img src={urlImagen(p.foto, 640)} alt={p.foto.alt}
+               {...dimensiones(p.foto, 640)} loading="lazy">
+        </div>
+      )}
+    </div>
+  </section>
+
+  <Franja franja={p.franja} whatsapp={whatsapp} locale={locale} />
+</Layout>

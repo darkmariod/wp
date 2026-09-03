@@ -15,6 +15,15 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
+  // Español sin prefijo (pestalozziambato.com/nosotros), inglés bajo
+  // /en (pestalozziambato.com/en/nosotros). prefixDefaultLocale:false
+  // es lo que deja al español así, sin /es/ delante — es el idioma
+  // que ya estaba indexado en Google.
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: { prefixDefaultLocale: false },
+  },
   integrations: [
     react(),
     sanity({

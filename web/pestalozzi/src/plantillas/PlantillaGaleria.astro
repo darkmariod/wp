@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+import { t, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ui = UI[locale];
+const uiG = ui.galeria;
+
+const p = await traerGaleria();
+const fotos = await traerFotos();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+// El acordeon pide "image"; "grande" es la version para el visor. El
+// alt de la foto queda compartido entre los dos idiomas a propósito
+// (ver la nota en schemaTypes/objetos.ts) — no hace falta t() acá.
+const fotosAcordeon = fotos.map((f: any) => ({
+  id: f._id ?? f.imagen?.asset?._ref,
+  image: urlImagen(f.imagen, 900),
+  grande: urlImagen(f.imagen, 1600),
+  label: f.imagen.alt,
+  alt: f.imagen.alt,
+  ...dimensiones(f.imagen, 900),
+}));
+---
+<Layout
+  title={uiG.tituloPagina}
+  description={uiG.descripcionPagina}
+  ogTitle={uiG.tituloPagina}
+  ogDescription={t(p.portada.bajada, locale)}
+  ogImage={urlImagen(p.portada.foto, 1200)}
+  canonicalPath={urlIdioma('/galeria', locale)}
+  current="galeria"
+  preloadImage={urlImagen(p.portada.foto, 720)}
+  locale={locale}
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href={urlIdioma('/', locale)}>{ui.breadcrumbInicio}</a> / {ui.nav.galeria}</p>
+      <h1 class="hero__titulo">{t(p.portada.titulo, locale)}</h1>
+      <p class="hero__bajada">{t(p.portada.bajada, locale)}</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor">
+
+      <p class="galeria-desc">{t(p.descTodas, locale)}</p>
+
+      <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
+        {fotosAcordeon.length} {fotosAcordeon.length === 1 ? ui.fotografia : ui.fotografias}<span class="galeria-pista"> · {ui.tocaFotoAmpliar}</span>
+      </p>
+
+      {/* El acordeón lo mueve GSAP desde componentes.js. El HTML llega
+          completo desde el servidor: sin JavaScript se ven igual las
+          seis fotos, solo que sin la expansión. */}
+      <div class="acordeon" data-acordeon>
+        {fotosAcordeon.map((f: any) => (
+          <div class="acordeon__panel" role="button" tabindex="0"
+               data-grande={f.grande} aria-label={`${uiG.fotografiaAmpliada}: ${f.alt}`}>
+            <span class="acordeon__marco">
+              <span class="acordeon__medio">
+                <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" draggable="false">
+              </span>
+              <span class="acordeon__velo" aria-hidden="true"></span>
+            </span>
+            <span class="acordeon__etiqueta" aria-hidden="true">
+              <span class="acordeon__barra"></span>
+              <span class="acordeon__texto">{f.alt}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div class="lightbox" role="dialog" aria-modal="true" aria-label={uiG.fotografiaAmpliada} aria-hidden="true">
+        <button class="lightbox__btn lightbox__cerrar" aria-label={uiG.cerrar}>&times;</button>
+        <button class="lightbox__btn lightbox__ant" aria-label={uiG.anterior}>&#8249;</button>
+        {/* Vacía hasta que se abre: la llena componentes.js con la
+            foto elegida. aria-hidden para que el lector no anuncie una
+            imagen que todavía no existe. */}
+        <img src="" alt="" aria-hidden="true">
+        <button class="lightbox__btn lightbox__sig" aria-label={uiG.siguiente}>&#8250;</button>
+        <p class="lightbox__cuenta"></p>
+      </div>
+
+    </div>
+  </section>
+
+  <Franja franja={p.franja} whatsapp={whatsapp} locale={locale} />
+</Layout>

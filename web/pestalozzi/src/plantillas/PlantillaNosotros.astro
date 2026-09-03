@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerNosotros } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+import { t, tArray, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ui = UI[locale];
+const uiN = ui.nosotros;
+
+const p = await traerNosotros();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+---
+<Layout
+  title={uiN.tituloPagina}
+  description={uiN.descripcionPagina}
+  ogTitle={uiN.tituloPagina}
+  ogDescription={t(p.portada.bajada, locale)}
+  ogImage={urlImagen(p.portada.foto, 1200)}
+  canonicalPath={urlIdioma('/nosotros', locale)}
+  current="nosotros"
+  preloadImage={urlImagen(p.portada.foto, 720)}
+  locale={locale}
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href={urlIdioma('/', locale)}>{ui.breadcrumbInicio}</a> / {ui.nav.nosotros}</p>
+      <h1 class="hero__titulo">{t(p.portada.titulo, locale)}</h1>
+      <p class="hero__bajada">{t(p.portada.bajada, locale)}</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIÉNES SOMOS ============ -->
+  <section class="seccion seccion--clara">
+    <div class="contenedor partido partido--texto-primero">
+      <div class="partido__texto" data-revelar="izq">
+        <span class="eyebrow">{t(p.quienesEyebrow, locale)}</span>
+        <h2>{t(p.quienesTitulo, locale)}</h2>
+        {tArray(p.quienesParrafos, locale).map((parrafo: string) => <p>{parrafo}</p>)}
+      </div>
+      <div class="partido__foto" data-revelar="der" data-cortina="der">
+        <img src={urlImagen(p.quienesFoto, 640)} alt={p.quienesFoto.alt} {...dimensiones(p.quienesFoto, 640)} loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FILOSOFÍA ============ -->
+  <section class="seccion seccion--suave">
+    <div class="contenedor">
+      <div class="enc-seccion" data-revelar>
+        <span class="eyebrow">{t(p.filosofiaEyebrow, locale)}</span>
+        <h2>{t(p.filosofiaTitulo, locale)}</h2>
+        <p>{t(p.filosofiaTexto, locale)}</p>
+      </div>
+
+      <div class="pilares">
+        {p.filosofiaPilares.map((pilar: any, i: number) => (
+          <article class="pilar-tarjeta" data-entrada="subir">
+            <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{t(pilar.titulo, locale)}</h3>
+            <p>{t(pilar.texto, locale)}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Franja franja={p.franja} whatsapp={whatsapp} locale={locale}>
+    <a href={urlIdioma('/contacto', locale)} class="enlace-flecha">{ui.verDatosContacto}</a>
+  </Franja>
+</Layout>

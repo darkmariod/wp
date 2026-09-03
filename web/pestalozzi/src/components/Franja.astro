@@ -1,11 +1,15 @@
 ---
 import { urlImagen, type ImagenSanity } from '../sanity/imagen';
+import { t, type Locale } from '../sanity/i18n';
+
+type CampoLocalizado = { es?: string; en?: string };
 
 interface Props {
-  franja: { titulo: string; texto: string; textoBoton: string; foto: ImagenSanity };
+  franja: { titulo: CampoLocalizado; texto: CampoLocalizado; textoBoton: CampoLocalizado; foto: ImagenSanity };
   whatsapp: string;
+  locale?: Locale;
 }
-const { franja, whatsapp } = Astro.props;
+const { franja, whatsapp, locale = 'es' } = Astro.props;
 ---
 <section class="franja">
   <div class="franja__marco">
@@ -13,10 +17,10 @@ const { franja, whatsapp } = Astro.props;
   </div>
   <div class="franja__velo"></div>
   <div class="contenedor">
-    <h2>{franja.titulo}</h2>
-    <p>{franja.texto}</p>
+    <h2>{t(franja.titulo, locale)}</h2>
+    <p>{t(franja.texto, locale)}</p>
     <div class="franja__acciones">
-      <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">{franja.textoBoton}</a>
+      <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">{t(franja.textoBoton, locale)}</a>
       <slot />
     </div>
   </div>

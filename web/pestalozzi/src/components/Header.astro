@@ -2,19 +2,23 @@
 // current: 'inicio' | 'nosotros' | 'galeria' | 'voluntariado' | 'contacto'
 // ctaContacto: false en la página de Contacto — ahí el botón manda
 // directo a WhatsApp en vez de repetir el enlace a sí misma.
+import { t, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
 interface Props {
   current: 'inicio' | 'nosotros' | 'galeria' | 'voluntariado' | 'contacto';
   ctaContacto?: boolean;
   config: any;
+  locale?: Locale;
 }
-const { current, ctaContacto = true, config } = Astro.props;
+const { current, ctaContacto = true, config, locale = 'es' } = Astro.props;
+const ui = UI[locale];
 
 const enlaces = [
-  { id: 'inicio', href: '/', texto: 'Inicio' },
-  { id: 'nosotros', href: '/nosotros', texto: 'Nosotros' },
-  { id: 'galeria', href: '/galeria', texto: 'Galería' },
-  { id: 'voluntariado', href: '/voluntariado', texto: 'Voluntariado' },
-  { id: 'contacto', href: '/contacto', texto: 'Contacto' },
+  { id: 'inicio', href: urlIdioma('/', locale), texto: ui.nav.inicio },
+  { id: 'nosotros', href: urlIdioma('/nosotros', locale), texto: ui.nav.nosotros },
+  { id: 'galeria', href: urlIdioma('/galeria', locale), texto: ui.nav.galeria },
+  { id: 'voluntariado', href: urlIdioma('/voluntariado', locale), texto: ui.nav.voluntariado },
+  { id: 'contacto', href: urlIdioma('/contacto', locale), texto: ui.nav.contacto },
 ];
 
 const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
@@ -23,8 +27,18 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 // del sitio: por eso va separada del menú y abre en otra pestaña. Si el
 // colegio todavía no cargó la dirección, el enlace simplemente no aparece.
 const aula = config.moodleUrl
-  ? { url: config.moodleUrl, texto: config.moodleTexto || 'Aula virtual' }
+  ? { url: config.moodleUrl, texto: t(config.moodleTexto, locale) || ui.aulaVirtualPorDefecto }
   : null;
+
+// Selector de idioma: misma página, la otra versión. current + '' arma
+// la ruta equivalente en cada idioma (todas comparten los mismos
+// nombres de página en las dos direcciones).
+const RUTAS: Record<string, string> = {
+  inicio: '/', nosotros: '/nosotros', galeria: '/galeria',
+  voluntariado: '/voluntariado', contacto: '/contacto',
+};
+const rutaActual = RUTAS[current] ?? '/';
+const otroIdioma: Locale = locale === 'es' ? 'en' : 'es';
 ---
 <header class="header">
   <div class="contenedor header__inner">
@@ -61,11 +75,15 @@ const aula = config.moodleUrl
         de React. Un div de más en el header era justamente lo que
         complicaba el display:none en celular. */}
     {ctaContacto ? (
-      <a href="/contacto" class="btn btn--acento header__cta" data-iman>{config.textoBotonAdmisiones}</a>
+      <a href={urlIdioma('/contacto', locale)} class="btn btn--acento header__cta" data-iman>{t(config.textoBotonAdmisiones, locale)}</a>
     ) : (
-      <a href={whatsapp} class="btn btn--acento header__cta" data-iman target="_blank" rel="noopener">Escríbenos</a>
+      <a href={whatsapp} class="btn btn--acento header__cta" data-iman target="_blank" rel="noopener">{ui.escribenos}</a>
     )}
-    <button class="hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-movil">
+    <a href={urlIdioma(rutaActual, otroIdioma)} class="header__idioma" hreflang={otroIdioma}
+       aria-label={otroIdioma === 'en' ? 'Switch to English' : 'Cambiar a español'}>
+      {otroIdioma === 'en' ? 'EN' : 'ES'}
+    </a>
+    <button class="hamburguesa" aria-label={ui.abrirMenu} aria-expanded="false" aria-controls="menu-movil">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -80,10 +98,13 @@ const aula = config.moodleUrl
   </div>
   {aula && <a href={aula.url} target="_blank" rel="noopener">{aula.texto} &nearr;</a>}
   {ctaContacto ? (
-    <a href="/contacto" class="btn btn--acento">{config.textoBotonAdmisiones}</a>
+    <a href={urlIdioma('/contacto', locale)} class="btn btn--acento">{t(config.textoBotonAdmisiones, locale)}</a>
   ) : (
-    <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">Escríbenos</a>
+    <a href={whatsapp} class="btn btn--acento" target="_blank" rel="noopener">{ui.escribenos}</a>
   )}
+  <a href={urlIdioma(rutaActual, otroIdioma)} class="menu-movil__idioma" hreflang={otroIdioma}>
+    {otroIdioma === 'en' ? 'English' : 'Español'}
+  </a>
   <div class="menu-movil__datos">
     <a href={`tel:+${config.telefonoInternacional}`}>{config.telefono}</a><br>
     <a href={`mailto:${config.correo}`}>{config.correo}</a>

@@ -21,13 +21,14 @@ const inicio = leer('dist/index.html');
 const galeria = leer('dist/galeria/index.html');
 const nosotros = leer('dist/nosotros/index.html');
 const contacto = leer('dist/contacto/index.html');
+const voluntariado = leer('dist/voluntariado/index.html');
 
 console.log('\n\x1b[1m1. Secciones opcionales: ocultas sin datos\x1b[0m');
 check('sin niveles cargados, la sección no aparece', !inicio.includes('id="programas"'));
 check('sin datos prácticos, la sección no aparece', !inicio.includes('datos-practicos"'));
 
 console.log('\n\x1b[1m2. Nada se rompe con los campos actuales\x1b[0m');
-for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros', nosotros], ['contacto', contacto]]) {
+for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros', nosotros], ['contacto', contacto], ['voluntariado', voluntariado]]) {
   check(`${nom}: sin "undefined" en el HTML`, !html.includes('>undefined<') && !html.includes('"undefined"'));
   check(`${nom}: sin "[object Object]"`, !html.includes('[object Object]'));
   check(`${nom}: sin "null" impreso`, !html.includes('>null<'));
@@ -40,7 +41,7 @@ check('ninguna fuente quedó vacía', !inicio.includes('<source src=""'));
 check('hay foto de respaldo (poster)', /poster="[^"]+"/.test(inicio));
 
 console.log('\n\x1b[1m4. Imágenes: todas con texto alternativo\x1b[0m');
-for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros', nosotros]]) {
+for (const [nom, html] of [['inicio', inicio], ['galeria', galeria], ['nosotros', nosotros], ['voluntariado', voluntariado]]) {
   const imgs = html.match(/<img[^>]*>/g) || [];
   const sinAlt = imgs.filter(i => !/alt="/.test(i));
   // Un alt vacío está BIEN si la imagen es decorativa a propósito y se

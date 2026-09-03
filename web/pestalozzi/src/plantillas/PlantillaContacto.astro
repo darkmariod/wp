@@ -1,0 +1,161 @@
+---
+// El contenido real (fetch + markup) vive acá, una sola vez. Las dos
+// rutas — src/pages/contacto.astro y src/pages/en/contacto.astro — son
+// apenas dos líneas cada una: importan esto y le pasan el idioma. Así
+// no hay dos copias del formulario para que se desincronicen.
+import Layout from '../layouts/Layout.astro';
+import { traerConfiguracion, traerContacto } from '../sanity/consultas';
+import { urlImagen } from '../sanity/imagen';
+import { t, tArray, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ui = UI[locale];
+const uiC = ui.contacto;
+
+const p = await traerContacto();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+const mapa = `https://www.google.com/maps?q=${encodeURIComponent(
+  `${config.direccionCalle}, ${config.ciudad}, Ecuador`
+)}&output=embed`;
+---
+<Layout
+  title={uiC.tituloPagina}
+  description={uiC.descripcionPagina(config.direccionCalle, config.ciudad, config.telefono)}
+  ogTitle={uiC.tituloPagina}
+  ogDescription={t(p.portada.bajada, locale)}
+  ogImage={urlImagen(p.portada.foto, 1200)}
+  canonicalPath={urlIdioma('/contacto', locale)}
+  current="contacto"
+  ctaContacto={false}
+  preloadImage={urlImagen(p.portada.foto, 720)}
+  locale={locale}
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href={urlIdioma('/', locale)}>{ui.breadcrumbInicio}</a> / {ui.nav.contacto}</p>
+      <h1 class="hero__titulo">{t(p.portada.titulo, locale)}</h1>
+      <p class="hero__bajada">{t(p.portada.bajada, locale)}</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor contacto-grid">
+
+      <!-- Datos -->
+      <div data-revelar="izq">
+        <span class="eyebrow">{uiC.datosDeContacto}</span>
+        <h2 style="margin-bottom:var(--space-8)">{t(p.datosTitulo, locale)}</h2>
+
+        <dl>
+          <div class="dato">
+            <div>
+              <dt>{uiC.direccion}</dt>
+              <dd>{config.direccionCalle}
+                <small>{config.direccionSector}, {config.ciudad}, Ecuador</small>
+              </dd>
+            </div>
+          </div>
+
+          <div class="dato">
+            <div>
+              <dt>{uiC.telefono}</dt>
+              <dd><a href={`tel:+${config.telefonoInternacional}`}>{config.telefono}</a>
+                <small>{uiC.llamadasYMensajes}</small>
+              </dd>
+            </div>
+          </div>
+
+          <div class="dato">
+            <div>
+              <dt>{uiC.correo}</dt>
+              <dd><a href={`mailto:${config.correo}`}>{config.correo}</a>
+                <small>{uiC.secretaria}</small>
+              </dd>
+            </div>
+          </div>
+        </dl>
+
+        {config.avisoMatriculasTitulo && (
+          <div class="aviso-matriculas">
+            <div>
+              <strong>{t(config.avisoMatriculasTitulo, locale)}</strong>
+              <span>{t(config.avisoMatriculasTexto, locale)}</span>
+            </div>
+          </div>
+        )}
+
+        <p class="mt-8">
+          <a href={whatsapp} class="btn btn--primario" target="_blank" rel="noopener">
+            {uiC.escribirWhatsapp}
+          </a>
+        </p>
+      </div>
+
+      <!-- Formulario -->
+      <div data-revelar="der">
+        <form class="formulario" id="form-contacto" novalidate>
+          <h2 style="margin-bottom:var(--space-6)">{t(p.formularioTitulo, locale)}</h2>
+
+          <div class="campo" data-validar>
+            <label for="nombre">{uiC.nombreYApellido}</label>
+            <input type="text" id="nombre" name="nombre" data-min="3" autocomplete="name" required>
+            <span class="campo__error">{uiC.errorNombre}</span>
+          </div>
+
+          <div class="campo" data-validar>
+            <label for="correo">{uiC.correoElectronico}</label>
+            <input type="email" id="correo" name="correo" data-min="5" autocomplete="email" required>
+            <span class="campo__error">{uiC.errorCorreo}</span>
+          </div>
+
+          <div class="campo">
+            <label for="telefono">{uiC.telefono} <span style="font-weight:400;text-transform:none">{uiC.opcional}</span></label>
+            <input type="tel" id="telefono" name="telefono" autocomplete="tel">
+          </div>
+
+          <div class="campo">
+            <label for="nivel">{uiC.nivelDeInteres}</label>
+            <select id="nivel" name="nivel">
+              <option value="">{uiC.seleccionaUnaOpcion}</option>
+              {tArray(p.nivelesFormulario, locale).map((nivel: string) => <option>{nivel}</option>)}
+            </select>
+          </div>
+
+          <div class="campo" data-validar>
+            <label for="mensaje">{uiC.mensaje}</label>
+            <textarea id="mensaje" name="mensaje" data-min="10" required></textarea>
+            <span class="campo__error">{uiC.errorMensaje}</span>
+          </div>
+
+          <!-- Trampa antispam: invisible para personas, tentadora para bots -->
+          <div class="trampa" aria-hidden="true">
+            <label for="sitio">{uiC.noLlenar}</label>
+            <input type="text" id="sitio" name="sitio" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button type="submit" class="btn btn--primario" style="width:100%">{uiC.enviarMensaje}</button>
+
+          <p class="form-aviso" aria-live="polite"></p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Mapa -->
+  <section class="seccion seccion--suave" style="padding-top:0">
+    <div class="contenedor" data-revelar>
+      <iframe
+        class="mapa"
+        title={uiC.ubicacionMapa(config.ciudad)}
+        src={mapa}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+</Layout>

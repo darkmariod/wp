@@ -1,0 +1,290 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerFotos, traerInicio } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+import { t, tArray, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const ui = UI[locale];
+const uiI = ui.inicio;
+
+const p = await traerInicio();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+const medidasTarjeta = (img: any) => dimensiones(img, 640);
+
+// Videos de portada: los del CMS mandan; si el colegio no subió ninguno
+// quedan los que ya venían con el sitio. Así nunca se queda sin video
+// por un campo vacío, y el colegio puede cambiarlo sin tocar código.
+const videoEscritorio = p.videoEscritorio || '/img/hero/hero-escritorio.mp4';
+const videoMovil = p.videoMovil || p.videoEscritorio || '/img/hero/hero-movil.mp4';
+
+// El carrusel necesita 4 fotos o más para que se note la profundidad, y
+// esta sección solo tiene dos. Si el colegio no cargó las suyas, se
+// usan las de la galería: son fotos reales del plantel, no relleno.
+const fotosCarrusel = (
+  p.nivelesCarrusel?.length >= 3
+    ? p.nivelesCarrusel
+    : (await traerFotos()).map((f: any) => f.imagen)
+).map((img: any) => ({
+  image: urlImagen(img, 600),
+  alt: img.alt,
+  ...dimensiones(img, 600),
+}));
+---
+<Layout
+  title={uiI.tituloPagina}
+  description={uiI.descripcionPagina}
+  ogTitle={uiI.ogTitulo}
+  ogDescription={t(p.bajada, locale)}
+  ogImage={urlImagen(p.fotoPortada, 1200)}
+  canonicalPath={urlIdioma('/', locale)}
+  current="inicio"
+  preloadImage={urlImagen(p.fotoPortada, 720)}
+  conJsonLd
+  locale={locale}
+>
+  <!-- ============ PORTADA ============ -->
+  <section class="hero">
+    <img class="hero__foto" src={urlImagen(p.fotoPortada, 720)} alt={p.fotoPortada.alt} width="720" height="1280" fetchpriority="high">
+    <video class="hero__video" autoplay muted loop playsinline preload="none" poster={urlImagen(p.fotoPortada, 720)} aria-hidden="true" tabindex="-1">
+      <source src={videoEscritorio} media="(min-width: 1024px)">
+      <source src={videoMovil}>
+    </video>
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <h1 class="hero__titulo">
+        <span class="hero__titulo--texto">{t(p.tituloLinea1, locale)}</span>
+        <br />
+        <span class="hero__titulo--texto hero__titulo--acento">{t(p.tituloLinea2, locale)}</span>
+      </h1>
+      <p class="hero__bajada" data-entrada="aparecer">{t(p.bajada, locale)}</p>
+      <div class="hero__acciones" data-entrada="aparecer">
+        <a href={urlIdioma('/contacto', locale)} class="btn btn--primario">{ui.agendaVisita}</a>
+        <a href={urlIdioma('/nosotros', locale)} class="enlace-flecha">{ui.conocePropuesta}</a>
+      </div>
+    </div>
+    <a href="#propuesta" class="bajar" aria-label={ui.irAlContenido}>
+      <span>{ui.desliza}</span>
+      <span class="bajar__linea"></span>
+    </a>
+  </section>
+
+  <!-- ============ LO QUE NOS DISTINGUE ============
+       Va apenas debajo de la portada, como la fila de razones de la
+       referencia que dio el colegio: lo primero que ve un padre después
+       del título, antes de entrar en la filosofía. -->
+  {p.destacados?.length > 0 && (
+    <section class="destacados-franja">
+      <div class="contenedor">
+        <ul class="destacados">
+          {p.destacados.map((d: any) => (
+            <li class="destacado" data-entrada="subir">
+              <h3>{t(d.titulo, locale)}</h3>
+              <p>{t(d.texto, locale)}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ PROPUESTA ============ -->
+  <section class="seccion seccion--clara" id="propuesta">
+    <div class="contenedor">
+      <div class="enc-partido" data-revelar>
+        <h2>{t(p.propuestaTitulo, locale)}</h2>
+        <p>{t(p.propuestaTexto, locale)}</p>
+      </div>
+
+      <div class="pilares">
+        {p.propuestaPilares.map((pilar: any, i: number) => (
+          <article class="pilar-tarjeta" data-entrada="subir">
+            <span class="pilar-tarjeta__numero">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{t(pilar.titulo, locale)}</h3>
+            <p>{t(pilar.texto, locale)}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NIVELES ============ -->
+  <section class="seccion seccion--suave" id="niveles">
+    <div class="contenedor">
+      <div class="enc-seccion enc-seccion--izq" data-revelar>
+        <span class="eyebrow">{t(p.nivelesEyebrow, locale)}</span>
+        <h2>{t(p.nivelesTitulo, locale)}</h2>
+        <p>{t(p.nivelesTexto, locale)}</p>
+        <ul class="niveles-chips">
+          {tArray(p.nivelesChips, locale).map((chip: string, i: number) => (
+            <li class="niveles-chips__item" data-revelar="zoom" data-retraso={i > 0 ? i * 60 : undefined}>{chip}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Carrusel de profundidad en lugar del mosaico. Los dos bloques
+          de color bajan debajo: llevan contenido real del CMS y enlazan
+          a contacto, así que no se pierden.
+
+          Lo mueve GSAP desde componentes.js. El HTML llega entero desde
+          el servidor: sin JavaScript se ve la primera foto en lugar de
+          un hueco. */}
+      <div class="niveles-carrusel">
+        <div class="carrusel" data-carrusel role="group" aria-roledescription="carrusel"
+             aria-label={uiI.fotografiasDelColegio} tabindex="0">
+          <div class="carrusel__pista">
+            {fotosCarrusel.map((f: any, i: number) => (
+              <div class="carrusel__tarjeta" aria-roledescription="diapositiva"
+                   aria-label={uiI.deTotal(i + 1, fotosCarrusel.length)} aria-hidden={i === 0 ? 'false' : 'true'}>
+                <img src={f.image} alt={f.alt} width={f.width} height={f.height}
+                     loading={i < 2 ? undefined : 'lazy'} draggable="false">
+                <span class="carrusel__tinte" aria-hidden="true"></span>
+              </div>
+            ))}
+          </div>
+
+          <button type="button" class="carrusel__flecha carrusel__flecha--ant" aria-label={uiI.fotoAnterior}>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button type="button" class="carrusel__flecha carrusel__flecha--sig" aria-label={uiI.fotoSiguiente}>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="carrusel__puntos" role="tablist" aria-label={uiI.fotos}>
+            {fotosCarrusel.map((_: any, i: number) => (
+              <button type="button" role="tab" class="carrusel__punto"
+                      aria-selected={i === 0 ? 'true' : 'false'} aria-label={uiI.irALaFoto(i + 1)}></button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="niveles-bloques">
+        <a href={urlIdioma('/contacto', locale)} class="niveles-mosaico__bloque niveles-mosaico__bloque--verde" data-revelar="der">
+          <h3>{t(p.nivelesBloqueVerde.titulo, locale)}</h3>
+          <p>{t(p.nivelesBloqueVerde.texto, locale)}</p>
+          <span class="niveles-mosaico__flecha" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href={urlIdioma('/contacto', locale)} class="niveles-mosaico__bloque niveles-mosaico__bloque--ambar" data-revelar="izq">
+          <h3>{t(p.nivelesBloqueAmbar.titulo, locale)}</h3>
+          <p>{t(p.nivelesBloqueAmbar.texto, locale)}</p>
+          <span class="niveles-mosaico__flecha" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUÉ OFRECE CADA NIVEL ============
+       Solo aparece si el colegio cargó los niveles en el CMS: sin datos
+       reales de edades y cupos, es preferible que no exista a que
+       muestre información inventada que un padre podría usar. -->
+  {p.programas?.length > 0 && (
+    <section class="seccion seccion--clara" id="programas">
+      <div class="contenedor">
+        <div class="enc-seccion" data-revelar>
+          <h2>{t(p.programasTitulo, locale)}</h2>
+          {p.programasTexto && <p>{t(p.programasTexto, locale)}</p>}
+        </div>
+
+        <div class="programas">
+          {p.programas.map((prog: any) => (
+            <article class="programa" data-entrada="subir" data-foco>
+              <span class="programa__edades">{t(prog.edades, locale)}</span>
+              <h3>{t(prog.nombre, locale)}</h3>
+              <p>{t(prog.descripcion, locale)}</p>
+              {prog.incluye?.length > 0 && (
+                <ul class="programa__incluye">
+                  {tArray(prog.incluye, locale).map((punto: string) => <li>{punto}</li>)}
+                </ul>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ DATOS PRÁCTICOS ============ -->
+  {p.practicoDatos?.length > 0 && (
+    <section class="seccion seccion--suave">
+      <div class="contenedor">
+        <div class="enc-seccion" data-revelar>
+          <h2>{t(p.practicoTitulo, locale)}</h2>
+        </div>
+        <dl class="datos-practicos">
+          {p.practicoDatos.map((dato: any) => (
+            <div class="dato-practico" data-entrada="subir">
+              <dt>{t(dato.etiqueta, locale)}</dt>
+              <dd>{t(dato.valor, locale)}</dd>
+              {dato.detalle && <p class="dato-practico__detalle">{t(dato.detalle, locale)}</p>}
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ MARQUESINA ============ -->
+  <!-- Las frases se duplican porque la animación desplaza -50%: así el
+       bucle empalma sin salto. -->
+  <section class="marquesina" aria-hidden="true">
+    <div class="marquesina__pista">
+      {(() => {
+        const frases = tArray(p.marquesinaFrases, locale);
+        return [...frases, ...frases].map((frase: string) => (
+          <span class="marquesina__item">{frase}<span>&bull;</span></span>
+        ));
+      })()}
+    </div>
+  </section>
+
+  <!-- ============ POR QUÉ ============ -->
+  <section class="seccion seccion--clara seccion--compacta">
+    <div class="contenedor partido">
+      <div class="partido__foto" data-revelar="izq" data-cortina="izq">
+        <img src={urlImagen(p.porQueFoto, 640)} alt={p.porQueFoto.alt} {...medidasTarjeta(p.porQueFoto)} loading="lazy">
+      </div>
+      <div class="partido__texto" data-revelar="der">
+        <span class="eyebrow">{t(p.porQueEyebrow, locale)}</span>
+        <h2 class="porque__titulo" data-entrada="difuso">{t(p.porQueTitulo, locale)}</h2>
+        {tArray(p.porQueParrafos, locale).map((parrafo: string) => <p>{parrafo}</p>)}
+        <p class="mt-8">
+          <a href={urlIdioma('/nosotros', locale)} class="btn btn--secundario">{ui.conocenos}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALERÍA ============ -->
+  <section class="seccion seccion--clara seccion--amplia">
+    <div class="contenedor">
+      <div class="enc-numerado" data-revelar>
+        <span>{t(p.galeriaEyebrow, locale)}</span>
+        <h2>{t(p.galeriaTitulo, locale)}</h2>
+        <p>{t(p.galeriaTexto, locale)}</p>
+      </div>
+
+      <div class="galeria-mini">
+        {[p.franja.foto, p.nivelesFotoIzquierda, p.porQueFoto].map((foto: any, i: number) => (
+          <a class="galeria-mini__item" href={urlIdioma('/galeria', locale)}>
+            <img src={urlImagen(foto, 640)} alt={foto.alt} {...medidasTarjeta(foto)} loading="lazy" data-revelar data-retraso={i > 0 ? i * 100 : undefined}>
+          </a>
+        ))}
+      </div>
+
+      <p class="centro" style="margin-top:var(--space-12)" data-revelar>
+        <a href={urlIdioma('/galeria', locale)} class="btn btn--secundario">{ui.verTodaLaGaleria}</a>
+      </p>
+    </div>
+  </section>
+
+  <Franja franja={p.franja} whatsapp={whatsapp} locale={locale} />
+</Layout>

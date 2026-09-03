@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Fab from '../components/Fab.astro';
 import { traerConfiguracion } from '../sanity/consultas';
+import { UI, type Locale } from '../sanity/i18n';
 
 // Astro con inlineStylesheets:'always' mete este CSS en un <style>
 // dentro del documento en el build — es la razón real por la que ya
@@ -20,18 +21,20 @@ interface Props {
   ogDescription: string;
   ogImage: string;
   canonicalPath: string;
-  current: 'inicio' | 'nosotros' | 'galeria' | 'contacto';
+  current: 'inicio' | 'nosotros' | 'galeria' | 'voluntariado' | 'contacto';
   ctaContacto?: boolean;
   preloadImage?: string;
   conJsonLd?: boolean;
   datosGaleria?: Record<string, string>;
+  locale?: Locale;
 }
 
 const {
   title, description, ogTitle, ogDescription, ogImage,
   canonicalPath, current, ctaContacto = true, preloadImage,
-  conJsonLd = false, datosGaleria,
+  conJsonLd = false, datosGaleria, locale = 'es',
 } = Astro.props;
+const ui = UI[locale];
 
 // Los datos del colegio se leen una sola vez acá y bajan a los tres
 // componentes: así el teléfono vive en un único lugar del CMS y no hay
@@ -40,6 +43,8 @@ const {
 const config = await traerConfiguracion();
 
 const sitio = 'https://pestalozzi-opal.vercel.app';
+// canonicalPath ya viene con el prefijo /en cuando corresponde: lo arma
+// cada página, que es quien sabe en qué idioma se está sirviendo.
 const canonical = canonicalPath === '/' ? `${sitio}/` : `${sitio}${canonicalPath}`;
 const imagenAbsoluta = ogImage.startsWith('http') ? ogImage : `${sitio}${ogImage}`;
 
@@ -70,7 +75,7 @@ const jsonLd = conJsonLd
   : null;
 ---
 <!DOCTYPE html>
-<html lang="es-EC">
+<html lang={ui.lang}>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -82,7 +87,7 @@ const jsonLd = conJsonLd
 <meta property="og:title" content={ogTitle}>
 <meta property="og:description" content={ogDescription}>
 <meta property="og:image" content={imagenAbsoluta}>
-<meta property="og:locale" content="es_EC">
+<meta property="og:locale" content={ui.ogLocale}>
 <meta property="og:url" content={canonical}>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content={ogTitle}>
@@ -106,16 +111,16 @@ const jsonLd = conJsonLd
 
 <script type="application/json" id="datos-sitio" set:html={JSON.stringify(datosSitio)} />
 
-<a class="saltar" href="#principal">Saltar al contenido</a>
+<a class="saltar" href="#principal">{ui.saltarContenido}</a>
 
-<Header current={current} ctaContacto={ctaContacto} config={config} />
+<Header current={current} ctaContacto={ctaContacto} config={config} locale={locale} />
 
 <main id="principal">
   <slot />
 </main>
 
-<Footer config={config} />
-<Fab config={config} />
+<Footer config={config} locale={locale} />
+<Fab config={config} locale={locale} />
 
 <script src="/js/componentes.js" defer></script>
 <script src="/js/main.js" defer></script>

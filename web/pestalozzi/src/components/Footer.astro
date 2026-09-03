@@ -1,8 +1,12 @@
 ---
+import { t, urlIdioma, UI, type Locale } from '../sanity/i18n';
+
 interface Props {
   config: any;
+  locale?: Locale;
 }
-const { config } = Astro.props;
+const { config, locale = 'es' } = Astro.props;
+const ui = UI[locale];
 
 // Solo se pintan las redes que el colegio realmente cargó en el CMS: si
 // mañana borran el TikTok, el ícono desaparece solo.
@@ -31,26 +35,26 @@ const redes = [
     <div class="footer__rejilla">
       <div class="footer__marca">
         <img src="/img/marca/logo-blanco.svg" alt="Pestalozzi Ambato" width="287" height="268" loading="lazy">
-        <p>Unidad Educativa · {config.ciudad}, Ecuador</p>
+        <p>{ui.footer.unidadEducativa} · {config.ciudad}, Ecuador</p>
       </div>
       <div>
-        <h4>Institución</h4>
+        <h4>{ui.footer.institucion}</h4>
         <ul>
-          <li><a href="/#propuesta">Propuesta educativa</a></li>
-          <li><a href="/#niveles">Niveles</a></li>
-          <li><a href="/nosotros">Filosofía</a></li>
-          <li><a href="/contacto">Admisiones</a></li>
+          <li><a href={urlIdioma('/#propuesta', locale)}>{ui.footer.propuestaEducativa}</a></li>
+          <li><a href={urlIdioma('/#niveles', locale)}>{ui.footer.niveles}</a></li>
+          <li><a href={urlIdioma('/nosotros', locale)}>{ui.footer.filosofia}</a></li>
+          <li><a href={urlIdioma('/contacto', locale)}>{ui.footer.admisiones}</a></li>
           {config.moodleUrl && (
             <li>
               <a href={config.moodleUrl} target="_blank" rel="noopener">
-                {config.moodleTexto || 'Aula virtual'} &nearr;
+                {t(config.moodleTexto, locale) || ui.aulaVirtualPorDefecto} &nearr;
               </a>
             </li>
           )}
         </ul>
       </div>
       <div>
-        <h4>Contacto</h4>
+        <h4>{ui.footer.contacto}</h4>
         <address>
           {config.direccionCalle}<br>
           {config.ciudad}, Ecuador<br>
@@ -58,7 +62,7 @@ const redes = [
         </address>
       </div>
       <div>
-        <h4>Síguenos</h4>
+        <h4>{ui.footer.siguenos}</h4>
         <div class="footer__redes">
           {redes.map((r) => (
             <a href={r.url} target="_blank" rel="noopener" aria-label={r.nombre}>
@@ -72,7 +76,7 @@ const redes = [
       </div>
     </div>
     <div class="footer__legal">
-      <p>© <span id="anio">2026</span> Unidad Educativa Pestalozzi Ambato. Desarrollado: Monkey Computer. Todos los derechos reservados.</p>
+      <p set:html={ui.footer.legal('<span id="anio">2026</span>')} />
       <p>{config.ciudad} · Ecuador</p>
     </div>
   </div>

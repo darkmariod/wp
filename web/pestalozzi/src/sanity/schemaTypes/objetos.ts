@@ -3,6 +3,40 @@ import { defineField, defineType } from 'sanity';
 // Bloques reutilizables. Se repiten en varias páginas, así que viven una
 // sola vez acá — igual que los componentes .astro.
 
+// --- Texto en dos idiomas ---
+// Cada campo de contenido pasa a tener una casilla en español y otra en
+// inglés, lado a lado en la misma pantalla de edición — no dos páginas
+// separadas. Así la estructura (cuántas fotos, cuántos párrafos) es una
+// sola, y no hay forma de que las dos versiones se desincronicen.
+//
+// El inglés no es obligatorio: mientras el colegio no lo cargue, el
+// sitio muestra el español ahí (ver el helper de idioma en las páginas).
+// Así nunca queda un hueco en blanco por un campo sin traducir todavía.
+export const textoLocalizado = defineType({
+  name: 'textoLocalizado',
+  title: 'Texto',
+  type: 'object',
+  fieldsets: [{ name: 'idiomas', title: 'Idiomas', options: { columns: 2 } }],
+  fields: [
+    defineField({ name: 'es', title: '🇪🇨 Español', type: 'string', fieldset: 'idiomas', validation: (r) => r.required() }),
+    defineField({ name: 'en', title: '🇬🇧 English', type: 'string', fieldset: 'idiomas' }),
+  ],
+  preview: { select: { title: 'es', subtitle: 'en' } },
+});
+
+// Misma idea que textoLocalizado, para párrafos más largos.
+export const parrafoLocalizado = defineType({
+  name: 'parrafoLocalizado',
+  title: 'Párrafo',
+  type: 'object',
+  fieldsets: [{ name: 'idiomas', title: 'Idiomas', options: { columns: 2 } }],
+  fields: [
+    defineField({ name: 'es', title: '🇪🇨 Español', type: 'text', rows: 3, fieldset: 'idiomas', validation: (r) => r.required() }),
+    defineField({ name: 'en', title: '🇬🇧 English', type: 'text', rows: 3, fieldset: 'idiomas' }),
+  ],
+  preview: { select: { title: 'es', subtitle: 'en' } },
+});
+
 export const pilar = defineType({
   name: 'pilar',
   title: 'Pilar',
@@ -11,19 +45,18 @@ export const pilar = defineType({
     defineField({
       name: 'titulo',
       title: 'Título',
-      type: 'string',
+      type: 'textoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'texto',
       title: 'Texto',
-      type: 'text',
-      rows: 3,
+      type: 'parrafoLocalizado',
       validation: (r) => r.required(),
     }),
   ],
   preview: {
-    select: { title: 'titulo', subtitle: 'texto' },
+    select: { title: 'titulo.es', subtitle: 'texto.es' },
   },
 });
 
@@ -38,22 +71,21 @@ export const programa = defineType({
     defineField({
       name: 'nombre',
       title: 'Nombre del nivel',
-      type: 'string',
+      type: 'textoLocalizado',
       description: 'Ej: Inicial 1',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'edades',
       title: 'Edades',
-      type: 'string',
+      type: 'textoLocalizado',
       description: 'Ej: 3 a 4 años',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'descripcion',
       title: 'Descripción',
-      type: 'text',
-      rows: 3,
+      type: 'parrafoLocalizado',
       description: 'Una o dos frases sobre qué se trabaja en este nivel.',
       validation: (r) => r.required(),
     }),
@@ -61,14 +93,14 @@ export const programa = defineType({
       name: 'incluye',
       title: 'Qué incluye',
       type: 'array',
-      of: [{ type: 'string' }],
+      of: [{ type: 'textoLocalizado' }],
       description:
         'Puntos concretos, no frases largas. Ej: "Grupos de hasta 12 niños", "Informe diario a la familia".',
       validation: (r) => r.required().min(1),
     }),
   ],
   preview: {
-    select: { title: 'nombre', subtitle: 'edades' },
+    select: { title: 'nombre.es', subtitle: 'edades.es' },
   },
 });
 
@@ -81,26 +113,26 @@ export const datoPractico = defineType({
     defineField({
       name: 'etiqueta',
       title: 'Qué es',
-      type: 'string',
+      type: 'textoLocalizado',
       description: 'Ej: Horario de atención',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'valor',
       title: 'El dato',
-      type: 'string',
+      type: 'textoLocalizado',
       description: 'Ej: Lunes a viernes, 07:30 a 13:00',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'detalle',
       title: 'Aclaración (opcional)',
-      type: 'string',
+      type: 'textoLocalizado',
       description: 'Una línea corta debajo, si hace falta.',
     }),
   ],
   preview: {
-    select: { title: 'etiqueta', subtitle: 'valor' },
+    select: { title: 'etiqueta.es', subtitle: 'valor.es' },
   },
 });
 
@@ -125,6 +157,13 @@ export const videoFondo = defineType({
     }),
 });
 
+// El texto alternativo se deja COMPARTIDO entre los dos idiomas, a
+// propósito: hay más de 20 imágenes en el sitio (portadas, franjas,
+// carrusel, galería), y duplicar "niños jugando en el patio" /
+// "children playing in the yard" en cada una es mucho trabajo para el
+// colegio a cambio de poco: el lector de pantalla igual describe la
+// escena, en el idioma que sea. Si en el futuro hace falta afinarlo
+// por idioma, se puede volver a separar sin perder lo ya cargado.
 export const imagenConAlt = defineType({
   name: 'imagenConAlt',
   title: 'Imagen',
@@ -151,21 +190,19 @@ export const franja = defineType({
     defineField({
       name: 'titulo',
       title: 'Título',
-      type: 'string',
+      type: 'textoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'texto',
       title: 'Texto',
-      type: 'text',
-      rows: 2,
+      type: 'parrafoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'textoBoton',
       title: 'Texto del botón',
-      type: 'string',
-      initialValue: 'Escríbenos por WhatsApp',
+      type: 'textoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
@@ -176,7 +213,7 @@ export const franja = defineType({
     }),
   ],
   preview: {
-    select: { title: 'titulo', media: 'foto' },
+    select: { title: 'titulo.es', media: 'foto' },
   },
 });
 
@@ -189,14 +226,13 @@ export const portada = defineType({
     defineField({
       name: 'titulo',
       title: 'Título',
-      type: 'string',
+      type: 'textoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'bajada',
       title: 'Texto debajo del título',
-      type: 'text',
-      rows: 2,
+      type: 'parrafoLocalizado',
       validation: (r) => r.required(),
     }),
     defineField({
@@ -207,6 +243,6 @@ export const portada = defineType({
     }),
   ],
   preview: {
-    select: { title: 'titulo', media: 'foto' },
+    select: { title: 'titulo.es', media: 'foto' },
   },
 });

@@ -80,23 +80,21 @@ export const configuracion = defineType({
     defineField({
       name: 'avisoMatriculasTitulo',
       title: 'Aviso de matrículas — título',
-      type: 'string',
+      type: 'textoLocalizado',
       group: 'matriculas',
-      initialValue: 'Matrículas abiertas',
     }),
     defineField({
       name: 'avisoMatriculasTexto',
       title: 'Aviso de matrículas — texto',
-      type: 'string',
+      type: 'textoLocalizado',
       group: 'matriculas',
       description: 'Ej: Ciclo lectivo 2026 – 2027',
     }),
     defineField({
       name: 'textoBotonAdmisiones',
       title: 'Texto del botón de admisiones (arriba a la derecha)',
-      type: 'string',
+      type: 'textoLocalizado',
       group: 'matriculas',
-      initialValue: 'Admisiones 2026–2027',
       validation: (r) => r.required(),
     }),
     // Si este campo queda vacío, el enlace no aparece en ningún lado del
@@ -113,9 +111,8 @@ export const configuracion = defineType({
     defineField({
       name: 'moodleTexto',
       title: 'Texto del enlace',
-      type: 'string',
+      type: 'textoLocalizado',
       group: 'aulaVirtual',
-      initialValue: 'Aula virtual',
       description: 'Cómo se llama el enlace en el menú y en el pie de página.',
     }),
   ],
