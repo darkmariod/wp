@@ -27,6 +27,8 @@ export async function traerInicio() {
     destacados,
     programasTitulo, programasTexto, programas,
     practicoTitulo, practicoDatos,
+    voluntariadoTitulo, voluntariadoTexto, voluntariadoRequisitos, voluntariadoTextoBoton,
+    voluntariadoFoto ${CAMPOS_IMAGEN},
     marquesinaFrases,
     porQueEyebrow, porQueTitulo, porQueParrafos,
     porQueFoto ${CAMPOS_IMAGEN},

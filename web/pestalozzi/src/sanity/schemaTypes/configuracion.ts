@@ -11,6 +11,7 @@ export const configuracion = defineType({
     { name: 'contacto', title: 'Contacto', default: true },
     { name: 'redes', title: 'Redes sociales' },
     { name: 'matriculas', title: 'Matrículas' },
+    { name: 'voluntariado', title: 'Botón de voluntariado' },
     { name: 'aulaVirtual', title: 'Aula virtual' },
   ],
   fields: [
@@ -117,6 +118,26 @@ export const configuracion = defineType({
       group: 'aulaVirtual',
       initialValue: 'Aula virtual',
       description: 'Cómo se llama el enlace en el menú y en el pie de página.',
+    }),
+
+    // --- Botón de voluntariado ---
+    // Lleva a la sección de voluntariado de la portada. Se apaga desde
+    // acá cuando el colegio no esté buscando gente, sin tocar código.
+    defineField({
+      name: 'voluntariadoBotonVisible',
+      title: 'Mostrar el botón en el menú',
+      type: 'boolean',
+      group: 'voluntariado',
+      initialValue: true,
+      description:
+        'Apagalo cuando no estén buscando voluntarios. La sección de la portada se controla aparte, desde Página: Inicio.',
+    }),
+    defineField({
+      name: 'voluntariadoBotonTexto',
+      title: 'Texto del botón',
+      type: 'string',
+      group: 'voluntariado',
+      initialValue: 'Voluntariado',
     }),
   ],
   preview: {

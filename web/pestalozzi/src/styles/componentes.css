@@ -111,6 +111,28 @@
 .nav a.activo { color: #fff; background-size: 100% 100%; }
 .nav a.activo { font-weight: 600; }
 
+/* Voluntariado: lleva a una sección de la propia portada, así que pesa
+   menos que Aula virtual (sistema externo) y mucho menos que Admisiones
+   (la acción principal). Sin borde ni relleno fuerte: se lee como
+   botón, pero no compite. */
+.header__voluntariado {
+  display: none;
+  align-items: center;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--green-800);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: background .25s var(--ease-out);
+}
+.header__voluntariado:hover,
+.header__voluntariado:focus-visible { background: var(--green-50); }
+/* Aparece junto al resto del menú de escritorio. Por debajo de 1024px
+   vive en la cortina del menú, no acá: el header no da para tres. */
+@media (min-width: 1024px) { .header__voluntariado { display: inline-flex; } }
+
 /* Aula virtual: es un sistema externo, no una sección del sitio. Se
    distingue del menú a propósito — sin el relleno verde de .nav a — para
    que se lea como "esto te lleva afuera". */
@@ -248,7 +270,8 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 
 .menu-movil.abierto > a:nth-of-type(1) { transition-delay: .49s; }
 .menu-movil.abierto > a:nth-of-type(2) { transition-delay: .55s; }
-.menu-movil.abierto .menu-movil__datos { transition-delay: .61s; }
+.menu-movil.abierto > a:nth-of-type(3) { transition-delay: .61s; }
+.menu-movil.abierto .menu-movil__datos { transition-delay: .67s; }
 
 /* Numeración editorial al costado de cada enlace de navegación. */
 .menu-movil__enlaces { counter-reset: enlace; display: flex; flex-direction: column; }
@@ -1774,3 +1797,58 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
               rgba(18, 99, 51, .10), transparent 70%);
 }
 [data-foco] > * { position: relative; z-index: 1; }
+
+/* ============================================================
+   VOLUNTARIADO
+   Dos columnas: texto y foto. Sin foto cargada, el texto ocupa
+   todo el ancho en vez de dejar una columna vacía.
+   ============================================================ */
+.voluntariado__grid {
+  display: grid;
+  gap: var(--space-10);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+@media (min-width: 900px) {
+  /* Solo se parte en dos si hay foto; :has evita la columna fantasma. */
+  .voluntariado__grid:has(.voluntariado__foto) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.voluntariado__lista {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-8) 0 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.voluntariado__lista li {
+  position: relative;
+  padding-left: var(--space-8);
+  color: var(--ink-600);
+}
+/* Tilde dibujada con CSS: un ícono más que cargar, por esto, no vale. */
+.voluntariado__lista li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .35em;
+  width: 14px;
+  height: 8px;
+  border-left: 2px solid var(--green-800);
+  border-bottom: 2px solid var(--green-800);
+  transform: rotate(-45deg);
+}
+
+.voluntariado__foto {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.voluntariado__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

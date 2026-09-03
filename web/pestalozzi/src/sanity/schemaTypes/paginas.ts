@@ -15,6 +15,7 @@ export const paginaInicio = defineType({
     { name: 'destacados', title: 'Lo que nos distingue' },
     { name: 'programas', title: 'Qué ofrece cada nivel' },
     { name: 'practico', title: 'Datos prácticos' },
+    { name: 'voluntariado', title: 'Voluntariado' },
     { name: 'marquesina', title: 'Frase deslizante' },
     { name: 'porQue', title: 'Por qué Pestalozzi' },
     { name: 'galeria', title: 'Vida escolar' },
@@ -224,6 +225,50 @@ export const paginaInicio = defineType({
       group: 'practico',
       description:
         'Horario de atención, cupos por aula, requisitos de matrícula… lo que un padre pregunta antes de llamar. Si se deja vacío, la sección no aparece.',
+    }),
+
+    // --- Voluntariado ---
+    // Sale de la reunión: el colegio busca voluntarios angloparlantes
+    // que conozcan Montessori. Si el título queda vacío, la sección no
+    // aparece — así el colegio puede apagarla cuando no busque gente,
+    // sin que haya que tocar el código.
+    defineField({
+      name: 'voluntariadoTitulo',
+      title: 'Título',
+      type: 'string',
+      group: 'voluntariado',
+      description:
+        'Si se deja vacío, la sección no se muestra en el sitio. Sirve para apagarla cuando no estén buscando voluntarios.',
+    }),
+    defineField({
+      name: 'voluntariadoTexto',
+      title: 'Texto',
+      type: 'text',
+      rows: 3,
+      group: 'voluntariado',
+    }),
+    defineField({
+      name: 'voluntariadoRequisitos',
+      title: 'A quién buscan',
+      type: 'array',
+      of: [{ type: 'string' }],
+      group: 'voluntariado',
+      description:
+        'Uno por línea, corto. Ej: "Hablante nativo de inglés", "Conoce la metodología Montessori".',
+    }),
+    defineField({
+      name: 'voluntariadoTextoBoton',
+      title: 'Texto del botón',
+      type: 'string',
+      group: 'voluntariado',
+      initialValue: 'Quiero ser voluntario',
+    }),
+    defineField({
+      name: 'voluntariadoFoto',
+      title: 'Foto',
+      type: 'imagenConAlt',
+      group: 'voluntariado',
+      description: 'Opcional. Si no se carga, la sección va sin foto.',
     }),
 
     defineField({

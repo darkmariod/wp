@@ -24,6 +24,12 @@ const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 const aula = config.moodleUrl
   ? { url: config.moodleUrl, texto: config.moodleTexto || 'Aula virtual' }
   : null;
+
+// Botón de voluntariado. Lleva al ancla de la portada; desde otra
+// página el enlace tiene que volver a Inicio primero, de ahí el "/".
+const voluntariado = config.voluntariadoBotonVisible !== false
+  ? { href: '/#voluntariado', texto: config.voluntariadoBotonTexto || 'Voluntariado' }
+  : null;
 ---
 <header class="header">
   <div class="contenedor header__inner">
@@ -42,6 +48,9 @@ const aula = config.moodleUrl
           : <a href={e.href}>{e.texto}</a>
       ))}
     </nav>
+    {voluntariado && (
+      <a href={voluntariado.href} class="header__voluntariado">{voluntariado.texto}</a>
+    )}
     {aula && (
       <a href={aula.url} class="header__aula" target="_blank" rel="noopener">
         {aula.texto}
@@ -73,6 +82,7 @@ const aula = config.moodleUrl
   <div class="menu-movil__enlaces">
     {enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
   </div>
+  {voluntariado && <a href={voluntariado.href}>{voluntariado.texto}</a>}
   {aula && <a href={aula.url} target="_blank" rel="noopener">{aula.texto} &nearr;</a>}
   {ctaContacto ? (
     <a href="/contacto" class="btn btn--acento">{config.textoBotonAdmisiones}</a>
