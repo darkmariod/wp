@@ -276,47 +276,5 @@ const fotosCarrusel = (
     </div>
   </section>
 
-  <!-- ============ VOLUNTARIADO ============
-       Solo aparece si el colegio cargó el título. Así pueden apagarla
-       cuando no estén buscando gente, sin tocar código.
-
-       Va casi al final a propósito: quien llega hasta acá ya conoce la
-       propuesta, y es a quien tiene sentido invitarle a sumarse. Arriba
-       competiría con el botón de admisiones, que es lo que de verdad
-       le interesa a un padre. -->
-  {p.voluntariadoTitulo && (
-    <section class="seccion seccion--clara voluntariado" id="voluntariado">
-      <div class="contenedor voluntariado__grid">
-        <div class="voluntariado__texto">
-          <span class="eyebrow">Súmate</span>
-          <h2 data-entrada="subir">{p.voluntariadoTitulo}</h2>
-          {p.voluntariadoTexto && <p>{p.voluntariadoTexto}</p>}
-
-          {p.voluntariadoRequisitos?.length > 0 && (
-            <ul class="voluntariado__lista">
-              {p.voluntariadoRequisitos.map((req: string) => (
-                <li data-entrada="subir">{req}</li>
-              ))}
-            </ul>
-          )}
-
-          <p class="mt-8">
-            <a href={`${whatsapp}?text=${encodeURIComponent('Hola, me interesa el voluntariado en Pestalozzi.')}`}
-               class="btn btn--primario" target="_blank" rel="noopener">
-              {p.voluntariadoTextoBoton || 'Quiero ser voluntario'}
-            </a>
-          </p>
-        </div>
-
-        {p.voluntariadoFoto && (
-          <div class="voluntariado__foto" data-revelar="der">
-            <img src={urlImagen(p.voluntariadoFoto, 640)} alt={p.voluntariadoFoto.alt}
-                 {...medidasTarjeta(p.voluntariadoFoto)} loading="lazy">
-          </div>
-        )}
-      </div>
-    </section>
-  )}
-
   <Franja franja={p.franja} whatsapp={whatsapp} />
 </Layout>

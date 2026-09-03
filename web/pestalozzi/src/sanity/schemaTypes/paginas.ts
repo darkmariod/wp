@@ -15,7 +15,6 @@ export const paginaInicio = defineType({
     { name: 'destacados', title: 'Lo que nos distingue' },
     { name: 'programas', title: 'Qué ofrece cada nivel' },
     { name: 'practico', title: 'Datos prácticos' },
-    { name: 'voluntariado', title: 'Voluntariado' },
     { name: 'marquesina', title: 'Frase deslizante' },
     { name: 'porQue', title: 'Por qué Pestalozzi' },
     { name: 'galeria', title: 'Vida escolar' },
@@ -225,50 +224,6 @@ export const paginaInicio = defineType({
       group: 'practico',
       description:
         'Horario de atención, cupos por aula, requisitos de matrícula… lo que un padre pregunta antes de llamar. Si se deja vacío, la sección no aparece.',
-    }),
-
-    // --- Voluntariado ---
-    // Sale de la reunión: el colegio busca voluntarios angloparlantes
-    // que conozcan Montessori. Si el título queda vacío, la sección no
-    // aparece — así el colegio puede apagarla cuando no busque gente,
-    // sin que haya que tocar el código.
-    defineField({
-      name: 'voluntariadoTitulo',
-      title: 'Título',
-      type: 'string',
-      group: 'voluntariado',
-      description:
-        'Si se deja vacío, la sección no se muestra en el sitio. Sirve para apagarla cuando no estén buscando voluntarios.',
-    }),
-    defineField({
-      name: 'voluntariadoTexto',
-      title: 'Texto',
-      type: 'text',
-      rows: 3,
-      group: 'voluntariado',
-    }),
-    defineField({
-      name: 'voluntariadoRequisitos',
-      title: 'A quién buscan',
-      type: 'array',
-      of: [{ type: 'string' }],
-      group: 'voluntariado',
-      description:
-        'Uno por línea, corto. Ej: "Hablante nativo de inglés", "Conoce la metodología Montessori".',
-    }),
-    defineField({
-      name: 'voluntariadoTextoBoton',
-      title: 'Texto del botón',
-      type: 'string',
-      group: 'voluntariado',
-      initialValue: 'Quiero ser voluntario',
-    }),
-    defineField({
-      name: 'voluntariadoFoto',
-      title: 'Foto',
-      type: 'imagenConAlt',
-      group: 'voluntariado',
-      description: 'Opcional. Si no se carga, la sección va sin foto.',
     }),
 
     defineField({
@@ -544,4 +499,82 @@ export const paginaContacto = defineType({
     }),
   ],
   preview: { prepare: () => ({ title: 'Página: Contacto' }) },
+});
+
+
+// Página de voluntariado. Sale de la segunda reunión: el colegio busca
+// voluntarios angloparlantes que conozcan Montessori.
+export const paginaVoluntariado = defineType({
+  name: 'paginaVoluntariado',
+  title: 'Página: Voluntariado',
+  type: 'document',
+  groups: [
+    { name: 'portada', title: 'Portada', default: true },
+    { name: 'contenido', title: 'Contenido' },
+    { name: 'franja', title: 'Franja final' },
+  ],
+  fields: [
+    defineField({
+      name: 'portada',
+      title: 'Portada',
+      type: 'portada',
+      group: 'portada',
+      validation: (r) => r.required(),
+    }),
+
+    defineField({
+      name: 'introTitulo',
+      title: 'Título',
+      type: 'string',
+      group: 'contenido',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'introParrafos',
+      title: 'Párrafos',
+      type: 'array',
+      of: [{ type: 'text', rows: 3 }],
+      group: 'contenido',
+      validation: (r) => r.required().min(1),
+    }),
+    defineField({
+      name: 'requisitosTitulo',
+      title: 'Título de la lista',
+      type: 'string',
+      group: 'contenido',
+      initialValue: 'A quién buscamos',
+    }),
+    defineField({
+      name: 'requisitos',
+      title: 'A quién buscan',
+      type: 'array',
+      of: [{ type: 'string' }],
+      group: 'contenido',
+      description: 'Uno por línea, corto. Ej: "Hablante nativo de inglés".',
+      validation: (r) => r.required().min(1),
+    }),
+    defineField({
+      name: 'textoBoton',
+      title: 'Texto del botón',
+      type: 'string',
+      group: 'contenido',
+      initialValue: 'Quiero ser voluntario',
+    }),
+    defineField({
+      name: 'foto',
+      title: 'Foto',
+      type: 'imagenConAlt',
+      group: 'contenido',
+      description: 'Opcional. Si no se carga, el texto ocupa todo el ancho.',
+    }),
+
+    defineField({
+      name: 'franja',
+      title: 'Franja final',
+      type: 'franja',
+      group: 'franja',
+      validation: (r) => r.required(),
+    }),
+  ],
+  preview: { prepare: () => ({ title: 'Página: Voluntariado' }) },
 });

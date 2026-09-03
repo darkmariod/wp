@@ -27,8 +27,6 @@ export async function traerInicio() {
     destacados,
     programasTitulo, programasTexto, programas,
     practicoTitulo, practicoDatos,
-    voluntariadoTitulo, voluntariadoTexto, voluntariadoRequisitos, voluntariadoTextoBoton,
-    voluntariadoFoto ${CAMPOS_IMAGEN},
     marquesinaFrases,
     porQueEyebrow, porQueTitulo, porQueParrafos,
     porQueFoto ${CAMPOS_IMAGEN},
@@ -66,4 +64,14 @@ export async function traerFotos() {
   return sanityClient.fetch(
     `*[_type == "foto"] | order(orden asc){ _id, categoria, orden, imagen ${CAMPOS_IMAGEN} }`
   );
+}
+
+export async function traerVoluntariado() {
+  return sanityClient.fetch(`*[_type == "paginaVoluntariado"][0]{
+    portada ${CAMPOS_PORTADA},
+    introTitulo, introParrafos,
+    requisitosTitulo, requisitos, textoBoton,
+    foto ${CAMPOS_IMAGEN},
+    franja ${CAMPOS_FRANJA}
+  }`);
 }

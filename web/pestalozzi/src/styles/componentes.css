@@ -111,28 +111,6 @@
 .nav a.activo { color: #fff; background-size: 100% 100%; }
 .nav a.activo { font-weight: 600; }
 
-/* Voluntariado: lleva a una sección de la propia portada, así que pesa
-   menos que Aula virtual (sistema externo) y mucho menos que Admisiones
-   (la acción principal). Sin borde ni relleno fuerte: se lee como
-   botón, pero no compite. */
-.header__voluntariado {
-  display: none;
-  align-items: center;
-  font-size: var(--fs-small);
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--green-800);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-  transition: background .25s var(--ease-out);
-}
-.header__voluntariado:hover,
-.header__voluntariado:focus-visible { background: var(--green-50); }
-/* Aparece junto al resto del menú de escritorio. Por debajo de 1024px
-   vive en la cortina del menú, no acá: el header no da para tres. */
-@media (min-width: 1024px) { .header__voluntariado { display: inline-flex; } }
-
 /* Aula virtual: es un sistema externo, no una sección del sitio. Se
    distingue del menú a propósito — sin el relleno verde de .nav a — para
    que se lea como "esto te lleva afuera". */
@@ -267,10 +245,10 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 .menu-movil.abierto .menu-movil__enlaces a:nth-of-type(2) { transition-delay: .31s; }
 .menu-movil.abierto .menu-movil__enlaces a:nth-of-type(3) { transition-delay: .37s; }
 .menu-movil.abierto .menu-movil__enlaces a:nth-of-type(4) { transition-delay: .43s; }
+.menu-movil.abierto .menu-movil__enlaces a:nth-of-type(5) { transition-delay: .49s; }
 
-.menu-movil.abierto > a:nth-of-type(1) { transition-delay: .49s; }
-.menu-movil.abierto > a:nth-of-type(2) { transition-delay: .55s; }
-.menu-movil.abierto > a:nth-of-type(3) { transition-delay: .61s; }
+.menu-movil.abierto > a:nth-of-type(1) { transition-delay: .55s; }
+.menu-movil.abierto > a:nth-of-type(2) { transition-delay: .61s; }
 .menu-movil.abierto .menu-movil__datos { transition-delay: .67s; }
 
 /* Numeración editorial al costado de cada enlace de navegación. */
@@ -1851,4 +1829,12 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+
+/* La página de voluntariado tiene su propio subtítulo antes de la lista. */
+.voluntariado__subtitulo {
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-h3);
 }

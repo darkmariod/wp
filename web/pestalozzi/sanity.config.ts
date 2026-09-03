@@ -13,6 +13,7 @@ const UNICOS = [
   { id: 'paginaNosotros', titulo: 'Página: Nosotros', icono: '📖' },
   { id: 'paginaGaleria', titulo: 'Página: Galería', icono: '🖼️' },
   { id: 'paginaContacto', titulo: 'Página: Contacto', icono: '✉️' },
+  { id: 'paginaVoluntariado', titulo: 'Página: Voluntariado', icono: '🤝' },
 ];
 
 export default defineConfig({

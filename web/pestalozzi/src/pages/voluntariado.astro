@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Franja from '../components/Franja.astro';
+import { traerConfiguracion, traerVoluntariado } from '../sanity/consultas';
+import { dimensiones, urlImagen } from '../sanity/imagen';
+
+const p = await traerVoluntariado();
+const config = await traerConfiguracion();
+const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
+
+// El mensaje va prellenado: quien escribe solo aprieta enviar, y el
+// colegio recibe consultas que se distinguen de las de admisiones.
+const whatsappVoluntariado =
+  `${whatsapp}?text=${encodeURIComponent('Hola, me interesa el voluntariado en Pestalozzi.')}`;
+---
+<Layout
+  title="Voluntariado | Unidad Educativa Pestalozzi Ambato"
+  description="Súmate como voluntario a la Unidad Educativa Pestalozzi de Ambato. Buscamos hablantes nativos de inglés y personas que conozcan la metodología Montessori."
+  ogTitle="Voluntariado | Pestalozzi Ambato"
+  ogDescription={p.portada.bajada}
+  ogImage={urlImagen(p.portada.foto, 1200)}
+  canonicalPath="/voluntariado"
+  current="voluntariado"
+  preloadImage={urlImagen(p.portada.foto, 720)}
+>
+  <section class="hero hero--interior">
+    <img class="hero__foto" src={urlImagen(p.portada.foto, 720)} alt={p.portada.foto.alt} width="720" height="1280" fetchpriority="high">
+    <div class="hero__velo"></div>
+    <div class="contenedor hero__contenido">
+      <p class="hero__migas"><a href="/">Inicio</a> / Voluntariado</p>
+      <h1 class="hero__titulo">{p.portada.titulo}</h1>
+      <p class="hero__bajada">{p.portada.bajada}</p>
+    </div>
+  </section>
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor voluntariado__grid">
+      <div class="voluntariado__texto">
+        <span class="eyebrow">Súmate</span>
+        <h2 data-entrada="subir">{p.introTitulo}</h2>
+        {p.introParrafos.map((parrafo: string) => <p>{parrafo}</p>)}
+
+        {p.requisitos?.length > 0 && (
+          <>
+            <h3 class="voluntariado__subtitulo">{p.requisitosTitulo || 'A quién buscamos'}</h3>
+            <ul class="voluntariado__lista">
+              {p.requisitos.map((req: string) => (
+                <li data-entrada="subir">{req}</li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <p class="mt-8">
+          <a href={whatsappVoluntariado} class="btn btn--primario" target="_blank" rel="noopener">
+            {p.textoBoton || 'Quiero ser voluntario'}
+          </a>
+        </p>
+      </div>
+
+      {p.foto && (
+        <div class="voluntariado__foto" data-revelar="der">
+          <img src={urlImagen(p.foto, 640)} alt={p.foto.alt}
+               {...dimensiones(p.foto, 640)} loading="lazy">
+        </div>
+      )}
+    </div>
+  </section>
+
+  <Franja franja={p.franja} whatsapp={whatsapp} />
+</Layout>
