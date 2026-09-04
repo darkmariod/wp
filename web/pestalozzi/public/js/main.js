@@ -900,8 +900,12 @@
       var actual = leer();
       if (checkAnaliticas) checkAnaliticas.checked = !!(actual && actual.analiticas);
       modal.hidden = false;
+      modal.classList.add('abierto');
     }
-    function ocultarModal() { modal.hidden = true; }
+    function ocultarModal() {
+      modal.hidden = true;
+      modal.classList.remove('abierto');
+    }
 
     var guardadas = leer();
     if (!guardadas) banner.hidden = false;

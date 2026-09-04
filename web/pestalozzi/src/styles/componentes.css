@@ -1919,14 +1919,18 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 }
 .cookies-banner__botones .btn { padding: .6em 1.1em; font-size: var(--fs-small); }
 
+/* display:none por defecto y .abierto lo enciende — nada de
+   :not([hidden]): el minificador de Astro fusiona esa regla con la
+   base y pierde la condición, dejando el modal visible siempre. */
 .cookies-modal {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: 3200;
-  display: grid;
   place-items: center;
   padding: var(--space-4);
 }
+.cookies-modal.abierto { display: grid; }
 .cookies-modal__velo {
   position: absolute;
   inset: 0;
