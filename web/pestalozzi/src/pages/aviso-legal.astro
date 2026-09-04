@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { traerConfiguracion } from '../sanity/consultas';
+
+const config = await traerConfiguracion();
+const PENDIENTE = 'PENDIENTE DE INFORMACIÓN POR PARTE DE LA INSTITUCIÓN';
+---
+<Layout
+  title="Aviso legal | Unidad Educativa Pestalozzi Ambato"
+  description="Información institucional y condiciones de uso del sitio de la Unidad Educativa Pestalozzi de Ambato."
+  ogTitle="Aviso legal"
+  ogDescription="Información institucional del sitio."
+  ogImage="/img/marca/logo.png"
+  canonicalPath="/aviso-legal"
+  current="contacto"
+  locale="es"
+>
+  <section class="seccion seccion--clara">
+    <div class="contenedor legal">
+      <h1>Aviso legal</h1>
+      <p class="legal__actualizado">Última actualización: 4 de septiembre de 2026.</p>
+
+      <h2>Datos de la institución</h2>
+      <ul>
+        <li>Razón social: {PENDIENTE}</li>
+        <li>RUC: {PENDIENTE}</li>
+        <li>Dirección: {config.direccionCalle}, {config.direccionSector}, {config.ciudad}, Ecuador</li>
+        <li>Correo: <a href={`mailto:${config.correo}`}>{config.correo}</a></li>
+        <li>Teléfono: {config.telefono}</li>
+      </ul>
+
+      <h2>Objeto del sitio</h2>
+      <p>
+        Este sitio web tiene carácter informativo. Presenta la
+        propuesta educativa de la Unidad Educativa Pestalozzi, sus
+        instalaciones y actividades, y ofrece un canal de contacto
+        para familias interesadas en el proceso de admisión.
+      </p>
+
+      <h2>Propiedad intelectual</h2>
+      <p>
+        Los textos, fotografías, logotipos y demás contenidos de este
+        sitio pertenecen a la Unidad Educativa Pestalozzi o se utilizan
+        con su autorización. Su reproducción total o parcial sin
+        autorización expresa no está permitida.
+      </p>
+
+      <h2>Responsabilidad sobre el contenido</h2>
+      <p>
+        La institución procura que la información publicada sea exacta
+        y esté actualizada, pero no garantiza la ausencia de errores.
+        Los datos de cupos, niveles y admisiones deben confirmarse
+        directamente con secretaría.
+      </p>
+
+      <h2>Enlaces a terceros</h2>
+      <p>
+        El sitio enlaza a servicios externos como WhatsApp y el Aula
+        Virtual (Moodle). La institución no se responsabiliza por el
+        contenido o las políticas de privacidad de esos servicios de
+        terceros.
+      </p>
+
+      <h2>Legislación aplicable</h2>
+      <p>
+        Este aviso se rige por la legislación de la República del
+        Ecuador.
+      </p>
+
+      <h2>Contacto</h2>
+      <p>
+        Para cualquier consulta relacionada con este aviso legal,
+        escribir a <a href={`mailto:${config.correo}`}>{config.correo}</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

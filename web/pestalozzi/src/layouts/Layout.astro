@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Fab from '../components/Fab.astro';
+import Cookies from '../components/Cookies.astro';
 import { traerConfiguracion } from '../sanity/consultas';
 import { UI, type Locale } from '../sanity/i18n';
 
@@ -121,6 +122,7 @@ const jsonLd = conJsonLd
 
 <Footer config={config} locale={locale} />
 <Fab config={config} locale={locale} />
+<Cookies locale={locale} />
 
 <script src="/js/componentes.js" defer></script>
 <script src="/js/main.js" defer></script>

@@ -1,0 +1,50 @@
+---
+import { UI, urlIdioma, type Locale } from '../sanity/i18n';
+
+interface Props { locale?: Locale }
+const { locale = 'es' } = Astro.props;
+const ui = UI[locale].cookies;
+---
+<div class="cookies-banner" id="cookies-banner" hidden role="dialog" aria-live="polite" aria-label={ui.tituloPreferencias}>
+  <div class="cookies-banner__caja">
+    <p>
+      {ui.mensaje}
+      {' '}<a href={urlIdioma('/politica-de-cookies', locale)}>{ui.leerPolitica}</a>
+    </p>
+    <div class="cookies-banner__botones">
+      <button type="button" class="btn btn--secundario" data-cookies-configurar>{ui.configurar}</button>
+      <button type="button" class="btn btn--secundario" data-cookies-rechazar>{ui.rechazarNoNecesarias}</button>
+      <button type="button" class="btn btn--primario" data-cookies-aceptar>{ui.aceptarTodas}</button>
+    </div>
+  </div>
+</div>
+
+<div class="cookies-modal" id="cookies-modal" hidden>
+  <div class="cookies-modal__velo" data-cookies-cerrar></div>
+  <div class="cookies-modal__caja" role="dialog" aria-modal="true" aria-labelledby="cookies-modal-titulo">
+    <h2 id="cookies-modal-titulo">{ui.tituloPreferencias}</h2>
+
+    <div class="cookies-modal__fila">
+      <div>
+        <h3>{ui.necesarias}</h3>
+        <p>{ui.necesariasDesc}</p>
+      </div>
+      <span class="cookies-modal__siempre">{ui.siempreActivas}</span>
+    </div>
+
+    <div class="cookies-modal__fila">
+      <div>
+        <h3>{ui.analiticas}</h3>
+        <p>{ui.analiticasDesc}</p>
+      </div>
+      <label class="cookies-modal__switch">
+        <input type="checkbox" id="cookies-analiticas">
+        <span></span>
+      </label>
+    </div>
+
+    <div class="cookies-modal__acciones">
+      <button type="button" class="btn btn--primario" data-cookies-guardar>{ui.guardarPreferencias}</button>
+    </div>
+  </div>
+</div>

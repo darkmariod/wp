@@ -79,5 +79,11 @@ const redes = [
       <p set:html={ui.footer.legal('<span id="anio">2026</span>')} />
       <p>{config.ciudad} · Ecuador</p>
     </div>
+    <nav class="footer__legales" aria-label={ui.footer.legales}>
+      <a href={urlIdioma('/politica-de-privacidad', locale)}>{ui.footer.politicaPrivacidad}</a>
+      <a href={urlIdioma('/politica-de-cookies', locale)}>{ui.footer.politicaCookies}</a>
+      <a href={urlIdioma('/aviso-legal', locale)}>{ui.footer.avisoLegal}</a>
+      <a href="#" data-abrir-preferencias-cookies>{ui.footer.preferenciasCookies}</a>
+    </nav>
   </div>
 </footer>

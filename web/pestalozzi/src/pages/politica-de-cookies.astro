@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { traerConfiguracion } from '../sanity/consultas';
+
+const config = await traerConfiguracion();
+---
+<Layout
+  title="Política de cookies | Unidad Educativa Pestalozzi Ambato"
+  description="Qué cookies utiliza el sitio de la Unidad Educativa Pestalozzi de Ambato y cómo cambiar tus preferencias."
+  ogTitle="Política de cookies"
+  ogDescription="Qué cookies utiliza este sitio."
+  ogImage="/img/marca/logo.png"
+  canonicalPath="/politica-de-cookies"
+  current="contacto"
+  locale="es"
+>
+  <section class="seccion seccion--clara">
+    <div class="contenedor legal">
+      <h1>Política de cookies</h1>
+      <p class="legal__actualizado">Última actualización: 4 de septiembre de 2026.</p>
+
+      <h2>¿Qué son las cookies?</h2>
+      <p>
+        Son pequeños archivos que un sitio web guarda en tu navegador
+        para recordar información entre visitas — por ejemplo, tus
+        preferencias de idioma o de cookies.
+      </p>
+
+      <h2>Cookies que usa este sitio hoy</h2>
+      <p>
+        Este sitio <strong>no carga Google Analytics, Meta Pixel ni
+        ningún otro rastreador</strong>. Lo único que se guarda en tu
+        navegador es lo siguiente:
+      </p>
+      <table class="legal__tabla">
+        <thead>
+          <tr><th>Nombre</th><th>Tipo</th><th>Finalidad</th><th>Duración</th><th>Proveedor</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>pestalozzi_cookies</code></td>
+            <td>Necesaria</td>
+            <td>Recuerda tu elección sobre cookies, para no volver a preguntarte en cada visita.</td>
+            <td>Sin vencimiento (hasta que la borres)</td>
+            <td>Propio del sitio</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Esta cookie es técnicamente un valor guardado en el
+        almacenamiento local de tu navegador (localStorage), no una
+        cookie HTTP tradicional — funciona igual a efectos de
+        privacidad: vive solo en tu navegador y nunca se envía a
+        nuestros servidores.
+      </p>
+
+      <h2>Cookies analíticas</h2>
+      <p>
+        Hoy no usamos ninguna. Si en el futuro se agrega una
+        herramienta de analítica (por ejemplo, para saber qué páginas
+        se visitan más), se activará únicamente si diste tu
+        consentimiento en el panel de preferencias, y esta página se
+        actualizará antes de que eso ocurra.
+      </p>
+
+      <h2>Cómo cambiar tus preferencias</h2>
+      <p>
+        Podés cambiar tu decisión en cualquier momento desde el enlace
+        "Preferencias de cookies" al final de cualquier página del
+        sitio.
+      </p>
+
+      <h2>Aula virtual (Moodle)</h2>
+      <p>
+        El Aula Virtual es un sistema aparte, alojado en un dominio
+        distinto. Sus propias cookies (necesarias para mantener tu
+        sesión iniciada) se rigen por su propia configuración y no
+        están cubiertas por este sitio informativo.
+      </p>
+
+      <h2>Contacto</h2>
+      <p>
+        Para consultas sobre esta política, escribir a
+        <a href={`mailto:${config.correo}`}>{config.correo}</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

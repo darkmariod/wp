@@ -11,6 +11,7 @@
      5. Scrollspy de secciones   (solo anclas locales)
      6. Formulario               (validación + envío por WhatsApp)
      7. Capa GSAP                (revelado, parallax, componentes)
+     11. Consentimiento de cookies
 
    El carrusel, la galería en acordeón, el visor de fotos, el botón
    imantado y el foco de luz viven en componentes.js.
@@ -858,5 +859,86 @@
       }, 4000);
     }
   }
+
+  /* ------------------------------------------------------------
+     11. CONSENTIMIENTO DE COOKIES
+     Hoy el sitio no carga ningún rastreador (ni Analytics ni Meta
+     Pixel) — por eso la única categoría real es "analíticas", para
+     el día que se agregue. Cualquier script futuro que necesite
+     consentimiento debe preguntar antes con
+     window.PestalozziCookies.tienePermiso('analiticas'), nunca
+     cargarse solo.
+     ------------------------------------------------------------ */
+  (function () {
+    var CLAVE = 'pestalozzi_cookies';
+    var banner = document.getElementById('cookies-banner');
+    var modal = document.getElementById('cookies-modal');
+    var checkAnaliticas = document.getElementById('cookies-analiticas');
+    if (!banner || !modal) return;
+
+    function leer() {
+      try {
+        var v = JSON.parse(localStorage.getItem(CLAVE));
+        return v && typeof v === 'object' ? v : null;
+      } catch (e) { return null; }
+    }
+
+    function guardar(prefs) {
+      try {
+        localStorage.setItem(CLAVE, JSON.stringify({
+          analiticas: !!prefs.analiticas,
+          fecha: new Date().toISOString(),
+        }));
+      } catch (e) {
+        // Sin localStorage (modo privado estricto): el sitio sigue
+        // funcionando, solo vuelve a preguntar la próxima visita.
+      }
+    }
+
+    function ocultarBanner() { banner.hidden = true; }
+    function mostrarModal() {
+      var actual = leer();
+      if (checkAnaliticas) checkAnaliticas.checked = !!(actual && actual.analiticas);
+      modal.hidden = false;
+    }
+    function ocultarModal() { modal.hidden = true; }
+
+    var guardadas = leer();
+    if (!guardadas) banner.hidden = false;
+
+    banner.querySelector('[data-cookies-aceptar]').addEventListener('click', function () {
+      guardar({ analiticas: true });
+      ocultarBanner();
+    });
+    banner.querySelector('[data-cookies-rechazar]').addEventListener('click', function () {
+      guardar({ analiticas: false });
+      ocultarBanner();
+    });
+    banner.querySelector('[data-cookies-configurar]').addEventListener('click', function () {
+      mostrarModal();
+    });
+    modal.querySelector('[data-cookies-guardar]').addEventListener('click', function () {
+      guardar({ analiticas: checkAnaliticas ? checkAnaliticas.checked : false });
+      ocultarModal();
+      ocultarBanner();
+    });
+    modal.querySelector('[data-cookies-cerrar]').addEventListener('click', ocultarModal);
+
+    // El enlace del footer reabre el panel en cualquier momento,
+    // incluso si ya se había decidido antes.
+    document.querySelectorAll('[data-abrir-preferencias-cookies]').forEach(function (enlace) {
+      enlace.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        mostrarModal();
+      });
+    });
+
+    window.PestalozziCookies = {
+      tienePermiso: function (categoria) {
+        var v = leer();
+        return !!(v && v[categoria]);
+      },
+    };
+  })();
 
 })();

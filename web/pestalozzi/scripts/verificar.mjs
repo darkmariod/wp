@@ -2,6 +2,7 @@
 // Uso:  npm run build && npm run verificar
 // Sale con código 1 si alguna prueba crítica falla (sirve para CI).
 import { readFile, readdir, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
@@ -175,19 +176,29 @@ try {
 
 try {
   const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
-  const urls = (sitemap.match(/<loc>/g) || []).length;
-  urls === NOMBRES.length ? ok(`sitemap.xml: ${urls} URLs`) : fallo(`sitemap.xml: ${urls} URLs, esperaba ${NOMBRES.length}`);
+  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  // No un número fijo: cada URL del sitemap tiene que apuntar a una
+  // página que de verdad existe en dist/. Así el chequeo sigue siendo
+  // válido sin tocarlo cada vez que se agrega una página real.
+  const rotas = locs.filter((loc) => {
+    const ruta = loc.replace('https://pestalozzi-opal.vercel.app', '');
+    const archivo = ruta === '/' ? 'index.html' : `${ruta.replace(/^\/|\/$/g, '')}/index.html`;
+    return !existsSync(join(dist, archivo));
+  });
+  rotas.length === 0
+    ? ok(`sitemap.xml: ${locs.length} URLs, todas existen en dist/`)
+    : fallo(`sitemap.xml: ${rotas.length} URL(s) sin página real: ${rotas.join(', ')}`);
 } catch { fallo('sitemap.xml: no existe en dist/'); }
 
 /* ─────────────────────────────────────────────────────────────
    7. PRESUPUESTO DE RENDIMIENTO
    ───────────────────────────────────────────────────────────── */
 titulo('7. Presupuesto de rendimiento');
-// jsPropio: 30 -> 32 -> 36. Cada ronda de efectos (parallax de franja,
-// descripción animada de galería, palabra por palabra) suma unos KB
-// reales, no relleno. 36 deja margen para la próxima sin perseguir el
-// número cada vez — sigue siendo minúsculo comparado a cualquier framework.
-const TOPES = { portadaGzip: 60, jsPropio: 36, videoTotal: 2600, imagenHero: 200 };
+// jsPropio: 30 -> 32 -> 36 -> 40. El consentimiento de cookies (banner +
+// panel de preferencias + localStorage) sumó ~2 KB reales, no relleno.
+// 40 deja margen para la próxima sin perseguir el número cada vez — sigue
+// siendo minúsculo comparado a cualquier framework.
+const TOPES = { portadaGzip: 60, jsPropio: 40, videoTotal: 2600, imagenHero: 200 };
 
 const idx = await readFile(join(dist, 'index.html'));
 const idxGz = gzipSync(idx).length / 1024;

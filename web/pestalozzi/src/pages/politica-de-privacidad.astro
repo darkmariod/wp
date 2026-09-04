@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { traerConfiguracion } from '../sanity/consultas';
+
+const config = await traerConfiguracion();
+const PENDIENTE = 'PENDIENTE DE INFORMACIÓN POR PARTE DE LA INSTITUCIÓN';
+---
+<Layout
+  title="Política de privacidad | Unidad Educativa Pestalozzi Ambato"
+  description="Cómo la Unidad Educativa Pestalozzi de Ambato trata los datos personales de familias y estudiantes."
+  ogTitle="Política de privacidad"
+  ogDescription="Cómo tratamos los datos personales en la Unidad Educativa Pestalozzi."
+  ogImage="/img/marca/logo.png"
+  canonicalPath="/politica-de-privacidad"
+  current="contacto"
+  locale="es"
+>
+  <section class="seccion seccion--clara">
+    <div class="contenedor legal">
+      <h1>Política de privacidad</h1>
+      <p class="legal__actualizado">Última actualización: 4 de septiembre de 2026.</p>
+
+      <p>
+        Este documento es informativo y describe cómo la Unidad Educativa
+        Pestalozzi ("la institución") trata los datos personales que
+        recibe a través de este sitio web. Antes de su publicación
+        definitiva, debe ser revisado por la institución y, de
+        preferencia, por asesoría jurídica especializada.
+      </p>
+
+      <h2>1. Responsable del tratamiento</h2>
+      <ul>
+        <li>Razón social: {PENDIENTE}</li>
+        <li>RUC: {PENDIENTE}</li>
+        <li>Dirección: {config.direccionCalle}, {config.direccionSector}, {config.ciudad}, Ecuador</li>
+        <li>Correo de contacto: <a href={`mailto:${config.correo}`}>{config.correo}</a></li>
+        <li>Teléfono: {config.telefono}</li>
+      </ul>
+
+      <h2>2. Datos que tratamos</h2>
+      <p>A través del sitio web recogemos únicamente los datos que la persona ingresa voluntariamente en el formulario de contacto:</p>
+      <ul>
+        <li>Nombre y apellido</li>
+        <li>Correo electrónico</li>
+        <li>Nivel de interés (opcional)</li>
+        <li>Mensaje</li>
+      </ul>
+      <p>
+        No utilizamos formularios de matrícula ni recogemos datos de
+        estudiantes a través del sitio web público. El proceso de
+        admisión y los datos asociados a él se gestionan directamente
+        con la institución, fuera de este sitio.
+      </p>
+
+      <h2>3. Finalidad</h2>
+      <p>
+        Los datos del formulario de contacto se usan exclusivamente para
+        responder la consulta o solicitud de información recibida, por
+        correo electrónico o WhatsApp.
+      </p>
+
+      <h2>4. Base jurídica y consentimiento</h2>
+      <p>
+        El tratamiento se basa en el consentimiento de la persona que
+        completa el formulario, otorgado al enviarlo voluntariamente.
+      </p>
+
+      <h2>5. Conservación</h2>
+      <p>
+        Los mensajes recibidos se conservan en la bandeja de correo
+        institucional el tiempo necesario para atender la consulta y
+        llevar registro de comunicaciones con familias interesadas.
+      </p>
+
+      <h2>6. Destinatarios y encargados del tratamiento</h2>
+      <p>
+        El formulario de contacto se procesa a través de Sanity (gestor
+        de contenidos) y se entrega por correo electrónico. No
+        compartimos datos con terceros con fines comerciales ni
+        publicitarios.
+      </p>
+
+      <h2>7. Transferencias internacionales</h2>
+      <p>
+        El sitio web está alojado en la infraestructura de Vercel Inc.
+        y el gestor de contenidos en Sanity.io, ambos con servidores
+        fuera de Ecuador. Los datos del formulario de contacto pueden
+        procesarse transitoriamente en esa infraestructura como parte
+        del funcionamiento técnico del sitio.
+      </p>
+
+      <h2>8. Seguridad</h2>
+      <p>
+        El sitio se sirve exclusivamente por HTTPS. El acceso al panel
+        de administración de contenidos está protegido por contraseña
+        y limitado al personal autorizado de la institución.
+      </p>
+
+      <h2>9. Derechos de las personas titulares</h2>
+      <p>
+        De acuerdo con la Ley Orgánica de Protección de Datos Personales
+        del Ecuador, toda persona puede solicitar acceso, rectificación,
+        actualización, eliminación u oposición respecto de sus datos
+        personales. Para ejercer estos derechos, escribir a
+        <a href={`mailto:${config.correo}`}>{config.correo}</a>.
+      </p>
+
+      <h2>10. Datos de niñas, niños y adolescentes</h2>
+      <p>
+        El formulario de contacto de este sitio está dirigido a
+        representantes legales, no a menores de edad. Las fotografías
+        de estudiantes que aparecen en la galería del sitio cuentan con
+        autorización institucional para su publicación con fines
+        informativos y de difusión de las actividades del colegio. Un
+        representante legal que desee solicitar el retiro de una
+        fotografía puede escribir a <a href={`mailto:${config.correo}`}>{config.correo}</a>.
+      </p>
+
+      <h2>11. Cambios a esta política</h2>
+      <p>
+        Esta política puede actualizarse para reflejar cambios en el
+        sitio o en la normativa aplicable. La fecha de la última
+        actualización se indica al inicio de este documento.
+      </p>
+
+      <h2>12. Contacto</h2>
+      <p>
+        Para cualquier consulta sobre esta política, escribir a
+        <a href={`mailto:${config.correo}`}>{config.correo}</a> o al
+        teléfono {config.telefono}.
+      </p>
+    </div>
+  </section>
+</Layout>

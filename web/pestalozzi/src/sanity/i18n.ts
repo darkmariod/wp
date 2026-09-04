@@ -61,6 +61,26 @@ export const UI = {
       unidadEducativa: 'Unidad Educativa',
       legal: (anio: string) =>
         `© ${anio} Unidad Educativa Pestalozzi Ambato. Desarrollado: Monkey Computer. Todos los derechos reservados.`,
+      legales: 'Legales',
+      politicaPrivacidad: 'Política de privacidad',
+      politicaCookies: 'Política de cookies',
+      avisoLegal: 'Aviso legal',
+      preferenciasCookies: 'Preferencias de cookies',
+    },
+    cookies: {
+      mensaje:
+        'Usamos cookies para que este sitio funcione correctamente y, con tu consentimiento, para comprender cómo se utiliza. Podés aceptar todas, rechazar las no necesarias o configurar tus preferencias.',
+      aceptarTodas: 'Aceptar todas',
+      rechazarNoNecesarias: 'Rechazar no necesarias',
+      configurar: 'Configurar',
+      tituloPreferencias: 'Preferencias de cookies',
+      necesarias: 'Necesarias',
+      necesariasDesc: 'Permiten que el sitio funcione — no se pueden desactivar.',
+      siempreActivas: 'Siempre activas',
+      analiticas: 'Analíticas',
+      analiticasDesc: 'Nos ayudarían a entender cómo se usa el sitio para mejorarlo. Hoy no hay ninguna activa.',
+      guardarPreferencias: 'Guardar preferencias',
+      leerPolitica: 'Leer la política de cookies',
     },
     fab: {
       whatsapp: 'WhatsApp',
@@ -166,6 +186,26 @@ export const UI = {
       unidadEducativa: 'Educational Unit',
       legal: (anio: string) =>
         `© ${anio} Unidad Educativa Pestalozzi Ambato. Developed by: Monkey Computer. All rights reserved.`,
+      legales: 'Legal',
+      politicaPrivacidad: 'Privacy Policy',
+      politicaCookies: 'Cookie Policy',
+      avisoLegal: 'Legal Notice',
+      preferenciasCookies: 'Cookie Preferences',
+    },
+    cookies: {
+      mensaje:
+        'We use cookies so this site works correctly and, with your consent, to understand how it is used. You can accept all, reject non-essential ones, or set your preferences.',
+      aceptarTodas: 'Accept all',
+      rechazarNoNecesarias: 'Reject non-essential',
+      configurar: 'Customize',
+      tituloPreferencias: 'Cookie preferences',
+      necesarias: 'Necessary',
+      necesariasDesc: 'Needed for the site to work — cannot be turned off.',
+      siempreActivas: 'Always active',
+      analiticas: 'Analytics',
+      analiticasDesc: 'Would help us understand how the site is used, to improve it. None are active today.',
+      guardarPreferencias: 'Save preferences',
+      leerPolitica: 'Read the cookie policy',
     },
     fab: {
       whatsapp: 'WhatsApp',
