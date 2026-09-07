@@ -424,13 +424,25 @@
       }
       if (elementoTitulo && !soloTitulo) {
         if (!elementoTitulo.dataset.split) { dividirEnLetras(elementoTitulo); elementoTitulo.dataset.split = '1'; }
+        var letras = elementoTitulo.querySelectorAll('.letra');
         // fromTo y no from: from fija opacity:0 de inmediato y, si el tween
         // no llega a correr (pestaña en segundo plano, dispositivo lento),
         // la letra queda invisible para siempre. clearProps devuelve el
         // control al CSS (opacity:1 por defecto) apenas termina.
-        gsap.fromTo(elementoTitulo.querySelectorAll('.letra'),
+        gsap.fromTo(letras,
           { opacity: 0 },
           { opacity: 1, duration: 0.01, stagger: 0.032, ease: 'none', clearProps: 'opacity' });
+        // Red de seguridad real: si la pestaña estaba en segundo plano
+        // justo cuando se pidió este tween, requestAnimationFrame puede
+        // no tickear nunca y clearProps no llega a correr — el título
+        // queda cortado para siempre (se vio pasar de verdad probando
+        // en una pestaña de fondo). setTimeout no depende de rAF, así
+        // que a los 1.5s fuerza el texto visible pase lo que pase. En
+        // el caso normal el tween ya terminó hace rato y esto no hace
+        // nada.
+        setTimeout(function () {
+          letras.forEach(function (letra) { letra.style.opacity = ''; });
+        }, 1500);
       }
       if (document.querySelector('.hero__migas')) {
         gsap.fromTo('.hero__migas',
