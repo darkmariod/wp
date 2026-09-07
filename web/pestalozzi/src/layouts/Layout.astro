@@ -28,12 +28,17 @@ interface Props {
   conJsonLd?: boolean;
   datosGaleria?: Record<string, string>;
   locale?: Locale;
+  // true solo en las 5 páginas que de verdad tienen versión /en/ real
+  // (Inicio, Nosotros, Galería, Voluntariado, Contacto). Las páginas
+  // legales y la 404 son español-only, así que no declaran alternates:
+  // no hay nada al otro lado del hreflang.
+  bilingue?: boolean;
 }
 
 const {
   title, description, ogTitle, ogDescription, ogImage,
   canonicalPath, current, ctaContacto = true, preloadImage,
-  conJsonLd = false, datosGaleria, locale = 'es',
+  conJsonLd = false, datosGaleria, locale = 'es', bilingue = false,
 } = Astro.props;
 const ui = UI[locale];
 
@@ -48,6 +53,13 @@ const sitio = 'https://pestalozzi-opal.vercel.app';
 // cada página, que es quien sabe en qué idioma se está sirviendo.
 const canonical = canonicalPath === '/' ? `${sitio}/` : `${sitio}${canonicalPath}`;
 const imagenAbsoluta = ogImage.startsWith('http') ? ogImage : `${sitio}${ogImage}`;
+
+// Para el par de hreflang: canonicalPath ya trae el prefijo /en puesto
+// por la página (vía urlIdioma), así que alcanza con sacarlo para
+// reconstruir la ruta base y armar las dos URLs.
+const rutaBase = canonicalPath === '/en' ? '/' : canonicalPath.replace(/^\/en/, '') || '/';
+const urlEs = rutaBase === '/' ? `${sitio}/` : `${sitio}${rutaBase}`;
+const urlEn = rutaBase === '/' ? `${sitio}/en` : `${sitio}/en${rutaBase}`;
 
 // Lo que main.js necesita saber del CMS. Va como JSON y no como
 // atributos sueltos para no repetir el mismo dato en varios lugares.
@@ -96,6 +108,13 @@ const jsonLd = conJsonLd
 <meta name="twitter:image" content={imagenAbsoluta}>
 
 <link rel="canonical" href={canonical}>
+{bilingue && (
+  <>
+    <link rel="alternate" hreflang="es-EC" href={urlEs}>
+    <link rel="alternate" hreflang="en" href={urlEn}>
+    <link rel="alternate" hreflang="x-default" href={urlEs}>
+  </>
+)}
 <link rel="icon" href="/img/marca/logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

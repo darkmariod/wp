@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Las rutas /en/* no se incluyen todavía: el contenido editorial en
-     inglés está pendiente de traducción y hoy cae en fallback al
-     español, así que indexarlas duplicaría contenido con la versión
-     en español. Se agregan cuando haya traducción real. -->
+<!-- Las 5 páginas bilingües (Inicio, Nosotros, Galería, Voluntariado,
+     Contacto) ya tienen traducción real en Sanity, así que sus rutas
+     /en/* se listan acá también. Las páginas legales son español-only
+     a propósito y no tienen versión /en/. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pestalozzi-opal.vercel.app/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://pestalozzi-opal.vercel.app/en</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,7 +20,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://pestalozzi-opal.vercel.app/en/nosotros</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://pestalozzi-opal.vercel.app/galeria</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pestalozzi-opal.vercel.app/en/galeria</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -25,7 +40,17 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://pestalozzi-opal.vercel.app/en/voluntariado</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://pestalozzi-opal.vercel.app/contacto</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pestalozzi-opal.vercel.app/en/contacto</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
