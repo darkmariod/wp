@@ -1,0 +1,11 @@
+# Frontend
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /mi-escuelita/
+Disallow: /profile
+Disallow: /storage-privado/
+Disallow: /api/
+
+Sitemap: https://tudominio.com/sitemap.xml
