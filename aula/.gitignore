@@ -1,0 +1,8 @@
+# Entorno local — nunca trackear claves ni secretos.
+.env
+.env.*
+!.env.example
+
+# Cache de tests y metadatos locales.
+.phpunit.result.cache
+.phpunit.cache/
