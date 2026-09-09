@@ -6,7 +6,7 @@
     <div>
         <h1 class="text-3xl font-bold text-ink-900">Notificaciones</h1>
         <p class="mt-2 text-sm text-ink-400">
-            Elegí qué avisos querés recibir por correo.
+            Elige qué avisos quieres recibir por correo.
         </p>
 
         <form method="POST" action="{{ route('mi-escuelita.notificaciones.update') }}" class="mt-8 space-y-4">
@@ -26,7 +26,7 @@
                     <span>
                         <span class="block font-medium text-ink-900">Nueva experiencia publicada</span>
                         <span class="mt-0.5 block text-sm text-ink-400">
-                            Avisame cuando la guía publique una experiencia nueva.
+                            Avísame cuando la guía publique una experiencia nueva.
                         </span>
                     </span>
                 </label>
@@ -45,7 +45,7 @@
                     <span>
                         <span class="block font-medium text-ink-900">Respuesta de la guía</span>
                         <span class="mt-0.5 block text-sm text-ink-400">
-                            Avisame cuando la guía responde a una experiencia compartida.
+                            Avísame cuando la guía responde a una experiencia compartida.
                         </span>
                     </span>
                 </label>

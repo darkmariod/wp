@@ -5,7 +5,7 @@
 @section('content')
     <div>
         <h1 class="text-xl font-semibold text-ink-900">Iniciar sesión</h1>
-        <p class="mt-1 text-sm text-ink-600">Entrá al espacio de tu familia en Mi Escuelita.</p>
+        <p class="mt-1 text-sm text-ink-600">Entra al espacio de tu familia en Mi Escuelita.</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-4">
@@ -74,7 +74,7 @@
 
         @if (Route::has('register'))
             <p class="pt-2 text-center text-sm text-ink-600">
-                ¿Todavía no tenés cuenta?
+                ¿Todavía no tienes cuenta?
                 <a href="{{ route('register') }}" class="rounded-md font-medium text-green-800 transition-fast hover:text-green-900 focus-ring">
                     Crear cuenta
                 </a>

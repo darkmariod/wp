@@ -5,7 +5,7 @@
 @section('content')
     <div>
         <h1 class="text-xl font-semibold text-ink-900">Crear cuenta</h1>
-        <p class="mt-1 text-sm text-ink-600">Registrate para entrar al espacio de tu familia.</p>
+        <p class="mt-1 text-sm text-ink-600">Regístrate para entrar al espacio de tu familia.</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4">
@@ -82,7 +82,7 @@
         </button>
 
         <p class="pt-2 text-center text-sm text-ink-600">
-            ¿Ya tenés cuenta?
+            ¿Ya tienes cuenta?
             <a href="{{ route('login') }}" class="rounded-md font-medium text-green-800 transition-fast hover:text-green-900 focus-ring">
                 Iniciar sesión
             </a>
