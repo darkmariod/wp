@@ -13,13 +13,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'photo_path', 'email', 'password', 'role', 'family_id', 'active', 'notification_preferences'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     public const ROLE_ADMINISTRADOR = 'administrador';
 
@@ -28,6 +29,14 @@ class User extends Authenticatable implements FilamentUser
     public const ROLE_GUIA = 'guia';
 
     public const ROLE_FAMILIA = 'familia';
+
+    /** Roles válidos de la app (coinciden con los roles de Spatie/Shield). */
+    public const ROLES = [
+        self::ROLE_ADMINISTRADOR,
+        self::ROLE_COORDINACION,
+        self::ROLE_GUIA,
+        self::ROLE_FAMILIA,
+    ];
 
     /**
      * Get the attributes that should be cast.

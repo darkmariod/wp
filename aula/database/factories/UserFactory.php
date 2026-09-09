@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends Factory<User>
@@ -34,6 +35,22 @@ class UserFactory extends Factory
             'role' => User::ROLE_FAMILIA,
             'active' => true,
         ];
+    }
+
+    /**
+     * Sincroniza el rol de Spatie con el campo `role` (string) de la app.
+     * La integración con Filament Shield usa los roles de Spatie; la
+     * plataforma sigue leyendo el campo role. Ambos deben coincidir.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            if (! $user->hasAnyRole(User::ROLES)) {
+                // findOrCreate: los roles pueden no existir en DB de test
+                // (sqlite en memoria); crearlos ahí es parte de la sync.
+                $user->assignRole(Role::findOrCreate($user->role, 'web'));
+            }
+        });
     }
 
     /**
