@@ -44,9 +44,14 @@ class Child extends Model
 
     public function avatarUrl(): ?string
     {
-        return $this->photo_path
-            ? Storage::disk('public')->url($this->photo_path)
-            : null;
+        if (! $this->photo_path) {
+            return null;
+        }
+
+        // Ruta relativa a la raíz: Storage::url() devuelve una URL absoluta
+        // armada con APP_URL, así que la imagen se rompe apenas la app se
+        // sirve en otro host o puerto del configurado.
+        return parse_url(Storage::disk('public')->url($this->photo_path), PHP_URL_PATH);
     }
 
     public function avatarInitials(): string
