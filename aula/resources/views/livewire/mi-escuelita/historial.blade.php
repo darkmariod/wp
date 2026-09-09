@@ -30,30 +30,18 @@
             >
         </label>
 
-        <label>
-            <span class="sr-only">Filtrar por área</span>
-            <select
-                wire:model.live="filtroArea"
-                class="w-full rounded-md border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 focus-ring"
-            >
-                <option value="">Todas las áreas</option>
-                @foreach ($this->areas as $area)
-                    <option value="{{ $area->id }}">{{ $area->name }}</option>
-                @endforeach
-            </select>
-        </label>
+        <x-field-select label="Filtrar por área" wire:model.live="filtroArea">
+            <option value="">Todas las áreas</option>
+            @foreach ($this->areas as $area)
+                <option value="{{ $area->id }}">{{ $area->name }}</option>
+            @endforeach
+        </x-field-select>
 
-        <label>
-            <span class="sr-only">Filtrar por estado</span>
-            <select
-                wire:model.live="filtro"
-                class="w-full rounded-md border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 focus-ring"
-            >
-                @foreach ($this->filtros as $clave => $etiqueta)
-                    <option value="{{ $clave }}">{{ $etiqueta }}</option>
-                @endforeach
-            </select>
-        </label>
+        <x-field-select label="Filtrar por estado" wire:model.live="filtro">
+            @foreach ($this->filtros as $clave => $etiqueta)
+                <option value="{{ $clave }}">{{ $etiqueta }}</option>
+            @endforeach
+        </x-field-select>
     </div>
 
     <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -80,7 +68,7 @@
 
     @if ($this->evidencias()->isEmpty())
         <p class="mt-10 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
-            Todavía no compartieron ninguna experiencia acá. Las que envíen van a aparecer en esta lista.
+            Todavía no compartieron ninguna experiencia aquí. Las que envíen van a aparecer en esta lista.
         </p>
     @else
         <div class="mt-4 overflow-x-auto rounded-lg border border-green-100 bg-white shadow-card">

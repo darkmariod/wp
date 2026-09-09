@@ -5,7 +5,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
-            Esto es una vista previa: así lo va a ver la familia y no pueden compartir evidencia desde acá.
+            Esto es una vista previa: así lo va a ver la familia y no pueden compartir evidencia desde aquí.
         </div>
     @endif
 
@@ -20,8 +20,9 @@
     <div class="mt-6 overflow-hidden rounded-lg border border-green-100 bg-white shadow-card">
         <div class="p-6 sm:p-8">
             @if ($content->area)
-                <span class="text-xs font-medium uppercase tracking-wide text-accent-600">
-                    {{ $content->area->icon }} {{ $content->area->name }}
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-accent-600">
+                    <x-area-icon :name="$content->area->icon" class="h-4 w-4" />
+                    {{ $content->area->name }}
                 </span>
             @endif
 
@@ -68,24 +69,26 @@
     @if ($content->requires_evidence)
         @if ($this->mostrarFormulario)
             <div class="mt-8 rounded-lg border border-green-100 bg-white p-6 shadow-card sm:p-8" wire:key="form-evidence">
-                <h2 class="text-xl font-semibold text-ink-900">Compartí esta experiencia</h2>
+                <h2 class="text-xl font-semibold text-ink-900">Comparte esta experiencia</h2>
                 <p class="mt-1 text-sm text-ink-400">
-                    Contanos cómo fue y subí una foto, video o documento de {{ $ninoActual->name ?? 'tu niño' }} en esta experiencia.
+                    Cuéntanos cómo fue y sube una foto, video o documento de {{ $ninoActual->name ?? 'tu niño' }} en esta experiencia.
                 </p>
 
                 <form wire:submit="submit" class="mt-6 space-y-6" novalidate>
                     @if ($this->hijosActivos->count() > 1)
                         <div>
-                            <label for="child_id" class="block text-sm font-medium text-ink-700">¿Para qué niño es esta experiencia?</label>
-                            <select
-                                id="child_id"
-                                wire:model="child_id"
-                                class="mt-2 block w-full max-w-md rounded-lg border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 shadow-sm focus-ring"
-                            >
-                                @foreach ($this->hijosActivos as $hijo)
-                                    <option value="{{ $hijo->id }}">{{ $hijo->name }}</option>
-                                @endforeach
-                            </select>
+                            <div class="max-w-md">
+                                <x-field-select
+                                    label="¿Para qué niño es esta experiencia?"
+                                    :hide-label="false"
+                                    id="child_id"
+                                    wire:model="child_id"
+                                >
+                                    @foreach ($this->hijosActivos as $hijo)
+                                        <option value="{{ $hijo->id }}">{{ $hijo->name }}</option>
+                                    @endforeach
+                                </x-field-select>
+                            </div>
                             @error('child_id')
                                 <p class="mt-2 text-sm font-medium text-red-600">{{ $message }}</p>
                             @enderror
@@ -116,7 +119,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm4.5-9a1.125 1.125 0 1 0 0-2.25 1.125 1.125 0 0 0 0 2.25ZM19.5 12.9l-3.75 3.75" />
                             </svg>
-                            Subí fotos
+                            Sube fotos
                             <span class="text-xs font-normal">(máx. 5)</span>
                         </label>
                         <input id="fotos" type="file" wire:model="fotos" multiple accept="image/*" class="sr-only" />
@@ -147,7 +150,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
                                 </svg>
-                                Subí un video
+                                Sube un video
                                 <span class="text-xs font-normal">(MP4 o MOV)</span>
                             </label>
                             <input id="video" type="file" wire:model="video" accept="video/mp4,video/quicktime" class="sr-only" />
@@ -177,7 +180,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
-                                Adjuntá un documento
+                                Adjunta un documento
                                 <span class="text-xs font-normal">(PDF, Word o imagen)</span>
                             </label>
                             <input id="document" type="file" wire:model="document" class="sr-only" />
@@ -194,7 +197,7 @@
                             id="comment"
                             wire:model="comment"
                             rows="4"
-                            placeholder="Contanos qué hicieron, cómo se sintió tu niño, qué aprendieron…"
+                            placeholder="Cuéntanos qué hicieron, cómo se sintió tu niño, qué aprendieron…"
                             class="mt-2 block w-full rounded-lg border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 shadow-sm focus-ring"
                         ></textarea>
                         @error('comment')

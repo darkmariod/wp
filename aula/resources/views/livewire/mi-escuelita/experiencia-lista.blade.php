@@ -31,18 +31,12 @@
             >
         </label>
 
-        <label>
-            <span class="sr-only">Filtrar por área</span>
-            <select
-                wire:model.live="filtroArea"
-                class="w-full rounded-md border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 focus-ring"
-            >
-                <option value="">Todas las áreas</option>
-                @foreach ($this->areas as $area)
-                    <option value="{{ $area->id }}">{{ $area->icon }} {{ $area->name }}</option>
-                @endforeach
-            </select>
-        </label>
+        <x-field-select label="Filtrar por área" wire:model.live="filtroArea">
+            <option value="">Todas las áreas</option>
+            @foreach ($this->areas as $area)
+                <option value="{{ $area->id }}">{{ $area->name }}</option>
+            @endforeach
+        </x-field-select>
     </div>
 
     <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -69,7 +63,7 @@
 
     @if ($this->experiencias()->isEmpty())
         <p class="mt-10 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
-            Todavía no hay experiencias publicadas para este ambiente. Pasate por la colección más tarde.
+            Todavía no hay experiencias publicadas para este ambiente. Pasa por la colección más tarde.
         </p>
     @else
         <div class="mt-4 overflow-x-auto rounded-lg border border-green-100 bg-white shadow-card">
@@ -101,7 +95,7 @@
                             <td class="whitespace-nowrap px-5 py-4 text-ink-600">
                                 @if ($exp->area)
                                     <span class="inline-flex items-center gap-1.5">
-                                        <span aria-hidden="true">{{ $exp->area->icon }}</span>
+                                        <x-area-icon :name="$exp->area->icon" class="h-4 w-4 text-green-700" />
                                         <span>{{ $exp->area->name }}</span>
                                     </span>
                                 @else

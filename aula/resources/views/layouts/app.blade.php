@@ -165,15 +165,7 @@
                 @yield('content')
             </main>
 
-            <footer class="border-t border-green-100 bg-white">
-                <div class="mx-auto flex max-w-5xl flex-col items-center gap-2 px-6 py-6 text-sm text-ink-400 sm:flex-row sm:justify-between">
-                    <span>Mi Escuelita — Pestalozzi</span>
-                    <a
-                        href="{{ route('privacidad') }}"
-                        class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring"
-                    >Política de privacidad</a>
-                </div>
-            </footer>
+            <x-site-footer />
         </div>
 
         <x-cookie-consent />
