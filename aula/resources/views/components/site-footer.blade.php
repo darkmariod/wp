@@ -18,10 +18,12 @@
         ['Admisiones', $sitio . '/admisiones'],
     ];
 
+    // Mismas redes y correo que pestalozzi-opal.vercel.app: es la
+    // presencia real de la institución, no un placeholder inventado.
     $redes = [
-        ['Facebook', 'https://www.facebook.com/'],
-        ['WhatsApp', 'https://wa.me/'],
-        ['TikTok', 'https://www.tiktok.com/'],
+        ['Facebook', 'https://facebook.com/pestalozziambato'],
+        ['WhatsApp', 'https://wa.me/593998246396'],
+        ['TikTok', 'https://www.tiktok.com/@pestalozziambato'],
     ];
 @endphp
 
@@ -30,12 +32,9 @@
         <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {{-- Marca --}}
             <div class="lg:col-span-1">
-                <span class="text-lg font-semibold tracking-tight text-green-800">
-                    Mi Escuelita
-                </span>
+                <x-brand-logo icon-class="h-8 w-auto" />
                 <p class="mt-3 max-w-xs text-sm leading-relaxed text-ink-400">
-                    El espacio donde tu familia y el colegio siguen juntos el
-                    crecimiento de tu niño.
+                    Unidad Educativa · Ambato, Ecuador
                 </p>
             </div>
 
@@ -65,25 +64,28 @@
                     <p>Tiwinza N.º 95 y Etza<br>Ambato, Ecuador</p>
                     <p>
                         <a
-                            href="mailto:info@pestalozzi.edu.ec"
+                            href="mailto:uepestalozzi.ambato@gmail.com"
                             class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring"
-                        >info@pestalozzi.edu.ec</a>
+                        >uepestalozzi.ambato@gmail.com</a>
                     </p>
                 </address>
             </div>
 
-            {{-- Redes --}}
+            {{-- Síguenos --}}
             <nav aria-labelledby="footer-redes">
-                <h2 id="footer-redes" class="text-sm font-semibold text-ink-900">Redes</h2>
-                <ul class="mt-4 space-y-1">
+                <h2 id="footer-redes" class="text-sm font-semibold text-ink-900">Síguenos</h2>
+                <ul class="mt-4 flex gap-3">
                     @foreach ($redes as [$texto, $url])
                         <li>
                             <a
                                 href="{{ $url }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex min-h-[44px] items-center text-sm text-ink-400 transition-fast hover:text-green-800 focus-ring"
-                            >{{ $texto }}</a>
+                                aria-label="{{ $texto }}"
+                                class="flex h-11 w-11 items-center justify-center rounded-full border border-green-100 text-ink-400 transition-fast hover:border-green-300 hover:text-green-800 focus-ring"
+                            >
+                                <x-social-icon :name="$texto" class="h-5 w-5" />
+                            </a>
                         </li>
                     @endforeach
                 </ul>

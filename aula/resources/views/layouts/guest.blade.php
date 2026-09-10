@@ -35,10 +35,8 @@
         @else
             <div class="flex min-h-screen flex-col items-center bg-bg pt-6 sm:justify-center sm:pt-0">
                 <div>
-                    <a href="{{ url('/') }}">
-                        <span class="block text-3xl font-semibold tracking-tight text-green-700">
-                            Mi Escuelita
-                        </span>
+                    <a href="{{ url('/') }}" class="focus-ring">
+                        <x-brand-logo icon-class="h-11 w-auto" text-class="text-2xl font-semibold tracking-tight text-green-800" />
                     </a>
                 </div>
 

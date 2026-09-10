@@ -26,12 +26,12 @@
             <header class="border-b border-green-100 bg-white">
                 <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
                     @if (auth()->user()?->isFamilia())
-                        <a href="{{ route('mi-escuelita.home') }}" class="rounded-md text-lg font-semibold text-green-800 focus-ring">
-                            Mi Escuelita
+                        <a href="{{ route('mi-escuelita.home') }}" class="rounded-md focus-ring">
+                            <x-brand-logo icon-class="h-8 w-auto" />
                         </a>
                     @else
-                        <a href="{{ route('dashboard') }}" class="rounded-md text-lg font-semibold text-green-800 focus-ring">
-                            Mi Escuelita
+                        <a href="{{ route('dashboard') }}" class="rounded-md focus-ring">
+                            <x-brand-logo icon-class="h-8 w-auto" />
                         </a>
                     @endif
 

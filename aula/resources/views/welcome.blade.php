@@ -7,13 +7,8 @@
 @section('content')
     <div class="flex min-h-screen flex-col bg-bg">
         <header class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-6">
-            <a href="{{ url('/') }}" class="flex min-h-[44px] flex-col justify-center focus-ring">
-                <span class="text-lg font-semibold leading-tight tracking-tight text-green-800">
-                    Mi Escuelita
-                </span>
-                <span class="text-xs leading-tight text-ink-400">
-                    Unidad Educativa Pestalozzi
-                </span>
+            <a href="{{ url('/') }}" class="flex min-h-[44px] items-center focus-ring">
+                <x-brand-logo icon-class="h-9 w-auto" :tagline="true" />
             </a>
 
             <nav class="flex items-center gap-2">
@@ -73,7 +68,10 @@
                             Aula virtual
                         </p>
 
-                        <h1 class="mt-4 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+                        {{-- Línea de acento corta, mismo detalle que pestalozzi-opal.vercel.app --}}
+                        <span class="mt-4 block h-1 w-14 rounded-full bg-accent-500" aria-hidden="true"></span>
+
+                        <h1 class="mt-4 text-5xl font-bold leading-tight text-white sm:text-6xl">
                             Unidad Educativa Pestalozzi
                         </h1>
 
@@ -112,28 +110,6 @@
                 </div>
             </section>
 
-            {{--
-                Tres pilares, numerados como en el sitio institucional.
-                Sin tarjetas: apoyados sobre el fondo, separados por regla.
-                Es lo que rompe la sensación de "todo es la misma cajita blanca".
-            --}}
-            <section class="mx-auto w-full max-w-6xl px-6 py-20">
-                <div class="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
-                    @foreach ([
-                        ['01', 'Seguí sus experiencias', 'Cada propuesta que la guía presenta en el ambiente, con su área de desarrollo y sus materiales.'],
-                        ['02', 'Compartí sus momentos', 'Subí una foto, un video o unas líneas contando cómo vivió la experiencia en casa.'],
-                        ['03', 'Conversá con la guía', 'Recibí su devolución y mantené abierto el diálogo entre la casa y el colegio.'],
-                    ] as [$numero, $titulo, $texto])
-                        <div class="border-t border-green-100 pt-6">
-                            <span class="text-sm font-semibold tracking-widest text-accent-600">{{ $numero }}</span>
-                            <h2 class="mt-3 text-xl font-semibold text-ink-900">{{ $titulo }}</h2>
-                            <p class="mt-2 text-sm leading-relaxed text-ink-400">{{ $texto }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            </section>
         </main>
-
-        <x-site-footer />
     </div>
 @endsection
