@@ -43,6 +43,8 @@ class ContentResource extends Resource
         return $schema
             ->schema([
                 Section::make('Contenido')
+                    ->description('El título y el tipo de actividad que vas a compartir.')
+                    ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->label('Título')
@@ -76,6 +78,8 @@ class ContentResource extends Resource
                     ])->columns(2),
 
                 Section::make('Asignación')
+                    ->description('A qué aula, área y guía pertenece esta actividad.')
+                    ->icon('heroicon-o-link')
                     ->schema([
                         Forms\Components\Select::make('environment_id')
                             ->label('Ambiente')
@@ -98,6 +102,8 @@ class ContentResource extends Resource
                     ])->columns(3),
 
                 Section::make('Detalle')
+                    ->description('El texto que van a leer las familias.')
+                    ->icon('heroicon-o-pencil-square')
                     ->schema([
                         Forms\Components\Textarea::make('description')
                             ->label('Descripción corta')
@@ -110,6 +116,8 @@ class ContentResource extends Resource
                     ])->collapsible(),
 
                 Section::make('Multimedia')
+                    ->description('Portada, video o galería que acompaña la actividad.')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\FileUpload::make('cover_image')
                             ->label('Imagen de portada')
@@ -126,6 +134,8 @@ class ContentResource extends Resource
                     ])->columns(2)->collapsible(),
 
                 Section::make('Publicación')
+                    ->description('Cuándo se ve esta actividad en el portal de familias.')
+                    ->icon('heroicon-o-calendar-days')
                     ->schema([
                         Forms\Components\Toggle::make('requires_evidence')
                             ->label('Requiere evidencia de la familia')
@@ -136,6 +146,12 @@ class ContentResource extends Resource
                             ->displayFormat('d/m/Y H:i')
                             ->nullable()
                             ->helperText('Si el estado es "Programado", se publicará automáticamente en esta fecha.'),
+                        Forms\Components\DatePicker::make('due_date')
+                            ->label('Fecha límite')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->nullable()
+                            ->helperText('Opcional. Para una tarea o lectura con entrega esperada — la familia va a ver un aviso si se pasa la fecha.'),
                     ])->columns(2)->collapsible(),
             ]);
     }
@@ -206,6 +222,16 @@ class ContentResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('due_date')
+                    ->label('Vence')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->placeholder('—')
+                    ->badge()
+                    ->color(fn (Content $record): string => $record->isOverdue() ? 'danger' : 'gray')
+                    ->formatStateUsing(fn (Content $record): string => $record->due_date
+                        ? $record->due_date->format('d/m/Y').($record->isOverdue() ? ' · Vencida' : '')
+                        : '—'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
                     ->date('d/m/Y')
@@ -247,6 +273,9 @@ class ContentResource extends Resource
                 Tables\Filters\Filter::make('scheduled_pending')
                     ->query(fn ($query) => $query->where('status', 'scheduled')->where('published_at', '>', now()))
                     ->label('Programados pendientes'),
+                Tables\Filters\Filter::make('vencidas')
+                    ->query(fn ($query) => $query->vencidas())
+                    ->label('Vencidas'),
             ])
             ->recordActions([
                 Action::make('vista_previa')

@@ -73,6 +73,7 @@
                         <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Experiencia</th>
                         <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Área</th>
                         <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Publicada</th>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Vence</th>
                         <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Acciones</th>
                     </tr>
                 </thead>
@@ -104,6 +105,21 @@
                             </td>
                             <td class="whitespace-nowrap px-5 py-4 text-ink-600">
                                 {{ $exp->published_at?->locale('es')->isoFormat('D [de] MMMM [de] YYYY') ?? '—' }}
+                            </td>
+                            <td class="whitespace-nowrap px-5 py-4">
+                                @if ($exp->due_date)
+                                    @if ($exp->isOverdue())
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
+                                            Venció el {{ $exp->due_date->locale('es')->isoFormat('D [de] MMM') }}
+                                        </span>
+                                    @else
+                                        <span class="text-ink-600">
+                                            {{ $exp->due_date->locale('es')->isoFormat('D [de] MMM') }}
+                                        </span>
+                                    @endif
+                                @else
+                                    <span class="text-ink-400">—</span>
+                                @endif
                             </td>
                             <td class="whitespace-nowrap px-5 py-4">
                                 <a

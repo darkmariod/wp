@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'title', 'slug', 'type', 'description', 'body',
     'environment_id', 'area_id', 'teacher_id',
     'cover_image', 'video_url',
-    'requires_evidence', 'published_at', 'status',
+    'requires_evidence', 'published_at', 'due_date', 'status',
 ])]
 #[ObservedBy(ContentObserver::class)]
 class Content extends Model
@@ -52,6 +52,7 @@ class Content extends Model
         return [
             'requires_evidence' => 'boolean',
             'published_at' => 'datetime',
+            'due_date' => 'date',
         ];
     }
 
@@ -92,6 +93,34 @@ class Content extends Model
     {
         return $query->where('status', self::STATUS_PUBLISHED)
             ->where('published_at', '<=', now());
+    }
+
+    /**
+     * Vencida: tiene fecha límite y ya pasó. Es una lectura de fecha,
+     * no depende de si la familia ya respondió o no — eso lo cuenta
+     * por separado la relación evidence().
+     */
+    public function isOverdue(): bool
+    {
+        // Comparación por día, no por hora: due_date se castea como 'date'
+        // (00:00:00), así que ->isPast() la marcaría vencida desde la
+        // medianoche del propio día límite. "Vence hoy" no es lo mismo
+        // que "ya venció" — la familia todavía tiene el día para responder.
+        return $this->due_date !== null && $this->due_date->lt(now()->startOfDay());
+    }
+
+    /**
+     * Vencidas dentro de las próximas $dias (para filtros de "por vencer").
+     */
+    public function scopeVencidas($query)
+    {
+        return $query->whereNotNull('due_date')->where('due_date', '<', now()->startOfDay());
+    }
+
+    public function scopePorVencer($query, int $dias = 3)
+    {
+        return $query->whereNotNull('due_date')
+            ->whereBetween('due_date', [now()->startOfDay(), now()->addDays($dias)->endOfDay()]);
     }
 
     /**

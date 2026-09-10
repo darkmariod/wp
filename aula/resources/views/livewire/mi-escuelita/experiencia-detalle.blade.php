@@ -28,9 +28,41 @@
 
             <h1 class="mt-1 text-3xl font-bold text-ink-900">{{ $content->title }}</h1>
 
+            @if ($content->due_date)
+                @if ($content->isOverdue())
+                    <div class="mt-4 flex items-center gap-2 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                        Esta actividad venció el {{ $content->due_date->locale('es')->isoFormat('D [de] MMMM') }}. Igual podés compartir tu experiencia.
+                    </div>
+                @else
+                    <div class="mt-4 flex items-center gap-2 rounded-lg border border-accent-100 bg-accent-100/40 px-4 py-3 text-sm font-medium text-accent-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                        </svg>
+                        Compartila antes del {{ $content->due_date->locale('es')->isoFormat('D [de] MMMM') }}.
+                    </div>
+                @endif
+            @endif
+
             @if ($content->description)
-                <div class="mt-5 max-w-none text-ink-600">
-                    {!! $content->description !!}
+                {{-- description es un Textarea plano (sin editor de texto), así
+                     que se escapa como texto normal: nunca renderizarlo con
+                     {!! !!} o cualquier HTML que tipee la guía se ejecutaría
+                     en el navegador de todas las familias que lo vean. --}}
+                <p class="mt-5 max-w-none whitespace-pre-line text-ink-600">
+                    {{ $content->description }}
+                </p>
+            @endif
+
+            @if ($content->body)
+                {{-- body sí viene del RichEditor (TipTap) de Filament. Se
+                     renderiza con el RichContentRenderer oficial, que sanea
+                     el HTML antes de devolverlo — es la única forma segura
+                     de imprimir contenido que llegó como HTML. --}}
+                <div class="prose prose-sm mt-5 max-w-none text-ink-600">
+                    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($content->body)->toHtml() !!}
                 </div>
             @endif
 
