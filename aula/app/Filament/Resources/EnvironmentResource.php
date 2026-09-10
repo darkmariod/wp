@@ -37,6 +37,8 @@ class EnvironmentResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos del Ambiente')
+                    ->description('El aula, su rango de edad y quién la guía.')
+                    ->icon('heroicon-o-building-office-2')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
@@ -63,6 +65,8 @@ class EnvironmentResource extends Resource
                     ])->columns(3),
 
                 Section::make('Descripción e Imagen')
+                    ->description('Lo que ven las familias al conocer este ambiente.')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\Textarea::make('description')
                             ->label('Descripción')

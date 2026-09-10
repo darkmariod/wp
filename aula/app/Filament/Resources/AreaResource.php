@@ -36,6 +36,8 @@ class AreaResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos del Área')
+                    ->description('El nombre y si es una materia obligatoria para todas las aulas.')
+                    ->icon('heroicon-o-squares-2x2')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
@@ -55,6 +57,8 @@ class AreaResource extends Resource
                     ])->columns(4),
 
                 Section::make('Descripción e Imagen')
+                    ->description('Cómo se presenta esta área en el portal de familias.')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\Textarea::make('description')
                             ->label('Descripción')

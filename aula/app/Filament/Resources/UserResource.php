@@ -36,6 +36,8 @@ class UserResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos del Usuario')
+                    ->description('Quién es y qué rol cumple dentro de la plataforma.')
+                    ->icon('heroicon-o-identification')
                     ->schema([
                         Forms\Components\FileUpload::make('photo_path')
                             ->label('Foto de perfil')
@@ -72,6 +74,8 @@ class UserResource extends Resource
                     ])->columns(2),
 
                 Section::make('Contraseña')
+                    ->description('Dejala vacía al editar para no cambiarla.')
+                    ->icon('heroicon-o-key')
                     ->schema([
                         Forms\Components\TextInput::make('password')
                             ->label('Contraseña')
@@ -84,6 +88,8 @@ class UserResource extends Resource
                     ])->collapsible(),
 
                 Section::make('Vínculos')
+                    ->description('Solo aplica a usuarios con rol Familia.')
+                    ->icon('heroicon-o-link')
                     ->schema([
                         Forms\Components\Select::make('family_id')
                             ->label('Familia')

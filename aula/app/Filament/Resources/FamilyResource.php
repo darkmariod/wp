@@ -32,6 +32,8 @@ class FamilyResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos de la Familia')
+                    ->description('El apellido o nombre por el que se identifica a la familia en el panel.')
+                    ->icon('heroicon-o-user-group')
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
