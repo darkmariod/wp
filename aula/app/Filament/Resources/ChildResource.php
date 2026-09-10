@@ -9,6 +9,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use App\Filament\Resources\ChildResource\RelationManagers\ParentsRelationManager;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -36,6 +37,8 @@ class ChildResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos del Niño')
+                    ->description('El nombre, la fecha de nacimiento y una foto para reconocerlo en el panel.')
+                    ->icon('heroicon-o-face-smile')
                     ->schema([
                         Forms\Components\FileUpload::make('photo_path')
                             ->label('Foto de perfil')
@@ -66,13 +69,27 @@ class ChildResource extends Resource
                     ])->columns(3),
 
                 Section::make('Vínculos')
+                    ->description('A qué familia pertenece y en qué aula está.')
+                    ->icon('heroicon-o-link')
                     ->schema([
                         Forms\Components\Select::make('family_id')
                             ->label('Familia')
                             ->relationship('family', 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
+                            ->required()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Nombre de la familia')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('phone')
+                                    ->label('Teléfono')
+                                    ->tel()
+                                    ->maxLength(255),
+                            ])
+                            ->createOptionModalHeading('Nueva familia')
+                            ->helperText('¿Es el primer niño de esta familia? Creala sin salir de esta pantalla.'),
                         Forms\Components\Select::make('environment_id')
                             ->label('Ambiente')
                             ->relationship('environment', 'name')
@@ -141,7 +158,7 @@ class ChildResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ParentsRelationManager::class,
         ];
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,6 +31,24 @@ class Child extends Model
     public function environment(): BelongsTo
     {
         return $this->belongsTo(Environment::class);
+    }
+
+    /**
+     * Los padres no se vinculan al niño directamente: son cuentas
+     * (role=familia) que cuelgan de la Family del niño, porque una
+     * familia puede compartir más de un niño y más de un adulto puede
+     * tener acceso (mamá y papá, cada uno con su propio login).
+     */
+    public function parents(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Family::class,
+            'id',          // FK en families que matchea family.id
+            'family_id',   // FK en users que apunta a families
+            'family_id',   // FK local en children
+            'id',          // Local key en families
+        );
     }
 
     public function evidence(): HasMany
