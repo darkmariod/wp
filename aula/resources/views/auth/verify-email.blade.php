@@ -22,7 +22,7 @@
             @csrf
             <button
                 type="submit"
-                class="inline-flex w-full items-center justify-center rounded-full bg-green-800 px-6 py-3 text-base font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
+                class="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-green-800 px-6 py-3 text-base font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
             >
                 Reenviar enlace de verificación
             </button>
@@ -32,7 +32,7 @@
             @csrf
             <button
                 type="submit"
-                class="inline-flex w-full items-center justify-center rounded-full border border-green-200 bg-white px-6 py-3 text-base font-medium text-green-800 transition-fast hover:bg-green-50 focus-ring"
+                class="inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-green-200 bg-white px-6 py-3 text-base font-medium text-green-800 transition-fast hover:bg-green-50 focus-ring"
             >
                 Cerrar sesión
             </button>

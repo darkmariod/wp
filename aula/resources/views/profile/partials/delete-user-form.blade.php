@@ -41,7 +41,7 @@
         <button
             type="submit"
             x-show="confirmar"
-            class="rounded-full bg-red-600 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-red-700 focus-ring"
+            class="inline-flex min-h-[44px] items-center rounded-full bg-red-600 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-red-700 focus-ring"
         >
             Eliminar definitivamente
         </button>

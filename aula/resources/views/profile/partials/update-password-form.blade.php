@@ -55,7 +55,7 @@
 
         <button
             type="submit"
-            class="inline-flex items-center justify-center rounded-full bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-full bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
         >
             Actualizar contraseña
         </button>

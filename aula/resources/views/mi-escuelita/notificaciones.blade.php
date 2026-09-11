@@ -60,7 +60,7 @@
 
             <button
                 type="submit"
-                class="inline-flex items-center rounded-lg bg-green-800 px-6 py-2.5 text-sm font-medium text-white shadow-card-hover transition-base hover:bg-green-700 focus-ring"
+                class="inline-flex min-h-[44px] items-center rounded-lg bg-green-800 px-6 py-2.5 text-sm font-medium text-white shadow-card-hover transition-base hover:bg-green-700 focus-ring"
             >
                 Guardar preferencias
             </button>
