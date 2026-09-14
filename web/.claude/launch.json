@@ -10,7 +10,7 @@
     {
       "name": "aula",
       "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/moodle-pestalozzi/aula && php artisan serve --port=8000"],
+      "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/wp/aula && php artisan serve --port=8000"],
       "port": 8000
     }
   ]
