@@ -7,6 +7,11 @@ export const CATEGORIAS_GALERIA = [
   { title: 'Eventos', value: 'eventos' },
 ];
 
+export const AMBIENTES_GALERIA = [
+  { title: 'Mentes Absorbentes', value: 'mentes-absorbentes' },
+  { title: 'Mentes Razonadoras', value: 'mentes-razonadoras' },
+];
+
 // Cada foto de la galería es un documento suelto: así el colegio agrega
 // una nueva sin tocar nada más, y el filtro de la galería se arma solo a
 // partir de la categoría que elijan acá.
@@ -35,6 +40,17 @@ export const foto = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: 'ambiente',
+      title: 'Ambiente',
+      type: 'string',
+      description:
+        'Opcional: asocia la foto a un ambiente específico. Si se deja vacío, la foto aparece solo cuando el filtro de ambiente está en "Todas".',
+      options: {
+        list: AMBIENTES_GALERIA,
+        layout: 'radio',
+      },
+    }),
+    defineField({
       name: 'orden',
       title: 'Orden',
       type: 'number',
@@ -51,12 +67,22 @@ export const foto = defineType({
     },
   ],
   preview: {
-    select: { media: 'imagen', alt: 'imagen.alt', categoria: 'categoria', orden: 'orden' },
-    prepare: ({ media, alt, categoria, orden }) => {
-      const nombre = CATEGORIAS_GALERIA.find((c) => c.value === categoria)?.title ?? 'Sin categoría';
+    select: {
+      media: 'imagen',
+      alt: 'imagen.alt',
+      categoria: 'categoria',
+      ambiente: 'ambiente',
+      orden: 'orden',
+    },
+    prepare: ({ media, alt, categoria, ambiente, orden }) => {
+      const nombreCat = CATEGORIAS_GALERIA.find((c) => c.value === categoria)?.title ?? 'Sin categoría';
+      const nombreAmb = ambiente
+        ? AMBIENTES_GALERIA.find((a) => a.value === ambiente)?.title
+        : null;
+      const partes = nombreAmb ? [nombreCat, nombreAmb] : [nombreCat];
       return {
         title: alt || 'Foto sin descripción',
-        subtitle: `${nombre} · orden ${orden ?? '—'}`,
+        subtitle: `${partes.join(' · ')} · orden ${orden ?? '—'}`,
         media,
       };
     },

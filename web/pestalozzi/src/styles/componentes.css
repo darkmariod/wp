@@ -912,6 +912,17 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 }
 
 /* ---------- Galería ---------- */
+.galeria-filtros {
+  margin-bottom: var(--space-4);
+}
+.galeria-filtros__label {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+  margin-bottom: var(--space-2);
+}
 .filtros {
   display: flex;
   flex-wrap: wrap;
@@ -1078,6 +1089,16 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 .lightbox__cerrar { top: var(--space-6); right: var(--space-6); }
 .lightbox__ant    { left: var(--space-4);  top: 50%; translate: 0 -50%; }
 .lightbox__sig    { right: var(--space-4); top: 50%; translate: 0 -50%; }
+.lightbox__descripcion {
+  position: absolute;
+  bottom: calc(var(--space-6) + 1.75rem);
+  left: 50%; translate: -50% 0;
+  max-width: min(92vw, 700px);
+  padding-inline: var(--space-4);
+  color: #fff;
+  font-size: var(--fs-body);
+  text-align: center;
+}
 .lightbox__cuenta {
   position: absolute;
   bottom: var(--space-6);

@@ -62,7 +62,7 @@ export async function traerContacto() {
 
 export async function traerFotos() {
   return sanityClient.fetch(
-    `*[_type == "foto"] | order(orden asc){ _id, categoria, orden, imagen ${CAMPOS_IMAGEN} }`
+    `*[_type == "foto"] | order(orden asc){ _id, categoria, ambiente, orden, imagen ${CAMPOS_IMAGEN} }`
   );
 }
 

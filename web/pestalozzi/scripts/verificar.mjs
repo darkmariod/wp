@@ -414,6 +414,28 @@ eyebrowHero === 'accent-100' || eyebrowHero === 'accent-500' || eyebrowHero === 
       : fallo(`eyebrow del hero volvió a --${eyebrowHero}, no pasa AA sobre el velo`))
   : aviso('no se pudo verificar el color del eyebrow del hero');
 
+/* ─────────────────────────────────────────────────────────────
+   14. GALERÍA — FILTRO POR AMBIENTE + DESCRIPCIÓN VISIBLE
+   Cada foto es el proyecto de un niño: tiene que poder filtrarse
+   por ambiente (Mentes Absorbentes / Razonadoras) Y mostrar su
+   descripción a la vista, no solo en el atributo alt.
+   ───────────────────────────────────────────────────────────── */
+titulo('14. Galería: filtro por ambiente y descripción visible');
+const galHtml = html['galeria.html'];
+const componentesFinal = await readFile(join(dist, 'js', 'componentes.js'), 'utf8');
+['mentes-absorbentes', 'mentes-razonadoras'].every((v) => galHtml.includes(`data-ambiente="${v}"`))
+  ? ok('filtro de ambiente: Mentes Absorbentes y Mentes Razonadoras presentes')
+  : fallo('filtro de ambiente: faltan botones data-ambiente en el HTML');
+['instalaciones', 'actividades', 'deportes', 'eventos'].every((v) => galHtml.includes(`data-categoria="${v}"`))
+  ? ok('filtro de categoría: las cuatro categorías presentes')
+  : fallo('filtro de categoría: faltan botones data-categoria en el HTML');
+galHtml.includes('class="lightbox__descripcion"')
+  ? ok('lightbox: existe un elemento para mostrar la descripción de la foto')
+  : fallo('lightbox: falta el elemento visible de descripción (antes vivía en el acordeón)');
+componentesFinal.includes('visorDesc')
+  ? ok('lightbox: el JS completa la descripción visible al abrir una foto')
+  : fallo('lightbox: el JS no está llenando la descripción visible');
+
 /* ───────────────────────────────────────────────────────────── */
 console.log(`\n\x1b[1mRESULTADO\x1b[0m  \x1b[32m${pasadas} pasadas\x1b[0m  \x1b[31m${fallidas} fallidas\x1b[0m  \x1b[33m${avisos} avisos\x1b[0m`);
 process.exit(fallidas > 0 ? 1 : 0);

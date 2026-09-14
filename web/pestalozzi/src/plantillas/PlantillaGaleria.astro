@@ -15,17 +15,43 @@ const fotos = await traerFotos();
 const config = await traerConfiguracion();
 const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 
-// El acordeon pide "image"; "grande" es la version para el visor. El
+// La grilla pide "image"; "grande" es la versión para el visor. El
 // alt de la foto queda compartido entre los dos idiomas a propósito
 // (ver la nota en schemaTypes/objetos.ts) — no hace falta t() acá.
-const fotosAcordeon = fotos.map((f: any) => ({
+// categoria y ambiente alimentan el filtro doble (un mismo valor basta:
+// los textos visibles de los filtros vienen de i18n, estos valores son
+// los internos que compara el JS).
+const fotosGrilla = fotos.map((f: any) => ({
   id: f._id ?? f.imagen?.asset?._ref,
   image: urlImagen(f.imagen, 900),
   grande: urlImagen(f.imagen, 1600),
-  label: f.imagen.alt,
   alt: f.imagen.alt,
+  categoria: f.categoria,
+  ambiente: f.ambiente ?? '',
   ...dimensiones(f.imagen, 900),
 }));
+
+// Opciones de las dos filas de filtros. "todas" es el valor por defecto
+// de ambas filas: el JS combina ambiente + categoria con un AND.
+const ambientes = [
+  { valor: 'todas', label: uiG.filtroTodas },
+  { valor: 'mentes-absorbentes', label: uiG.filtroMentesAbsorbentes },
+  { valor: 'mentes-razonadoras', label: uiG.filtroMentesRazonadoras },
+];
+const categorias = [
+  { valor: 'todas', label: uiG.filtroTodasFotos },
+  { valor: 'instalaciones', label: uiG.filtroInstalaciones },
+  { valor: 'actividades', label: uiG.filtroActividades },
+  { valor: 'deportes', label: uiG.filtroDeportes },
+  { valor: 'eventos', label: uiG.filtroEventos },
+];
+const descs = [
+  { valor: 'todas', texto: t(p.descTodas, locale) },
+  { valor: 'instalaciones', texto: t(p.descInstalaciones, locale) },
+  { valor: 'actividades', texto: t(p.descActividades, locale) },
+  { valor: 'deportes', texto: t(p.descDeportes, locale) },
+  { valor: 'eventos', texto: t(p.descEventos, locale) },
+];
 ---
 <Layout
   title={uiG.tituloPagina}
@@ -52,41 +78,54 @@ const fotosAcordeon = fotos.map((f: any) => ({
   <section class="seccion seccion--clara">
     <div class="contenedor">
 
-      <p class="galeria-desc">{t(p.descTodas, locale)}</p>
+      <div class="galeria-filtros" role="group" aria-label={uiG.filtrosAmbiente}>
+        <p class="galeria-filtros__label">{uiG.filtrosAmbiente}</p>
+        <div class="filtros">
+          {ambientes.map((a) => (
+            <button class="filtro" data-ambiente={a.valor}
+                    aria-pressed={a.valor === 'todas'}>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
-        {fotosAcordeon.length} {fotosAcordeon.length === 1 ? ui.fotografia : ui.fotografias}<span class="galeria-pista"> · {ui.tocaFotoAmpliar}</span>
+      <div class="galeria-filtros" role="group" aria-label={uiG.filtrosCategoria}>
+        <p class="galeria-filtros__label">{uiG.filtrosCategoria}</p>
+        <div class="filtros">
+          {categorias.map((c) => (
+            <button class="filtro" data-categoria={c.valor}
+                    aria-pressed={c.valor === 'todas'}>
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <p class="galeria-desc" data-desc-inicial={t(p.descTodas, locale)}>
+        {t(p.descTodas, locale)}
       </p>
 
-      {/* El acordeón lo mueve GSAP desde componentes.js. El HTML llega
-          completo desde el servidor: sin JavaScript se ven igual las
-          seis fotos, solo que sin la expansión. */}
-      <div class="acordeon" data-acordeon>
-        {fotosAcordeon.map((f: any) => (
-          <div class="acordeon__panel" role="button" tabindex="0"
-               data-grande={f.grande} aria-label={`${uiG.fotografiaAmpliada}: ${f.alt}`}>
-            <span class="acordeon__marco">
-              <span class="acordeon__medio">
-                <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" draggable="false">
-              </span>
-              <span class="acordeon__velo" aria-hidden="true"></span>
-            </span>
-            <span class="acordeon__etiqueta" aria-hidden="true">
-              <span class="acordeon__barra"></span>
-              <span class="acordeon__texto">{f.alt}</span>
-            </span>
-          </div>
+      <p class="centro" style="color:var(--ink-400);margin-bottom:var(--space-8)">
+        <span class="galeria-contador" data-total={fotos.length}>{fotos.length}</span> {fotos.length === 1 ? ui.fotografia : ui.fotografias}<span class="galeria-pista"> · {ui.tocaFotoAmpliar}</span>
+      </p>
+
+      <div class="mosaico" data-mosaico data-descs={JSON.stringify(descs.map(d => d.texto))}>
+        {fotosGrilla.map((f: any) => (
+          <button class="foto" data-grande={f.grande} data-alt={f.alt}
+                  data-categoria={f.categoria} data-ambiente={f.ambiente}
+                  aria-label={`${uiG.fotografiaAmpliada}: ${f.alt}`}>
+            <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" draggable="false">
+          </button>
         ))}
       </div>
 
       <div class="lightbox" role="dialog" aria-modal="true" aria-label={uiG.fotografiaAmpliada} aria-hidden="true">
         <button class="lightbox__btn lightbox__cerrar" aria-label={uiG.cerrar}>&times;</button>
         <button class="lightbox__btn lightbox__ant" aria-label={uiG.anterior}>&#8249;</button>
-        {/* Vacía hasta que se abre: la llena componentes.js con la
-            foto elegida. aria-hidden para que el lector no anuncie una
-            imagen que todavía no existe. */}
         <img src="" alt="" aria-hidden="true">
         <button class="lightbox__btn lightbox__sig" aria-label={uiG.siguiente}>&#8250;</button>
+        <p class="lightbox__descripcion"></p>
         <p class="lightbox__cuenta"></p>
       </div>
 

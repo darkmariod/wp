@@ -188,96 +188,99 @@
     })();
 
     /* ----------------------------------------------------------
-       2. GALERÍA EN ACORDEÓN
-       Los paneles se expanden al pasar el cursor. Un clic sobre el
-       ya abierto amplía la foto — en celular, sin cursor, son dos
-       toques.
+       2. GALERÍA — FILTROS + LIGHTBOX
+       Doble fila de filtros (ambiente + categoría) con AND combinado.
+       Lightbox navega solo las fotos visibles.
        ---------------------------------------------------------- */
-    (function acordeon() {
-      var raiz = document.querySelector('[data-acordeon]');
-      if (!raiz) return;
+    (function galeria() {
+      var mosaico = document.querySelector('[data-mosaico]');
+      if (!mosaico) return;
 
-      var paneles = Array.prototype.slice.call(raiz.querySelectorAll('.acordeon__panel'));
-      var total = paneles.length;
+      var items = Array.prototype.slice.call(mosaico.querySelectorAll('.foto'));
+      var total = items.length;
       if (!total) return;
 
-      var activo = Math.floor(total / 2);
-      var tl = null;
-      var proporcion = 0.5;
+      var btnAmb = Array.prototype.slice.call(document.querySelectorAll('[data-ambiente]'));
+      var btnCat = Array.prototype.slice.call(document.querySelectorAll('[data-categoria]'));
+      var descEl = document.querySelector('.galeria-desc');
+      var contadorEl = document.querySelector('.galeria-contador');
+      var descsRaw = mosaico.getAttribute('data-descs');
+      var descsFiltro = descsRaw ? JSON.parse(descsRaw) : [];
 
-      function acomodar(animar) {
-        var crecer = total > 1 ? (proporcion * (total - 1)) / (1 - proporcion) : 1;
-        if (tl) tl.kill();
-        var dur = animar && !reducir ? 0.6 : 0;
-        tl = gsap.timeline();
+      var ambienteActual = 'todas';
+      var categoriaActual = 'todas';
 
-        paneles.forEach(function (panel, i) {
-          var esActivo = i === activo;
-          var medio = panel.querySelector('.acordeon__medio');
-          var barra = panel.querySelector('.acordeon__barra');
-          var texto = panel.querySelector('.acordeon__texto');
-          var giro = esActivo ? 0 : (i < activo ? 8 : -8);
-
-          tl.to(panel, { flexGrow: esActivo ? crecer : 1, rotateY: giro, duration: dur, ease: 'power3.out' }, 0);
-
-          if (medio) {
-            var deriva = limitar(activo - i, -1.5, 1.5);
-            tl.to(medio, {
-              xPercent: -50, yPercent: -50,
-              x: esActivo ? 0 : deriva * 0.5 * 320 * 0.06,
-              '--dim': esActivo ? 0 : 0.35,
-              duration: dur, ease: 'power3.out'
-            }, 0);
-          }
-          if (barra && texto) {
-            if (esActivo) tl.to([barra, texto], { opacity: 1, x: 0, duration: dur, ease: 'power3.out', stagger: reducir ? 0 : 0.06 }, 0);
-            else tl.to([barra, texto], { opacity: 0, x: -14, duration: dur * 0.6, ease: 'power3.out' }, 0);
-          }
-          panel.setAttribute('aria-current', esActivo ? 'true' : 'false');
+      function filtrar() {
+        items.forEach(function (item) {
+          var amb = item.getAttribute('data-ambiente') || '';
+          var cat = item.getAttribute('data-categoria') || '';
+          var pasaAmb = ambienteActual === 'todas' || amb === ambienteActual;
+          var pasaCat = categoriaActual === 'todas' || cat === categoriaActual;
+          item.classList.toggle('oculta', !(pasaAmb && pasaCat));
         });
+
+        var visibles = items.filter(function (i) { return !i.classList.contains('oculta'); });
+        if (contadorEl) contadorEl.textContent = visibles.length;
+
+        if (descEl) {
+          if (ambienteActual !== 'todas' && categoriaActual === 'todas') {
+            descEl.textContent = descEl.getAttribute('data-desc-inicial') || '';
+          } else if (categoriaActual === 'todas') {
+            descEl.textContent = descEl.getAttribute('data-desc-inicial') || '';
+          } else {
+            var mapa = { instalaciones: 1, actividades: 2, deportes: 3, eventos: 4 };
+            var idx = mapa[categoriaActual];
+            if (typeof idx !== 'undefined' && descsFiltro[idx]) {
+              descEl.textContent = descsFiltro[idx];
+            } else {
+              descEl.textContent = descEl.getAttribute('data-desc-inicial') || '';
+            }
+          }
+        }
       }
 
-      acomodar(false);
-
-      paneles.forEach(function (panel, i) {
-        panel.addEventListener('mouseenter', function () {
-          if (i !== activo) { activo = i; acomodar(true); }
-        });
-        panel.addEventListener('focus', function () {
-          if (i !== activo) { activo = i; acomodar(true); }
-        });
-        panel.addEventListener('click', function () {
-          if (i !== activo) { activo = i; acomodar(true); }
-          else abrirVisor(i);
-        });
-        panel.addEventListener('keydown', function (e) {
-          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            e.preventDefault(); activo = (i + 1) % total; acomodar(true); paneles[activo].focus();
-          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            e.preventDefault(); activo = (i - 1 + total) % total; acomodar(true); paneles[activo].focus();
-          } else if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (i === activo) abrirVisor(i); else { activo = i; acomodar(true); }
-          }
+      btnAmb.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          ambienteActual = btn.getAttribute('data-ambiente') || 'todas';
+          btnAmb.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+          filtrar();
         });
       });
 
-      /* --- visor de foto ampliada --- */
+      btnCat.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          categoriaActual = btn.getAttribute('data-categoria') || 'todas';
+          btnCat.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+          filtrar();
+        });
+      });
+
+      /* --- lightbox --- */
       var visor = document.querySelector('.lightbox');
       if (!visor) return;
       var visorImg = visor.querySelector('img');
       var visorCuenta = visor.querySelector('.lightbox__cuenta');
+      var visorDesc = visor.querySelector('.lightbox__descripcion');
       var enVisor = null;
       var focoPrevio = null;
 
+      function visibles() {
+        return items.filter(function (i) { return !i.classList.contains('oculta'); });
+      }
+
       function pintarVisor() {
-        var panel = paneles[enVisor];
-        visorImg.src = panel.getAttribute('data-grande') || panel.querySelector('img').src;
-        visorImg.alt = panel.querySelector('img').alt;
-        if (visorCuenta) visorCuenta.textContent = (enVisor + 1) + ' / ' + total;
+        var foto = visibles()[enVisor];
+        if (!foto) return;
+        visorImg.src = foto.getAttribute('data-grande') || foto.querySelector('img').src;
+        visorImg.alt = foto.getAttribute('data-alt') || '';
+        if (visorDesc) visorDesc.textContent = foto.getAttribute('data-alt') || '';
+        var v = visibles();
+        if (visorCuenta) visorCuenta.textContent = (enVisor + 1) + ' / ' + v.length;
       }
 
       function abrirVisor(i) {
+        var v = visibles();
+        if (i < 0 || i >= v.length) return;
         enVisor = i;
         focoPrevio = document.activeElement;
         pintarVisor();
@@ -293,14 +296,13 @@
         visor.classList.remove('abierto');
         visor.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
-        // Devolver el foco a donde estaba: sin esto, quien navega con
-        // teclado queda al principio de la página al cerrar.
         if (focoPrevio && focoPrevio.focus) focoPrevio.focus();
       }
 
       var mover = function (paso) {
         if (enVisor === null) return;
-        enVisor = (enVisor + paso + total) % total;
+        var v = visibles();
+        enVisor = (enVisor + paso + v.length) % v.length;
         pintarVisor();
       };
 
@@ -317,6 +319,14 @@
         if (e.key === 'Escape') cerrarVisor();
         else if (e.key === 'ArrowRight') mover(1);
         else if (e.key === 'ArrowLeft') mover(-1);
+      });
+
+      mosaico.addEventListener('click', function (e) {
+        var btn = e.target.closest('.foto');
+        if (!btn || btn.classList.contains('oculta')) return;
+        var v = visibles();
+        var idx = v.indexOf(btn);
+        if (idx !== -1) abrirVisor(idx);
       });
     })();
 
