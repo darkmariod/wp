@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MiEscuelita\AsistenciaController;
 use App\Http\Controllers\MiEscuelita\EvidenceController;
 use App\Http\Controllers\MiEscuelita\ExperienceController;
 use App\Http\Controllers\MiEscuelita\HomeController;
@@ -46,6 +47,8 @@ Route::middleware(['auth', 'familia'])->prefix('mi-escuelita')->name('mi-escueli
     Route::post('/experiencias/{content:slug}/evidencias', [EvidenceController::class, 'store'])->middleware('throttle:10,1')->name('evidencias.store');
 
     Route::get('/mis-experiencias', [ExperienceController::class, 'historial'])->name('historial');
+
+    Route::get('/asistencia', [AsistenciaController::class, 'index'])->name('asistencia');
 
     Route::get('/notificaciones', [NotificationPreferenceController::class, 'edit'])->name('notificaciones.edit');
     Route::patch('/notificaciones', [NotificationPreferenceController::class, 'update'])->name('notificaciones.update');

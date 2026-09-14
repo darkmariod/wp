@@ -61,6 +61,11 @@ class Child extends Model
         return $this->hasMany(Observation::class);
     }
 
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
     public function avatarUrl(): ?string
     {
         if (! $this->photo_path) {

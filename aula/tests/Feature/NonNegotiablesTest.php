@@ -30,9 +30,9 @@ class NonNegotiablesTest extends TestCase
         }
     }
 
-    public function test_no_existe_ninguna_tabla_de_asistencia(): void
+    public function test_existe_tabla_de_asistencia(): void
     {
-        $this->assertFalse(Schema::hasTable('attendances'));
+        $this->assertTrue(Schema::hasTable('attendances'));
         $this->assertFalse(Schema::hasTable('attendance'));
     }
 

@@ -81,6 +81,21 @@
                     </svg>
                 </div>
             </a>
+
+            <a
+                href="{{ route('mi-escuelita.asistencia') }}"
+                class="group rounded-lg border border-green-100 bg-white p-6 shadow-card transition-base hover:shadow-card-hover focus-ring"
+            >
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold text-ink-900">Asistencia</h2>
+                        <p class="mt-1 text-sm text-ink-400">Sigue la asistencia de tu niño, mes a mes.</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700/40 transition-base group-hover:text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                </div>
+            </a>
         </div>
 
         @if ($areas->isNotEmpty())

@@ -174,9 +174,17 @@ class EvidenceSubmissionTest extends TestCase
         }
     }
 
-    public function test_no_existe_ninguna_tabla_de_asistencia(): void
+    public function test_existe_tabla_de_asistencia(): void
     {
-        $this->assertFalse(Schema::hasTable('attendances'));
-        $this->assertFalse(Schema::hasTable('attendance'));
+        $this->assertTrue(Schema::hasTable('attendances'));
+
+        // La asistencia tampoco compite: solo estados, nunca notas
+        // ni ranking.
+        foreach (['grade', 'score', 'percentage', 'ranking'] as $columna) {
+            $this->assertFalse(
+                Schema::hasColumn('attendances', $columna),
+                "La tabla attendances no debería tener la columna {$columna}",
+            );
+        }
     }
 }

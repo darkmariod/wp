@@ -43,6 +43,9 @@
                             <a href="{{ route('mi-escuelita.historial') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
                                 Mis experiencias
                             </a>
+                            <a href="{{ route('mi-escuelita.asistencia') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                                Asistencia
+                            </a>
                             <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
                                 Notificaciones
                             </a>
@@ -124,6 +127,9 @@
                                 </a>
                                 <a href="{{ route('mi-escuelita.historial') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
                                     Mis experiencias
+                                </a>
+                                <a href="{{ route('mi-escuelita.asistencia') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                                    Asistencia
                                 </a>
                                 <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
                                     Notificaciones

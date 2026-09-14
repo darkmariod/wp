@@ -9,6 +9,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use App\Filament\Resources\ChildResource\RelationManagers\AttendancesRelationManager;
 use App\Filament\Resources\ChildResource\RelationManagers\ParentsRelationManager;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -159,6 +160,7 @@ class ChildResource extends Resource
     {
         return [
             ParentsRelationManager::class,
+            AttendancesRelationManager::class,
         ];
     }
 
