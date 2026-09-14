@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    container_name: aula-pestalozzi
+    restart: unless-stopped
+    ports:
+      - "8083:8000"
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY}
+      APP_URL: ${APP_URL}
+      DB_CONNECTION: sqlite
+      MAIL_MAILER: log
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - aula_database:/var/www/html/database
+      - aula_storage:/var/www/html/storage/app
+
+volumes:
+  aula_database:
+  aula_storage:
