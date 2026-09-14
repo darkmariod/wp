@@ -116,6 +116,7 @@ const descs = [
                   data-categoria={f.categoria} data-ambiente={f.ambiente}
                   aria-label={`${uiG.fotografiaAmpliada}: ${f.alt}`}>
             <img src={f.image} alt={f.alt} width={f.width} height={f.height} loading="lazy" draggable="false">
+            <span class="foto__leyenda">{f.alt}</span>
           </button>
         ))}
       </div>

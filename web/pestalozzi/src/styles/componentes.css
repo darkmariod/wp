@@ -1017,12 +1017,25 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 .foto::after {
   content: '';
   position: absolute; inset: 0;
+  z-index: 1;
   background: rgba(11, 74, 38, .35);
   opacity: 0;
   transition: opacity .3s var(--ease-out);
 }
 .foto:hover::after { opacity: 1; }
 .foto.oculta { display: none; }
+.foto__leyenda {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: var(--space-4) var(--space-3) var(--space-2);
+  font-size: var(--fs-small);
+  line-height: 1.3;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(to top, rgba(5, 52, 26, .85), transparent);
+}
 
 /* Miniatura de galería en la portada */
 .galeria-mini {
@@ -1580,6 +1593,7 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 }
 .fab__disparador:hover { background: var(--green-900); transform: scale(1.06); }
 .fab__disparador svg { transition: transform .35s var(--ease-spring); }
+.fab__marca { display: block; width: 26px; height: 26px; }
 .fab[data-abierto="true"] .fab__disparador { background: var(--ink-900); }
 .fab[data-abierto="true"] .fab__disparador svg { transform: rotate(135deg); }
 
