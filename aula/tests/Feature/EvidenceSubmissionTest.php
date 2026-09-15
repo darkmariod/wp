@@ -132,6 +132,43 @@ class EvidenceSubmissionTest extends TestCase
         )->assertSessionHasErrors('photos');
     }
 
+    /**
+     * La UI real ya no pega al controller de arriba: el botón "Compartir
+     * experiencia" corre por App\Livewire\MiEscuelita\ExperienciaDetalle
+     * (ver experiencias-show.blade.php). Ese componente tiene su propio
+     * rules()/messages() — deben coincidir con su propiedad pública
+     * `$fotos`, no con el `photos` en inglés del controller viejo.
+     */
+    public function test_familia_comparte_fotos_desde_el_componente_livewire_real(): void
+    {
+        Storage::fake('local');
+        Notification::fake();
+        ['user' => $user, 'guia' => $guia, 'ambiente' => $ambiente, 'nino' => $nino] = $this->familiaConHijo();
+        $content = Content::factory()->published()->requiresEvidence()->create([
+            'teacher_id' => $guia->id,
+            'environment_id' => $ambiente->id,
+        ]);
+
+        \Livewire\Livewire::actingAs($user)
+            ->test(\App\Livewire\MiEscuelita\ExperienciaDetalle::class, [
+                'content' => $content,
+                'yaEnviada' => false,
+            ])
+            ->set('child_id', $nino->id)
+            ->set('comment', 'Le encantó buscar hojas de distintos tamaños.')
+            ->set('fotos', [
+                UploadedFile::fake()->image('foto1.jpg'),
+                UploadedFile::fake()->image('foto2.jpg'),
+            ])
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $evidence = Evidence::first();
+        $this->assertNotNull($evidence);
+        $this->assertCount(2, $evidence->media);
+        Notification::assertSentTo($guia, EvidenceSubmittedNotification::class);
+    }
+
     public function test_guia_puede_responder_y_la_familia_recibe_notificacion(): void
     {
         Notification::fake();

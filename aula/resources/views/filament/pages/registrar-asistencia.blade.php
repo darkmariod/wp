@@ -17,6 +17,16 @@
         {{ $this->content }}
     </x-filament::section>
 
+    <div wire:loading wire:target="environment_id,fecha">
+        <x-filament::section>
+            <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;padding-block:2rem;">
+                <x-filament::loading-indicator style="height:1.25rem;width:1.25rem;" />
+                <p style="font-size:.875rem;color:var(--gray-500);">Cargando niños del ambiente...</p>
+            </div>
+        </x-filament::section>
+    </div>
+
+    <div wire:loading.remove wire:target="environment_id,fecha">
     @if ($this->ninos->isEmpty())
         <x-filament::section>
             <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;padding-block:2rem;text-align:center;">
@@ -67,4 +77,5 @@
             </x-filament::button>
         </div>
     @endif
+    </div>
 </x-filament-panels::page>

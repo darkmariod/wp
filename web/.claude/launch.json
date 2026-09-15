@@ -8,10 +8,22 @@
       "port": 4321
     },
     {
+      "name": "pestalozzi-dev",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd pestalozzi && npx astro dev --host --port=4323"],
+      "port": 4323
+    },
+    {
       "name": "aula",
       "runtimeExecutable": "sh",
       "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/wp/aula && php artisan serve --port=8000"],
       "port": 8000
+    },
+    {
+      "name": "documentacion",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/documentacion && npx astro preview --host --port=4322"],
+      "port": 4322
     }
   ]
 }

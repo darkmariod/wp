@@ -1,0 +1,32 @@
+{
+  "name": "Mi Escuelita — Pestalozzi",
+  "short_name": "Mi Escuelita",
+  "description": "Aula virtual de la Unidad Educativa Pestalozzi Ambato: tareas, evidencias y asistencia.",
+  "start_url": "/mi-escuelita",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#047857",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

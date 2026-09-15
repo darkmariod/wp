@@ -74,7 +74,17 @@ class ContentResource extends Resource
                             ])
                             ->default(Content::STATUS_DRAFT)
                             ->required()
-                            ->native(false),
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
+                                // "Publicado" sin fecha de publicación no se ve para las
+                                // familias (scopePublished exige status + published_at).
+                                // Se completa sola para no depender de que la guía se
+                                // acuerde de tocar el otro campo.
+                                if ($state === Content::STATUS_PUBLISHED && blank($get('published_at'))) {
+                                    $set('published_at', now());
+                                }
+                            }),
                     ])->columns(2),
 
                 Section::make('Asignación')

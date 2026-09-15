@@ -108,8 +108,8 @@ class ExperienciaDetalle extends Component
         return [
             'child_id' => ['required', 'integer', 'exists:children,id'],
             'comment' => ['nullable', 'string', 'max:2000'],
-            'photos' => ['nullable', 'array', 'max:5'],
-            'photos.*' => ['image', 'max:8192'], // 8 MB por foto
+            'fotos' => ['nullable', 'array', 'max:5'],
+            'fotos.*' => ['image', 'max:8192'], // 8 MB por foto
             'video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime', 'max:51200'], // 50 MB
             'document' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp', 'max:10240'],
         ];
@@ -118,8 +118,8 @@ class ExperienciaDetalle extends Component
     public function messages(): array
     {
         return [
-            'photos.max' => 'Se pueden compartir hasta 5 fotos.',
-            'photos.*.image' => 'Cada archivo de foto debe ser una imagen.',
+            'fotos.max' => 'Se pueden compartir hasta 5 fotos.',
+            'fotos.*.image' => 'Cada archivo de foto debe ser una imagen.',
             'video.mimetypes' => 'El video debe ser MP4 o MOV.',
         ];
     }

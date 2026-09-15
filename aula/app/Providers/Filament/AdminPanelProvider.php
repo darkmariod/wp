@@ -10,9 +10,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -31,10 +29,24 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Emerald,
+                // Misma paleta verde que pestalozzi-opal.vercel.app
+                // (src/styles/tokens.css), no el "Emerald" genérico de Filament.
+                'primary' => [
+                    50 => '#EFF9F3',
+                    100 => '#D7F0E2',
+                    200 => '#AEE2C4',
+                    300 => '#86D4A6',
+                    400 => '#5EC086',
+                    500 => '#35AD65',
+                    600 => '#239450',
+                    700 => '#197A40',
+                    800 => '#126333',
+                    900 => '#0B4A26',
+                    950 => '#05341A',
+                ],
             ])
-            ->brandName('Mi Escuelita')
-            ->brandLogo(fn () => new HtmlString('<span class="text-lg font-bold text-green-800">Mi Escuelita</span>'))
+            ->brandName('Pestalozzi')
+            ->brandLogo(fn () => new HtmlString('<span class="text-lg font-bold text-green-800">Pestalozzi</span>'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -43,7 +55,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

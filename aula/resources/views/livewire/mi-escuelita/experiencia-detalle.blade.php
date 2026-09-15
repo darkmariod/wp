@@ -156,7 +156,7 @@
                         </label>
                         <input id="fotos" type="file" wire:model="fotos" multiple accept="image/*" class="sr-only" />
 
-                        @error('photos')
+                        @error('fotos')
                             <p class="mt-2 text-sm font-medium text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
