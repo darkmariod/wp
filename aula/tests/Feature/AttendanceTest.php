@@ -186,6 +186,44 @@ class AttendanceTest extends TestCase
             ->assertSet('detalleDias', fn (iterable $dias) => collect($dias)->pluck('child_id')->all() === [$nino->id]);
     }
 
+    /**
+     * Flujo real completo: la guía registra asistencia de un segundo
+     * hijo de la misma familia (un hermano), y esa familia — cambiando
+     * de niño con el selector del encabezado — ve el registro de ESE
+     * hijo, no el del primero.
+     */
+    public function test_la_familia_ve_la_asistencia_de_un_segundo_hijo_registrado_por_la_guia(): void
+    {
+        ['guia' => $guia, 'ambiente' => $ambiente, 'familia' => $familia, 'user' => $user] = $this->ambienteConFamilia();
+
+        $segundoNino = Child::factory()->create([
+            'family_id' => $familia->id,
+            'environment_id' => $ambiente->id,
+        ]);
+
+        $fecha = now()->toDateString();
+
+        Livewire::actingAs($guia)
+            ->test(RegistrarAsistencia::class)
+            ->set('environment_id', $ambiente->id)
+            ->set('fecha', $fecha)
+            ->set('estados', [$segundoNino->id => Attendance::STATUS_PRESENTE])
+            ->call('guardar')
+            ->assertHasNoFormErrors();
+
+        session(['current_child_id' => $segundoNino->id]);
+
+        Livewire::actingAs($user)
+            ->test(Asistencia::class)
+            ->assertSet('resumenMes', [
+                Attendance::STATUS_PRESENTE => 1,
+                Attendance::STATUS_ATRASO => 0,
+                Attendance::STATUS_FALTA_JUSTIFICADA => 0,
+                Attendance::STATUS_FALTA_INJUSTIFICADA => 0,
+            ])
+            ->assertSet('detalleDias', fn (iterable $dias) => collect($dias)->pluck('child_id')->all() === [$segundoNino->id]);
+    }
+
     public function test_resumen_anual_suma_los_meses_del_ciclo_cerrado(): void
     {
         ['user' => $user, 'nino' => $nino] = $this->ambienteConFamilia();
