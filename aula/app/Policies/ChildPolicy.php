@@ -36,7 +36,7 @@ class ChildPolicy
 
     public function create(User $user): bool
     {
-        return $user->isStaff();
+        return $user->isStaff() || $user->isGuia();
     }
 
     public function update(User $user, Child $child): bool

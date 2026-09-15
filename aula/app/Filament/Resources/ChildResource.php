@@ -11,6 +11,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use App\Filament\Resources\ChildResource\RelationManagers\AttendancesRelationManager;
 use App\Filament\Resources\ChildResource\RelationManagers\ParentsRelationManager;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -93,7 +94,13 @@ class ChildResource extends Resource
                             ->helperText('¿Es el primer niño de esta familia? Creala sin salir de esta pantalla.'),
                         Forms\Components\Select::make('environment_id')
                             ->label('Ambiente')
-                            ->relationship('environment', 'name')
+                            ->relationship(
+                                'environment',
+                                'name',
+                                modifyQueryUsing: fn (Builder $query) => auth()->user()?->isGuia()
+                                    ? $query->where('teacher_id', auth()->id())
+                                    : $query,
+                            )
                             ->searchable()
                             ->preload()
                             ->nullable(),
