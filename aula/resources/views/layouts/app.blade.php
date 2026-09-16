@@ -42,18 +42,24 @@
                         </a>
                     @endif
 
-                    <nav class="hidden items-center gap-6 text-sm font-medium text-ink-600 sm:flex" aria-label="Navegación principal">
+                    @php
+                        $enlaceNav = fn (bool $activo) => $activo
+                            ? 'border-b-2 border-green-700 pb-0.5 font-semibold text-green-800 focus-ring'
+                            : 'border-b-2 border-transparent pb-0.5 transition-fast hover:text-green-800 focus-ring';
+                    @endphp
+
+                    <nav class="hidden items-center gap-6 text-sm text-ink-600 sm:flex" aria-label="Navegación principal">
                         @if (auth()->user()?->isFamilia())
-                            <a href="{{ route('mi-escuelita.experiencias.index') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                            <a href="{{ route('mi-escuelita.experiencias.index') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.experiencias.*')) }}">
                                 Experiencias
                             </a>
-                            <a href="{{ route('mi-escuelita.historial') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                            <a href="{{ route('mi-escuelita.historial') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.historial')) }}">
                                 Mis experiencias
                             </a>
-                            <a href="{{ route('mi-escuelita.asistencia') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                            <a href="{{ route('mi-escuelita.asistencia') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.asistencia')) }}">
                                 Asistencia
                             </a>
-                            <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                            <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
                                 Notificaciones
                             </a>
 
@@ -82,14 +88,14 @@
                                     @if ($ninoActual->avatarUrl())
                                         <img src="{{ $ninoActual->avatarUrl() }}" alt="" class="h-8 w-8 rounded-full object-cover">
                                     @else
-                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white {{ $ninoActual->avatarColorClass() }}">{{ $ninoActual->avatarInitials() }}</span>
+                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-800 text-xs font-semibold text-white">{{ $ninoActual->avatarInitials() }}</span>
                                     @endif
                                     {{ $ninoActual->name }}
                                 </span>
                             @endif
                         @endif
 
-                        <a href="{{ route('profile.edit') }}" class="rounded-md transition-fast hover:text-green-800 focus-ring">
+                        <a href="{{ route('profile.edit') }}" class="{{ $enlaceNav(request()->routeIs('profile.edit')) }}">
                             Perfil
                         </a>
 
@@ -126,19 +132,25 @@
                     :class="menuAbierto ? 'max-h-[480px]' : 'max-h-0'"
                     x-show="menuAbierto"
                 >
+                    @php
+                        $enlaceNavMovil = fn (bool $activo) => $activo
+                            ? 'min-h-[44px] bg-green-50 px-3 py-2 font-semibold text-green-800 focus-ring'
+                            : 'min-h-[44px] px-3 py-2 transition-fast hover:bg-green-50 focus-ring';
+                    @endphp
+
                     <div class="border-t border-green-100 px-6 py-4">
-                        <div class="flex flex-col gap-1 text-sm font-medium text-ink-600">
+                        <div class="flex flex-col gap-1 text-sm text-ink-600">
                             @if (auth()->user()?->isFamilia())
-                                <a href="{{ route('mi-escuelita.experiencias.index') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                                <a href="{{ route('mi-escuelita.experiencias.index') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.experiencias.*')) }}">
                                     Experiencias
                                 </a>
-                                <a href="{{ route('mi-escuelita.historial') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                                <a href="{{ route('mi-escuelita.historial') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.historial')) }}">
                                     Mis experiencias
                                 </a>
-                                <a href="{{ route('mi-escuelita.asistencia') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                                <a href="{{ route('mi-escuelita.asistencia') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.asistencia')) }}">
                                     Asistencia
                                 </a>
-                                <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                                <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
                                     Notificaciones
                                 </a>
 
@@ -154,7 +166,7 @@
                                 @endif
                             @endif
 
-                            <a href="{{ route('profile.edit') }}" class="min-h-[44px] rounded-md px-3 py-2 transition-fast hover:bg-green-50 focus-ring">
+                            <a href="{{ route('profile.edit') }}" class="{{ $enlaceNavMovil(request()->routeIs('profile.edit')) }}">
                                 Perfil
                             </a>
                             <form method="POST" action="{{ route('logout') }}">

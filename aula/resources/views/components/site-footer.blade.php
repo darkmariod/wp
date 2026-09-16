@@ -27,78 +27,58 @@
     ];
 @endphp
 
-<footer class="mt-16 border-t border-green-100 bg-white">
-    <div class="mx-auto max-w-6xl px-6 py-12">
-        <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-            {{-- Marca --}}
-            <div class="lg:col-span-1">
-                <x-brand-logo icon-class="h-8 w-auto" />
-                <p class="mt-3 max-w-xs text-sm leading-relaxed text-ink-400">
-                    Unidad Educativa · Ambato, Ecuador
-                </p>
-            </div>
-
-            {{-- Institución --}}
-            <nav aria-labelledby="footer-institucion">
-                <h2 id="footer-institucion" class="text-sm font-semibold text-ink-900">
-                    Institución
-                </h2>
-                <ul class="mt-4 space-y-1">
+<footer class="mt-10 border-t border-green-100 bg-white">
+    <div class="mx-auto max-w-6xl px-6 py-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            {{-- Marca + institución --}}
+            <div class="flex flex-col gap-2">
+                <x-brand-logo icon-class="h-6 w-auto" text-class="text-sm font-semibold text-green-800" />
+                <p class="text-xs text-ink-400">Unidad Educativa · Ambato, Ecuador</p>
+                <nav aria-label="Institución" class="flex flex-wrap gap-x-4 gap-y-1">
                     @foreach ($institucion as [$texto, $url])
-                        <li>
-                            <a
-                                href="{{ $url }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex min-h-[44px] items-center text-sm text-ink-400 transition-fast hover:text-green-800 focus-ring"
-                            >{{ $texto }}</a>
-                        </li>
+                        <a
+                            href="{{ $url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex min-h-[44px] items-center text-xs text-ink-400 transition-fast hover:text-green-800 focus-ring sm:min-h-0"
+                        >{{ $texto }}</a>
                     @endforeach
-                </ul>
-            </nav>
+                </nav>
+            </div>
 
             {{-- Contacto --}}
-            <div>
-                <h2 class="text-sm font-semibold text-ink-900">Contacto</h2>
-                <address class="mt-4 space-y-2 text-sm not-italic leading-relaxed text-ink-400">
-                    <p>Tiwinza N.º 95 y Etza<br>Ambato, Ecuador</p>
-                    <p>
-                        <a
-                            href="mailto:uepestalozzi.ambato@gmail.com"
-                            class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring"
-                        >uepestalozzi.ambato@gmail.com</a>
-                    </p>
-                </address>
-            </div>
+            <address class="text-xs not-italic leading-relaxed text-ink-400">
+                <p>Tiwinza N.º 95 y Etza, Ambato, Ecuador</p>
+                <a
+                    href="mailto:uepestalozzi.ambato@gmail.com"
+                    class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring sm:min-h-0"
+                >uepestalozzi.ambato@gmail.com</a>
+            </address>
 
             {{-- Síguenos --}}
-            <nav aria-labelledby="footer-redes">
-                <h2 id="footer-redes" class="text-sm font-semibold text-ink-900">Síguenos</h2>
-                <ul class="mt-4 flex gap-3">
-                    @foreach ($redes as [$texto, $url])
-                        <li>
-                            <a
-                                href="{{ $url }}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label="{{ $texto }}"
-                                class="flex h-11 w-11 items-center justify-center rounded-full border border-green-100 text-ink-400 transition-fast hover:border-green-300 hover:text-green-800 focus-ring"
-                            >
-                                <x-social-icon :name="$texto" class="h-5 w-5" />
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
+            <nav aria-labelledby="footer-redes" class="flex items-center gap-3">
+                <h2 id="footer-redes" class="sr-only">Síguenos</h2>
+                @foreach ($redes as [$texto, $url])
+                    <a
+                        href="{{ $url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="{{ $texto }}"
+                        class="flex h-8 w-8 items-center justify-center text-ink-400 transition-fast hover:text-green-800 focus-ring"
+                    >
+                        <x-social-icon :name="$texto" class="h-4 w-4" />
+                    </a>
+                @endforeach
             </nav>
         </div>
 
         {{-- Barra legal --}}
-        <div class="mt-10 flex flex-col gap-3 border-t border-green-100 pt-6 text-sm text-ink-300 sm:flex-row sm:items-center sm:justify-between">
+        <div class="mt-4 flex flex-col gap-2 border-t border-green-100 pt-3 text-xs text-ink-300 sm:flex-row sm:items-center sm:justify-between">
             <span>&copy; {{ now()->year }} Unidad Educativa Pestalozzi Ambato</span>
 
             <a
                 href="{{ route('privacidad') }}"
-                class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring"
+                class="inline-flex min-h-[44px] items-center transition-fast hover:text-green-800 focus-ring sm:min-h-0"
             >Política de privacidad y cookies</a>
         </div>
     </div>
