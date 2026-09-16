@@ -1,4 +1,4 @@
-<section class="rounded-lg border border-green-100 bg-white p-6 shadow-card">
+<section class="py-8">
     <header>
         <h2 class="text-lg font-semibold text-ink-900">Actualizar contraseña</h2>
         <p class="mt-1 text-sm text-ink-600">Usá una contraseña larga y que no uses en otro lado.</p>
@@ -55,7 +55,7 @@
 
         <button
             type="submit"
-            class="inline-flex min-h-[44px] items-center justify-center rounded-full bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
+            class="inline-flex min-h-[44px] items-center justify-center bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
         >
             Actualizar contraseña
         </button>

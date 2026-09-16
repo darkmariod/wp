@@ -1,4 +1,4 @@
-<section class="rounded-lg border border-green-100 bg-white p-6 shadow-card">
+<section class="py-8 first:pt-0">
     <header>
         <h2 class="text-lg font-semibold text-ink-900">Información del perfil</h2>
         <p class="mt-1 text-sm text-ink-600">Actualizá tu nombre y correo de la cuenta.</p>
@@ -52,7 +52,7 @@
                     <button
                         form="send-verification"
                         type="submit"
-                        class="mt-2 rounded-full border border-green-200 bg-white px-4 py-1.5 text-sm font-medium text-green-800 transition-fast hover:bg-green-50 focus-ring"
+                        class="mt-2 border border-green-200 bg-white px-4 py-1.5 text-sm font-medium text-green-800 transition-fast hover:bg-green-50 focus-ring"
                     >
                         Reenviar enlace de verificación
                     </button>
@@ -68,7 +68,7 @@
 
         <button
             type="submit"
-            class="inline-flex min-h-[44px] items-center justify-center rounded-full bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
+            class="inline-flex min-h-[44px] items-center justify-center bg-green-800 px-6 py-2 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring disabled:opacity-60"
         >
             Guardar
         </button>

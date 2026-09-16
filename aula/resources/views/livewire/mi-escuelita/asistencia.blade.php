@@ -3,8 +3,8 @@
         <x-breadcrumb
             :items="[['label' => 'Inicio', 'url' => route('mi-escuelita.home')], ['label' => 'Asistencia']]"
         />
-        <h1 class="mt-4 text-3xl font-bold text-ink-900">Asistencia</h1>
-        <p class="mt-2 text-sm text-ink-400">
+        <h1 class="mt-4 text-3xl font-semibold text-ink-900">Asistencia</h1>
+        <p class="mt-2 text-sm text-ink-600">
             El día a día de {{ $this->nino?->name ?? 'tu niño' }} en el colegio, mes a mes y el resumen del último ciclo lectivo ya cerrado.
         </p>
     </div>
@@ -33,21 +33,21 @@
         </x-field-select>
     </div>
 
-    <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <x-fact-row :cols="4" class="mt-6">
         @foreach ([
             'Presentes' => $this->resumenMes[\App\Models\Attendance::STATUS_PRESENTE] ?? 0,
             'Atrasos' => $this->resumenMes[\App\Models\Attendance::STATUS_ATRASO] ?? 0,
             'Justificadas' => $this->resumenMes[\App\Models\Attendance::STATUS_FALTA_JUSTIFICADA] ?? 0,
             'Injustificadas' => $this->resumenMes[\App\Models\Attendance::STATUS_FALTA_INJUSTIFICADA] ?? 0,
         ] as $etiqueta => $cantidad)
-            <div class="rounded-lg border border-green-100 bg-white p-5 shadow-card">
-                <p class="text-3xl font-bold text-ink-900">{{ $cantidad }}</p>
-                <p class="mt-1 text-sm font-medium text-ink-400">{{ $etiqueta }}</p>
+            <div class="py-3 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+                <p class="text-2xl font-semibold text-ink-900">{{ $cantidad }}</p>
+                <p class="mt-0.5 text-sm text-ink-600">{{ $etiqueta }}</p>
             </div>
         @endforeach
-    </div>
+    </x-fact-row>
 
-    <h2 class="mt-10 text-xl font-semibold text-ink-900">Calendario del mes</h2>
+    <h2 class="mt-10 text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">Calendario del mes</h2>
 
     @php
         $puntos = [
@@ -59,11 +59,11 @@
     @endphp
 
     @if ($this->detalleDias->isEmpty())
-        <p class="mt-4 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
+        <p class="mt-4 border border-green-100 p-6 text-center text-ink-400">
             No hay registros de asistencia para este mes todavía.
         </p>
     @else
-        <div class="mt-4 rounded-lg border border-green-100 bg-white p-4 shadow-card sm:p-6">
+        <div class="mt-4 border-y border-green-100 py-4 sm:py-6">
             <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-ink-400 sm:gap-2 sm:text-xs">
                 <span>Lun</span>
                 <span>Mar</span>
@@ -83,9 +83,9 @@
                             @else
                                 <div
                                     @class([
-                                        'relative flex aspect-square flex-col items-center justify-center rounded-md text-xs font-medium sm:text-sm',
+                                        'relative flex h-11 flex-col items-center justify-center text-xs font-medium sm:h-12 sm:text-sm',
                                         $colores[$celda['status']] ?? ($celda['esFinDeSemana'] ? 'bg-bg text-ink-300' : 'bg-bg text-ink-600'),
-                                        'ring-2 ring-green-700 ring-offset-1' => $celda['esHoy'],
+                                        'border-2 border-green-800' => $celda['esHoy'],
                                     ])
                                     @if ($celda['status'])
                                         title="{{ $celda['fecha']->locale('es')->isoFormat('D [de] MMMM') }} · {{ $etiquetado[$celda['status']] }}"
@@ -99,10 +99,10 @@
                 @endforeach
             </div>
 
-            <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-green-100 pt-4 text-xs text-ink-600">
+            <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-ink-600">
                 @foreach ($etiquetado as $clave => $etiqueta)
                     <span class="inline-flex items-center gap-1.5">
-                        <span @class(['h-2.5 w-2.5 rounded-full', $puntos[$clave]])></span>
+                        <span @class(['h-2.5 w-2.5', $puntos[$clave]])></span>
                         {{ $etiqueta }}
                     </span>
                 @endforeach
@@ -111,24 +111,24 @@
     @endif
 
     @if ($this->resumenAnual)
-        <div class="mt-10 rounded-lg border border-green-100 bg-white p-6 shadow-card">
-            <h2 class="text-xl font-semibold text-ink-900">Resumen anual — ciclo {{ $this->resumenAnual['etiqueta'] }}</h2>
-            <p class="mt-1 text-sm text-ink-400">
-                Corresponde al ciclo lectivo {{ $this->resumenAnual['etiqueta'] }} ya cerrado.
-            </p>
-            <div class="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div class="mt-10">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">
+                Resumen del ciclo {{ $this->resumenAnual['etiqueta'] }}, ya cerrado
+            </h2>
+
+            <x-fact-row :cols="4" class="mt-4">
                 @foreach ([
                     'Presentes' => $this->resumenAnual['counts'][\App\Models\Attendance::STATUS_PRESENTE] ?? 0,
                     'Atrasos' => $this->resumenAnual['counts'][\App\Models\Attendance::STATUS_ATRASO] ?? 0,
                     'Justificadas' => $this->resumenAnual['counts'][\App\Models\Attendance::STATUS_FALTA_JUSTIFICADA] ?? 0,
                     'Injustificadas' => $this->resumenAnual['counts'][\App\Models\Attendance::STATUS_FALTA_INJUSTIFICADA] ?? 0,
                 ] as $etiqueta => $cantidad)
-                    <div class="rounded-lg border border-green-100 bg-green-50/40 p-5">
-                        <p class="text-3xl font-bold text-ink-900">{{ $cantidad }}</p>
-                        <p class="mt-1 text-sm font-medium text-ink-400">{{ $etiqueta }}</p>
+                    <div class="py-3 sm:px-6 sm:py-0 sm:first:pl-0 sm:last:pr-0">
+                        <p class="text-2xl font-semibold text-ink-900">{{ $cantidad }}</p>
+                        <p class="mt-0.5 text-sm text-ink-600">{{ $etiqueta }}</p>
                     </div>
                 @endforeach
-            </div>
+            </x-fact-row>
         </div>
     @endif
 </div>

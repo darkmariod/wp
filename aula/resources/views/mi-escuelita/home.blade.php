@@ -5,108 +5,83 @@
 @section('content')
     @php
         $etiquetaHoy = [
-            \App\Models\Attendance::STATUS_PRESENTE => ['Presente hoy', 'bg-green-800/60 text-green-100'],
-            \App\Models\Attendance::STATUS_ATRASO => ['Llegó tarde hoy', 'bg-amber-500/20 text-amber-200'],
-            \App\Models\Attendance::STATUS_FALTA_JUSTIFICADA => ['Falta justificada hoy', 'bg-sky-500/20 text-sky-200'],
-            \App\Models\Attendance::STATUS_FALTA_INJUSTIFICADA => ['Falta injustificada hoy', 'bg-rose-500/20 text-rose-200'],
+            \App\Models\Attendance::STATUS_PRESENTE => 'Presente',
+            \App\Models\Attendance::STATUS_ATRASO => 'Llegó tarde',
+            \App\Models\Attendance::STATUS_FALTA_JUSTIFICADA => 'Falta justificada',
+            \App\Models\Attendance::STATUS_FALTA_INJUSTIFICADA => 'Falta injustificada',
         ][$asistenciaHoy] ?? null;
     @endphp
 
-    <div>
-        {{--
-            Hero del portal. Mismo panel verde profundo que la portada:
-            ancla la identidad del colegio. Sin formas decorativas — el
-            contenido real (niño actual + asistencia de hoy) hace el
-            trabajo que antes hacían los círculos de fondo.
-        --}}
-        <section class="rounded-2xl bg-green-950 px-8 py-10 sm:px-12 sm:py-12">
-            <p class="text-sm font-medium uppercase tracking-widest text-accent-500">
-                Espacio para familias
-            </p>
+    <header class="border-b border-green-100 pb-6">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-green-700">Espacio para familias</p>
 
-            <h1 class="mt-3 text-3xl font-semibold text-white sm:text-4xl">
-                ¡Hola, {{ $familia['nombre'] ?? 'familia' }}!
-            </h1>
+        <h1 class="mt-2 text-[28px] font-semibold leading-tight text-ink-900 sm:text-3xl">
+            ¡Hola, {{ $familia['nombre'] ?? 'familia' }}!
+        </h1>
 
-            @if ($ninoActual)
-                <div class="mt-6 flex flex-wrap items-center gap-3">
-                    <a
-                        href="{{ route('mi-escuelita.historial') }}"
-                        class="inline-flex min-h-[44px] items-center gap-3 rounded-full border border-green-800 bg-green-900/60 p-2 pr-5 transition-fast hover:border-green-700 focus-ring"
-                    >
-                        @if ($ninoActual->avatarUrl())
-                            <img src="{{ $ninoActual->avatarUrl() }}" alt="" class="h-10 w-10 rounded-full object-cover">
-                        @else
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-white {{ $ninoActual->avatarColorClass() }}">{{ $ninoActual->avatarInitials() }}</span>
-                        @endif
-                        <span class="text-left">
-                            <span class="block text-xs font-medium text-green-300">Seguimos el desarrollo de</span>
-                            <span class="block text-sm font-semibold text-white">{{ $ninoActual->name }}</span>
-                        </span>
-                    </a>
-
-                    @if ($etiquetaHoy)
-                        <span class="inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-medium {{ $etiquetaHoy[1] }}">
-                            {{ $etiquetaHoy[0] }}
-                        </span>
-                    @endif
-                </div>
-            @endif
-        </section>
-
-        {{--
-            Tres accesos, cada uno con un dato real en vez de solo un
-            ícono decorativo — así la familia ve de un vistazo si hay
-            algo esperando, no solo tres tarjetas idénticas.
-        --}}
-        <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <a
-                href="{{ route('mi-escuelita.experiencias.index') }}"
-                class="rounded-lg border border-green-100 bg-white p-5 shadow-card transition-base hover:shadow-card-hover focus-ring"
-            >
-                <p class="text-3xl font-bold text-ink-900">{{ $totalExperiencias }}</p>
-                <h2 class="mt-1 font-semibold text-ink-900">Experiencias</h2>
-                <p class="mt-1 text-sm text-ink-400">Explorá lo que la guía va presentando.</p>
-            </a>
-
-            <a
-                href="{{ route('mi-escuelita.historial') }}"
-                class="rounded-lg border border-green-100 bg-white p-5 shadow-card transition-base hover:shadow-card-hover focus-ring"
-            >
-                @if ($sinResponder > 0)
-                    <p class="text-3xl font-bold text-accent-600">{{ $sinResponder }}</p>
-                    <h2 class="mt-1 font-semibold text-ink-900">Mis experiencias</h2>
-                    <p class="mt-1 text-sm text-ink-400">Esperando respuesta de la guía.</p>
-                @else
-                    <p class="text-3xl font-bold text-ink-900">✓</p>
-                    <h2 class="mt-1 font-semibold text-ink-900">Mis experiencias</h2>
-                    <p class="mt-1 text-sm text-ink-400">Todo al día con la guía.</p>
+        @if ($ninoActual)
+            <p class="mt-3 max-w-prose text-ink-600">
+                Estamos acompañando el desarrollo de
+                <a
+                    href="{{ route('mi-escuelita.historial') }}"
+                    class="font-semibold text-green-800 underline decoration-green-300 underline-offset-4 transition-fast hover:decoration-green-700 focus-ring"
+                >{{ $ninoActual->name }}</a>.
+                @if ($etiquetaHoy)
+                    Hoy en el colegio: {{ strtolower($etiquetaHoy) }}.
                 @endif
-            </a>
-
-            <a
-                href="{{ route('mi-escuelita.asistencia') }}"
-                class="rounded-lg border border-green-100 bg-white p-5 shadow-card transition-base hover:shadow-card-hover focus-ring"
-            >
-                <p class="text-3xl font-bold text-ink-900">{{ $etiquetaHoy[0] ?? '—' }}</p>
-                <h2 class="mt-1 font-semibold text-ink-900">Asistencia</h2>
-                <p class="mt-1 text-sm text-ink-400">Calendario mes a mes de tu niño.</p>
-            </a>
-        </div>
-
-        @if ($areas->isNotEmpty())
-            <h2 class="mt-10 text-xl font-semibold text-ink-900">Áreas de desarrollo</h2>
-            <div class="mt-4 flex flex-wrap gap-2">
-                @foreach ($areas as $area)
-                    <a
-                        href="{{ route('mi-escuelita.experiencias.index', ['area' => $area->id]) }}"
-                        class="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-green-100 bg-white px-4 text-sm font-medium text-ink-700 transition-fast hover:border-green-300 hover:bg-green-50 focus-ring"
-                    >
-                        <x-area-icon :name="$area->icon" class="h-4 w-4 text-green-700" />
-                        {{ $area->name }}
-                    </a>
-                @endforeach
-            </div>
+            </p>
         @endif
-    </div>
+    </header>
+
+    {{--
+        Resumen leído como una frase, no como tres widgets: cuántas
+        experiencias hay para ver, si algo espera respuesta, y cómo viene
+        la asistencia. Sin cajas — son hechos, no botones.
+    --}}
+    <x-fact-row :cols="3" class="mt-8">
+        <a href="{{ route('mi-escuelita.experiencias.index') }}" class="group block py-3 transition-fast sm:px-6 sm:py-0 sm:first:pl-0">
+            <p class="text-2xl font-semibold text-ink-900 group-hover:text-green-800">{{ $totalExperiencias }}</p>
+            <p class="mt-0.5 text-sm text-ink-600">experiencias disponibles</p>
+        </a>
+
+        <a href="{{ route('mi-escuelita.historial') }}" class="group block py-3 transition-fast sm:px-6">
+            <p class="text-2xl font-semibold text-ink-900 group-hover:text-green-800">
+                {{ $sinResponder > 0 ? $sinResponder : 'Al día' }}
+            </p>
+            <p class="mt-0.5 text-sm text-ink-600">
+                {{ $sinResponder > 0 ? 'esperando respuesta de la guía' : 'con la guía' }}
+            </p>
+        </a>
+
+        <a href="{{ route('mi-escuelita.asistencia') }}" class="group block py-3 transition-fast sm:px-6 sm:pr-0">
+            <p class="text-2xl font-semibold text-ink-900 group-hover:text-green-800">{{ $etiquetaHoy ?? '—' }}</p>
+            <p class="mt-0.5 text-sm text-ink-600">asistencia de hoy</p>
+        </a>
+    </x-fact-row>
+
+    @if ($areas->isNotEmpty())
+        <section class="mt-10">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">Áreas de desarrollo</h2>
+
+            <ul class="mt-4 border-t border-green-100">
+                @foreach ($areas as $area)
+                    <li class="border-b border-green-100">
+                        <a
+                            href="{{ route('mi-escuelita.experiencias.index', ['area' => $area->id]) }}"
+                            class="flex items-baseline justify-between gap-6 py-4 transition-fast hover:bg-green-50/40 focus-ring"
+                        >
+                            <span class="flex items-baseline gap-4">
+                                <span class="font-mono text-xs text-ink-300">{{ sprintf('%02d', $loop->iteration) }}</span>
+                                <span class="font-medium text-ink-900">{{ $area->name }}</span>
+                            </span>
+
+                            @if ($area->description)
+                                <span class="hidden max-w-sm text-right text-sm text-ink-400 sm:block">{{ $area->description }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 @endsection

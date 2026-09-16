@@ -3,8 +3,8 @@
         <x-breadcrumb
             :items="[['label' => 'Inicio', 'url' => route('mi-escuelita.home')], ['label' => 'Mis experiencias']]"
         />
-        <h1 class="mt-4 text-3xl font-bold text-ink-900">Mis experiencias</h1>
-        <p class="mt-2 text-sm text-ink-400">
+        <h1 class="mt-4 text-3xl font-semibold text-ink-900">Mis experiencias</h1>
+        <p class="mt-2 text-sm text-ink-600">
             Todo lo que esta familia ya compartió, con el estado y la respuesta de la guía.
         </p>
     </div>
@@ -16,6 +16,13 @@
             \App\Models\Evidence::STATUS_VIEWED => 'Vista por la guía',
             \App\Models\Evidence::STATUS_RESPONDED => 'Con respuesta',
             \App\Models\Evidence::STATUS_ARCHIVED => 'Archivada',
+        ];
+        $coloresEstado = [
+            \App\Models\Evidence::STATUS_PENDING => 'text-amber-700',
+            \App\Models\Evidence::STATUS_SUBMITTED => 'text-ink-600',
+            \App\Models\Evidence::STATUS_VIEWED => 'text-sky-700',
+            \App\Models\Evidence::STATUS_RESPONDED => 'font-medium text-green-800',
+            \App\Models\Evidence::STATUS_ARCHIVED => 'text-ink-400',
         ];
     @endphp
 
@@ -29,7 +36,7 @@
                 type="search"
                 placeholder="Buscar por experiencia…"
                 wire:model.live.debounce.300ms="search"
-                class="w-full rounded-md border border-green-100 bg-white py-2 pl-9 pr-3 text-sm text-ink-900 focus-ring"
+                class="w-full border border-green-100 bg-white py-2 pl-9 pr-3 text-sm text-ink-900 focus-ring"
             >
         </label>
 
@@ -47,8 +54,8 @@
         </x-field-select>
     </div>
 
-    <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-ink-400">
+    <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-b border-green-100 pb-3">
+        <p class="text-sm text-ink-600">
             {{ $this->evidencias()->total() }}
             {{ $this->evidencias()->total() === 1 ? 'envío' : 'envíos' }}
         </p>
@@ -56,7 +63,7 @@
         <button
             type="button"
             wire:click="toggleOrden"
-            class="inline-flex items-center gap-2 rounded-md border border-green-100 bg-white px-3 py-2 text-sm font-medium text-ink-600 transition-fast hover:border-green-300 hover:text-green-800 focus-ring"
+            class="inline-flex items-center gap-1.5 text-sm text-ink-600 transition-fast hover:text-green-800 focus-ring"
         >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                 @if ($orden === 'desc')
@@ -70,42 +77,33 @@
     </div>
 
     @if ($this->evidencias()->isEmpty())
-        <p class="mt-10 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
+        <p class="mt-6 border border-green-100 p-6 text-center text-ink-400">
             Todavía no compartieron ninguna experiencia aquí. Las que envíen van a aparecer en esta lista.
         </p>
     @else
-        <div class="mt-4 overflow-x-auto rounded-lg border border-green-100 bg-white shadow-card">
-            <table class="min-w-full divide-y divide-green-100 text-sm">
-                <thead class="bg-green-50/60">
-                    <tr>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Experiencia</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Área</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Fecha de envío</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Estado</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Respuesta de la guía</th>
+        <div class="mt-4 overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="border-b-2 border-ink-900">
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-600 first:pl-0">Experiencia</th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Área</th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Fecha de envío</th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Estado</th>
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Respuesta de la guía</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-green-100">
                     @foreach ($this->evidencias() as $evidencia)
-                        <tr class="align-top transition-base hover:bg-green-50/40">
-                            <td class="px-5 py-4 font-medium text-ink-900">{{ $evidencia['experiencia'] }}</td>
-                            <td class="px-5 py-4 text-ink-600">{{ $evidencia['area'] ?? '—' }}</td>
-                            <td class="whitespace-nowrap px-5 py-4 text-ink-600">
+                        <tr class="align-top">
+                            <td class="px-3 py-4 font-medium text-ink-900 first:pl-0">{{ $evidencia['experiencia'] }}</td>
+                            <td class="px-3 py-4 text-ink-600">{{ $evidencia['area'] ?? '—' }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-ink-600">
                                 {{ $evidencia['enviada']?->locale('es')->isoFormat('D [de] MMMM [de] YYYY') ?? '—' }}
                             </td>
-                            <td class="px-5 py-4">
-                                <span @class([
-                                    'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium',
-                                    'bg-amber-50 text-amber-700' => $evidencia['estado'] === \App\Models\Evidence::STATUS_PENDING,
-                                    'bg-green-50 text-green-800' => $evidencia['estado'] === \App\Models\Evidence::STATUS_SUBMITTED,
-                                    'bg-sky-50 text-sky-700' => $evidencia['estado'] === \App\Models\Evidence::STATUS_VIEWED,
-                                    'bg-accent-600/10 text-accent-600' => $evidencia['estado'] === \App\Models\Evidence::STATUS_RESPONDED,
-                                    'bg-ink-100 text-ink-400' => $evidencia['estado'] === \App\Models\Evidence::STATUS_ARCHIVED,
-                                ])>
-                                    {{ $etiquetado[$evidencia['estado']] ?? 'Desconocido' }}
-                                </span>
+                            <td class="px-3 py-4 {{ $coloresEstado[$evidencia['estado']] ?? 'text-ink-400' }}">
+                                {{ $etiquetado[$evidencia['estado']] ?? 'Desconocido' }}
                             </td>
-                            <td class="px-5 py-4 text-ink-600">
+                            <td class="px-3 py-4 text-ink-600">
                                 @if ($evidencia['observacion'])
                                     <p class="border-l-2 border-green-200 pl-3 italic">{{ $evidencia['observacion'] }}</p>
                                 @else
