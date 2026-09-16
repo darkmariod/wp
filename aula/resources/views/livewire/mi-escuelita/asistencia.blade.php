@@ -47,45 +47,66 @@
         @endforeach
     </div>
 
-    <h2 class="mt-10 text-xl font-semibold text-ink-900">Día por día</h2>
+    <h2 class="mt-10 text-xl font-semibold text-ink-900">Calendario del mes</h2>
+
+    @php
+        $puntos = [
+            \App\Models\Attendance::STATUS_PRESENTE => 'bg-green-600',
+            \App\Models\Attendance::STATUS_ATRASO => 'bg-amber-500',
+            \App\Models\Attendance::STATUS_FALTA_JUSTIFICADA => 'bg-sky-500',
+            \App\Models\Attendance::STATUS_FALTA_INJUSTIFICADA => 'bg-rose-500',
+        ];
+    @endphp
 
     @if ($this->detalleDias->isEmpty())
         <p class="mt-4 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
             No hay registros de asistencia para este mes todavía.
         </p>
     @else
-        <div class="mt-4 overflow-x-auto rounded-lg border border-green-100 bg-white shadow-card">
-            <table class="min-w-full divide-y divide-green-100 text-sm">
-                <thead class="bg-green-50/60">
-                    <tr>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Fecha</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Estado</th>
-                        @if ($this->detalleDias->contains(fn ($d) => filled($d->notes)))
-                            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Nota</th>
-                        @endif
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-green-100">
-                    @foreach ($this->detalleDias as $dia)
-                        <tr class="transition-base hover:bg-green-50/40">
-                            <td class="whitespace-nowrap px-5 py-4 font-medium text-ink-900">
-                                {{ $dia->date->locale('es')->isoFormat('D [de] MMMM') }}
-                            </td>
-                            <td class="px-5 py-4">
-                                <span @class([
-                                    'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium',
-                                    $colores[$dia->status] ?? 'bg-ink-100 text-ink-400',
-                                ])>
-                                    {{ $etiquetado[$dia->status] ?? $dia->status }}
-                                </span>
-                            </td>
-                            @if ($this->detalleDias->contains(fn ($d) => filled($d->notes)))
-                                <td class="px-5 py-4 text-ink-600">{{ $dia->notes ?? '—' }}</td>
+        <div class="mt-4 rounded-lg border border-green-100 bg-white p-4 shadow-card sm:p-6">
+            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wide text-ink-400 sm:gap-2 sm:text-xs">
+                <span>Lun</span>
+                <span>Mar</span>
+                <span>Mié</span>
+                <span>Jue</span>
+                <span>Vie</span>
+                <span>Sáb</span>
+                <span>Dom</span>
+            </div>
+
+            <div class="mt-2 space-y-1 sm:space-y-2">
+                @foreach ($this->calendario as $semana)
+                    <div class="grid grid-cols-7 gap-1 sm:gap-2">
+                        @foreach ($semana as $celda)
+                            @if ($celda === null)
+                                <div></div>
+                            @else
+                                <div
+                                    @class([
+                                        'relative flex aspect-square flex-col items-center justify-center rounded-md text-xs font-medium sm:text-sm',
+                                        $colores[$celda['status']] ?? ($celda['esFinDeSemana'] ? 'bg-bg text-ink-300' : 'bg-bg text-ink-600'),
+                                        'ring-2 ring-green-700 ring-offset-1' => $celda['esHoy'],
+                                    ])
+                                    @if ($celda['status'])
+                                        title="{{ $celda['fecha']->locale('es')->isoFormat('D [de] MMMM') }} · {{ $etiquetado[$celda['status']] }}"
+                                    @endif
+                                >
+                                    {{ $celda['fecha']->day }}
+                                </div>
                             @endif
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-green-100 pt-4 text-xs text-ink-600">
+                @foreach ($etiquetado as $clave => $etiqueta)
+                    <span class="inline-flex items-center gap-1.5">
+                        <span @class(['h-2.5 w-2.5 rounded-full', $puntos[$clave]])></span>
+                        {{ $etiqueta }}
+                    </span>
+                @endforeach
+            </div>
         </div>
     @endif
 

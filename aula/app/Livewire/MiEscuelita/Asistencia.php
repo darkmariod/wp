@@ -104,6 +104,45 @@ class Asistencia extends Component
     }
 
     /**
+     * Semanas (lun-dom) del mes elegido, cada celda con su estado si lo
+     * tiene. null = fuera del mes (relleno para alinear la grilla).
+     *
+     * @return array<int, array<int, array{fecha: CarbonImmutable, status: ?string, esHoy: bool, esFinDeSemana: bool}|null>>
+     */
+    #[Computed]
+    public function calendario(): array
+    {
+        if (! $this->currentChild()) {
+            return [];
+        }
+
+        $inicio = $this->mesElegido()->startOfMonth();
+        $fin = $inicio->endOfMonth();
+        $hoy = CarbonImmutable::now()->startOfDay();
+
+        $porFecha = $this->detalleDias->keyBy(fn ($dia) => $dia->date->toDateString());
+
+        $celdas = array_fill(0, $inicio->dayOfWeekIso - 1, null);
+
+        for ($dia = $inicio; $dia->lte($fin); $dia = $dia->addDay()) {
+            $registro = $porFecha->get($dia->toDateString());
+
+            $celdas[] = [
+                'fecha' => $dia,
+                'status' => $registro?->status,
+                'esHoy' => $dia->isSameDay($hoy),
+                'esFinDeSemana' => $dia->isWeekend(),
+            ];
+        }
+
+        while (count($celdas) % 7 !== 0) {
+            $celdas[] = null;
+        }
+
+        return array_chunk($celdas, 7);
+    }
+
+    /**
      * Los 12 meses del ciclo vigente para el selector.
      */
     #[Computed]

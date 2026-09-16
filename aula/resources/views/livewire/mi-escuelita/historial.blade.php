@@ -20,13 +20,16 @@
     @endphp
 
     <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label class="sm:col-span-2">
+        <label class="relative sm:col-span-2">
             <span class="sr-only">Buscar por experiencia</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
             <input
                 type="search"
                 placeholder="Buscar por experiencia…"
                 wire:model.live.debounce.300ms="search"
-                class="w-full rounded-md border border-green-100 bg-white px-3 py-2 text-sm text-ink-900 focus-ring"
+                class="w-full rounded-md border border-green-100 bg-white py-2 pl-9 pr-3 text-sm text-ink-900 focus-ring"
             >
         </label>
 
@@ -104,7 +107,7 @@
                             </td>
                             <td class="px-5 py-4 text-ink-600">
                                 @if ($evidencia['observacion'])
-                                    {{ $evidencia['observacion'] }}
+                                    <p class="border-l-2 border-green-200 pl-3 italic">{{ $evidencia['observacion'] }}</p>
                                 @else
                                     <span class="text-ink-400">Sin respuesta aún</span>
                                 @endif

@@ -5,7 +5,10 @@ namespace App\Http\Controllers\MiEscuelita;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MiEscuelita\Concerns\ResolvesCurrentChild;
 use App\Models\Area;
+use App\Models\Attendance;
 use App\Models\Child;
+use App\Models\Content;
+use App\Models\Evidence;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -22,11 +25,30 @@ class HomeController extends Controller
     public function index(): View
     {
         $user = Auth::user();
+        $nino = $this->currentChild();
 
         return view('mi-escuelita.home', [
             'familia' => ['nombre' => $user->family?->name],
-            'ninoActual' => $this->currentChild(),
+            'ninoActual' => $nino,
             'areas' => Area::query()->where('active', true)->orderBy('order')->get(['id', 'name', 'icon', 'description']),
+            'totalExperiencias' => Content::query()
+                ->published()
+                ->where(function ($q) use ($nino) {
+                    $q->whereNull('environment_id');
+                    if ($nino) {
+                        $q->orWhere('environment_id', $nino->environment_id);
+                    }
+                })
+                ->count(),
+            'sinResponder' => $nino
+                ? Evidence::query()
+                    ->where('child_id', $nino->id)
+                    ->whereIn('status', [Evidence::STATUS_SUBMITTED, Evidence::STATUS_VIEWED])
+                    ->count()
+                : 0,
+            'asistenciaHoy' => $nino
+                ? $nino->attendances()->whereDate('date', now())->value('status')
+                : null,
         ]);
     }
 
