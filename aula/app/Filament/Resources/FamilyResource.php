@@ -21,6 +21,10 @@ class FamilyResource extends Resource
 {
     protected static ?string $model = Family::class;
 
+    protected static ?string $modelLabel = 'Familia';
+
+    protected static ?string $pluralModelLabel = 'Padres de Familia';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string|UnitEnum|null $navigationGroup = 'Gestión de Familias';
