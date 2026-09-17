@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Franja from '../components/Franja.astro';
-import { traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
+import { traerCategoriasGaleria, traerConfiguracion, traerFotos, traerGaleria } from '../sanity/consultas';
 import { dimensiones, urlImagen } from '../sanity/imagen';
 import { t, urlIdioma, UI, type Locale } from '../sanity/i18n';
 
@@ -12,27 +12,30 @@ const uiG = ui.galeria;
 
 const p = await traerGaleria();
 const fotos = await traerFotos();
+const categoriasGaleria = await traerCategoriasGaleria();
 const config = await traerConfiguracion();
 const whatsapp = `https://wa.me/${config.telefonoInternacional}`;
 
 // La grilla pide "image"; "grande" es la versión para el visor. El
 // alt de la foto queda compartido entre los dos idiomas a propósito
 // (ver la nota en schemaTypes/objetos.ts) — no hace falta t() acá.
-// categoria y ambiente alimentan el filtro doble (un mismo valor basta:
-// los textos visibles de los filtros vienen de i18n, estos valores son
-// los internos que compara el JS).
+// categoria viaja como el _id de la categoriaGaleria referenciada (o
+// vacío si la foto quedó sin categoría, ej. una borrada desde el
+// Studio): así el filtro no depende de un texto fijo en el código.
 const fotosGrilla = fotos.map((f: any) => ({
   id: f._id ?? f.imagen?.asset?._ref,
   image: urlImagen(f.imagen, 900),
   grande: urlImagen(f.imagen, 1600),
   alt: f.imagen.alt,
-  categoria: f.categoria,
+  categoria: f.categoria?._id ?? '',
   ambiente: f.ambiente ?? '',
   ...dimensiones(f.imagen, 900),
 }));
 
 // Opciones de las dos filas de filtros. "todas" es el valor por defecto
-// de ambas filas: el JS combina ambiente + categoria con un AND.
+// de ambas filas: el JS combina ambiente + categoria con un AND. Las
+// categorías (salvo "todas") vienen del Studio: las crea la docente
+// desde "Categoría de la galería", no el código.
 const ambientes = [
   { valor: 'todas', label: uiG.filtroTodas },
   { valor: 'mentes-absorbentes', label: uiG.filtroMentesAbsorbentes },
@@ -40,17 +43,11 @@ const ambientes = [
 ];
 const categorias = [
   { valor: 'todas', label: uiG.filtroTodasFotos },
-  { valor: 'instalaciones', label: uiG.filtroInstalaciones },
-  { valor: 'actividades', label: uiG.filtroActividades },
-  { valor: 'deportes', label: uiG.filtroDeportes },
-  { valor: 'eventos', label: uiG.filtroEventos },
+  ...categoriasGaleria.map((c: any) => ({ valor: c._id, label: t(c.nombre, locale) })),
 ];
 const descs = [
   { valor: 'todas', texto: t(p.descTodas, locale) },
-  { valor: 'instalaciones', texto: t(p.descInstalaciones, locale) },
-  { valor: 'actividades', texto: t(p.descActividades, locale) },
-  { valor: 'deportes', texto: t(p.descDeportes, locale) },
-  { valor: 'eventos', texto: t(p.descEventos, locale) },
+  ...categoriasGaleria.map((c: any) => ({ valor: c._id, texto: t(c.descripcion, locale) })),
 ];
 ---
 <Layout

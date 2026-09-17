@@ -48,9 +48,15 @@ export async function traerNosotros() {
 export async function traerGaleria() {
   return sanityClient.fetch(`*[_type == "paginaGaleria"][0]{
     portada ${CAMPOS_PORTADA},
-    descTodas, descInstalaciones, descActividades, descDeportes, descEventos,
+    descTodas,
     franja ${CAMPOS_FRANJA}
   }`);
+}
+
+export async function traerCategoriasGaleria() {
+  return sanityClient.fetch(
+    `*[_type == "categoriaGaleria"] | order(orden asc){ _id, nombre, descripcion, orden }`
+  );
 }
 
 export async function traerContacto() {
@@ -62,7 +68,7 @@ export async function traerContacto() {
 
 export async function traerFotos() {
   return sanityClient.fetch(
-    `*[_type == "foto"] | order(orden asc){ _id, categoria, ambiente, orden, imagen ${CAMPOS_IMAGEN} }`
+    `*[_type == "foto"] | order(orden asc){ _id, "categoria": categoria->{_id, nombre}, ambiente, orden, imagen ${CAMPOS_IMAGEN} }`
   );
 }
 

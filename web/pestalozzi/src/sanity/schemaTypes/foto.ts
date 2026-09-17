@@ -1,12 +1,5 @@
 import { defineField, defineType } from 'sanity';
 
-export const CATEGORIAS_GALERIA = [
-  { title: 'Instalaciones', value: 'instalaciones' },
-  { title: 'Actividades', value: 'actividades' },
-  { title: 'Deportes', value: 'deportes' },
-  { title: 'Eventos', value: 'eventos' },
-];
-
 export const AMBIENTES_GALERIA = [
   { title: 'Mentes Absorbentes', value: 'mentes-absorbentes' },
   { title: 'Mentes Razonadoras', value: 'mentes-razonadoras' },
@@ -31,12 +24,10 @@ export const foto = defineType({
     defineField({
       name: 'categoria',
       title: 'Categoría',
-      type: 'string',
-      description: 'Define en qué filtro de la galería aparece esta foto.',
-      options: {
-        list: CATEGORIAS_GALERIA,
-        layout: 'radio',
-      },
+      type: 'reference',
+      to: [{ type: 'categoriaGaleria' }],
+      description:
+        'En qué filtro de la galería aparece esta foto. Si la categoría que buscás no existe todavía, creala primero desde "Categoría de la galería".',
       validation: (r) => r.required(),
     }),
     defineField({
@@ -70,12 +61,12 @@ export const foto = defineType({
     select: {
       media: 'imagen',
       alt: 'imagen.alt',
-      categoria: 'categoria',
+      nombreCategoria: 'categoria.nombre.es',
       ambiente: 'ambiente',
       orden: 'orden',
     },
-    prepare: ({ media, alt, categoria, ambiente, orden }) => {
-      const nombreCat = CATEGORIAS_GALERIA.find((c) => c.value === categoria)?.title ?? 'Sin categoría';
+    prepare: ({ media, alt, nombreCategoria, ambiente, orden }) => {
+      const nombreCat = nombreCategoria ?? 'Sin categoría';
       const nombreAmb = ambiente
         ? AMBIENTES_GALERIA.find((a) => a.value === ambiente)?.title
         : null;

@@ -403,34 +403,8 @@ export const paginaGaleria = defineType({
     defineField({
       name: 'descTodas',
       title: 'Texto del filtro "Todas"',
-      type: 'parrafoLocalizado',
-      group: 'descripciones',
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'descInstalaciones',
-      title: 'Texto del filtro "Instalaciones"',
-      type: 'parrafoLocalizado',
-      group: 'descripciones',
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'descActividades',
-      title: 'Texto del filtro "Actividades"',
-      type: 'parrafoLocalizado',
-      group: 'descripciones',
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'descDeportes',
-      title: 'Texto del filtro "Deportes"',
-      type: 'parrafoLocalizado',
-      group: 'descripciones',
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'descEventos',
-      title: 'Texto del filtro "Eventos"',
+      description:
+        'El texto de cada categoría específica (Instalaciones, Actividades, etc.) se edita en "Categoría de la galería", no acá.',
       type: 'parrafoLocalizado',
       group: 'descripciones',
       validation: (r) => r.required(),
