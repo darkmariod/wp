@@ -49,15 +49,8 @@ class ContentResource extends Resource
                         Forms\Components\TextInput::make('title')
                             ->label('Título')
                             ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('slug')
-                            ->label('Slug')
-                            ->required()
-                            ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->dehydrated()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('type')
                             ->label('Tipo')
                             ->options(fn (Get $get): array => static::tipoOptions($get('environment_id')))
@@ -141,6 +134,13 @@ class ContentResource extends Resource
                             ->url()
                             ->nullable()
                             ->placeholder('https://youtube.com/watch?v=...'),
+                        Forms\Components\TextInput::make('books_url')
+                            ->label('Libros (Drive o Dropbox)')
+                            ->url()
+                            ->nullable()
+                            ->placeholder('https://drive.google.com/...')
+                            ->helperText('Enlace a la carpeta con los libros de lectura para que la familia los descargue.')
+                            ->columnSpanFull(),
                     ])->columns(2)->collapsible(),
 
                 Section::make('Publicación')

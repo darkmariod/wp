@@ -56,7 +56,6 @@ class ContentUploadTest extends TestCase
             ->test(CreateContent::class)
             ->fillForm([
                 'title' => 'Sumamos con semillas',
-                'slug' => 'sumamos-con-semillas',
                 'type' => Content::TYPE_TASK,
                 'status' => Content::STATUS_DRAFT,
                 'environment_id' => $ambiente->id,
@@ -67,7 +66,7 @@ class ContentUploadTest extends TestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $content = Content::where('slug', 'sumamos-con-semillas')->first();
+        $content = Content::where('title', 'Sumamos con semillas')->first();
 
         $this->assertNotNull($content, 'La actividad debería haberse guardado');
         $this->assertNotNull($content->cover_image, 'Debería haber quedado la portada');
@@ -82,7 +81,6 @@ class ContentUploadTest extends TestCase
             ->test(CreateContent::class)
             ->fillForm([
                 'title' => 'La tortuga y la liebre',
-                'slug' => 'la-tortuga-y-la-liebre',
                 'type' => Content::TYPE_READING,
                 'status' => Content::STATUS_DRAFT,
                 'environment_id' => $ambiente->id,
@@ -93,10 +91,51 @@ class ContentUploadTest extends TestCase
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('content', [
-            'slug' => 'la-tortuga-y-la-liebre',
+            'title' => 'La tortuga y la liebre',
             'type' => Content::TYPE_READING,
             'status' => Content::STATUS_DRAFT,
         ]);
+    }
+
+    public function test_el_slug_se_genera_solo_sin_que_la_guia_lo_escriba(): void
+    {
+        ['guia' => $guia, 'ambiente' => $ambiente, 'area' => $area] = $this->ambienteConFamilia();
+
+        Livewire::actingAs($guia)
+            ->test(CreateContent::class)
+            ->fillForm([
+                'title' => 'Contamos hasta diez',
+                'type' => Content::TYPE_TASK,
+                'status' => Content::STATUS_DRAFT,
+                'environment_id' => $ambiente->id,
+                'area_id' => $area->id,
+                'teacher_id' => $guia->id,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $content = Content::where('title', 'Contamos hasta diez')->first();
+
+        $this->assertNotNull($content);
+        $this->assertStringStartsWith('contamos-hasta-diez-', $content->slug);
+    }
+
+    public function test_la_familia_ve_el_enlace_a_los_libros_cuando_la_guia_lo_carga(): void
+    {
+        ['ambiente' => $ambiente, 'area' => $area, 'guia' => $guia, 'nino' => $nino, 'padre' => $padre] = $this->ambienteConFamilia();
+
+        $content = Content::factory()->published()->create([
+            'environment_id' => $ambiente->id,
+            'area_id' => $area->id,
+            'teacher_id' => $guia->id,
+            'books_url' => 'https://drive.google.com/carpeta-de-libros',
+        ]);
+
+        $this->actingAs($padre)
+            ->get(route('mi-escuelita.experiencias.show', $content))
+            ->assertOk()
+            ->assertSee('https://drive.google.com/carpeta-de-libros')
+            ->assertSee('Libros de lectura');
     }
 
     public function test_el_titulo_es_obligatorio(): void

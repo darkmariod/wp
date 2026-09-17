@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\ContentResource\Pages\CreateContent;
-use App\Models\Child;
 use App\Models\Content;
 use App\Models\Environment;
 use App\Models\Family;
@@ -60,7 +59,6 @@ class ContentDueDateTest extends TestCase
             ->test(CreateContent::class)
             ->fillForm([
                 'title' => 'Sumas hasta el 20',
-                'slug' => 'sumas-hasta-el-20',
                 'type' => Content::TYPE_TASK,
                 'status' => Content::STATUS_DRAFT,
                 'environment_id' => $ambiente->id,
@@ -70,7 +68,7 @@ class ContentDueDateTest extends TestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $creado = Content::where('slug', 'sumas-hasta-el-20')->first();
+        $creado = Content::where('title', 'Sumas hasta el 20')->first();
 
         $this->assertNotNull($creado->due_date);
         $this->assertFalse($creado->isOverdue());

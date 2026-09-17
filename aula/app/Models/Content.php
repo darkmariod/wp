@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'title', 'slug', 'type', 'description', 'body',
     'environment_id', 'area_id', 'teacher_id',
-    'cover_image', 'video_url',
+    'cover_image', 'video_url', 'books_url',
     'requires_evidence', 'published_at', 'due_date', 'status',
 ])]
 #[ObservedBy(ContentObserver::class)]
