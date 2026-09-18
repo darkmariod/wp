@@ -11,6 +11,10 @@ import Layout from '../layouts/Layout.astro';
 
   <h2><span class="num">01</span>Entrar al panel</h2>
   <p>Entrá con tu correo y contraseña. Al ingresar ves el <strong>Escritorio</strong>, con las estadísticas generales del colegio: niños activos, asistencias de hoy, evidencias por revisar, y el gráfico de asistencia del mes.</p>
+  <figure class="captura">
+    <img src="/capturas/panel-escritorio.png" alt="Escritorio del panel de administración con las estadísticas generales" loading="lazy">
+    <figcaption>Escritorio del panel, con el resumen general del colegio.</figcaption>
+  </figure>
 
   <h2><span class="num">02</span>Crear un usuario (guía, coordinación o administrador)</h2>
   <p>Cada persona que entra al sistema —guía, coordinación o familia— es un usuario.</p>
@@ -31,6 +35,10 @@ import Layout from '../layouts/Layout.astro';
     Después <code>Gestión de Familias → Niños → Nuevo niño</code>: <code>Nombre</code>, <code>Fecha de nacimiento</code>, <code>Familia</code> y <code>Ambiente</code>.
   </div>
   <p>Una guía también puede inscribir un niño nuevo, pero solo dentro de su propio ambiente — no puede asignarlo a un ambiente ajeno.</p>
+  <figure class="captura">
+    <img src="/capturas/panel-familias.png" alt="Listado de Padres de Familia en el panel" loading="lazy">
+    <figcaption>Listado de Padres de Familia.</figcaption>
+  </figure>
 
   <h2><span class="num">05</span>Crear y publicar contenido (experiencias, lecturas, tareas)</h2>
   <p>Acá es donde la guía sube lo que la familia va a ver: una experiencia, una lectura, un video, un documento, una galería, un anuncio, o una tarea con fecha límite y evidencia.</p>
@@ -41,22 +49,38 @@ import Layout from '../layouts/Layout.astro';
     Cambiá el <code>Estado</code> a "Publicado" y guardá.
   </div>
   <p>En un ambiente de Mentes Razonadoras solo se permiten lecturas y tareas — el sistema no deja publicar otro tipo ahí.</p>
+  <figure class="captura">
+    <img src="/capturas/panel-contenido-nuevo.png" alt="Formulario de Crear Contenido, sin campo de slug y con el enlace de Libros" loading="lazy">
+    <figcaption>Crear Contenido: sin campo de slug, con el enlace de Libros (Drive o Dropbox) en Multimedia.</figcaption>
+  </figure>
 
   <h2><span class="num">06</span>Registrar asistencia</h2>
   <p>Se marca una vez por día, por ambiente: cada niño queda presente, con atraso, o con falta justificada o injustificada.</p>
   <div class="paso-nota">
     <code>Gestión Académica → Registro de Asistencia</code>. Elegí <code>Ambiente</code> y <code>Fecha</code> (por defecto hoy), marcá el estado de cada niño con los botones, y guardá. Volver a marcar el mismo día no duplica el registro: lo actualiza.
   </div>
+  <figure class="captura">
+    <img src="/capturas/panel-asistencia-registro.png" alt="Registro de Asistencia con los botones de estado por niño" loading="lazy">
+    <figcaption>Registro de Asistencia: un botón por estado, por niño.</figcaption>
+  </figure>
 
   <h2><span class="num">07</span>Ver y responder una evidencia</h2>
   <p>Cuando la familia responde una tarea con una foto o un comentario, queda como evidencia pendiente. La guía puede leerla y responder directamente.</p>
   <div class="paso-nota">
     <code>Gestión Académica → Evidencias</code>. Abrí una evidencia para ver el comentario de la familia, y usá <code>Responder</code> para escribir la respuesta.
   </div>
+  <figure class="captura">
+    <img src="/capturas/panel-evidencias.png" alt="Listado de evidencias enviadas por las familias" loading="lazy">
+    <figcaption>Listado de evidencias enviadas por las familias.</figcaption>
+  </figure>
 
   <h2><span class="num">08</span>Reporte mensual de asistencia (PDF / Excel)</h2>
   <p>Un reporte individual por niño, para uso interno del colegio — las familias nunca lo ven. Ya tiene cargado el calendario de feriados del ciclo lectivo, así que un día sin clases no cuenta como falta.</p>
   <div class="paso-nota">
     <code>Gestión Académica → Reportes de Asistencia</code>. Elegí <code>Ambiente</code>, <code>Niño</code> y <code>Mes</code>, revisá el resumen en pantalla, y descargalo en <code>PDF</code> o <code>Excel</code>.
   </div>
+  <figure class="captura">
+    <img src="/capturas/panel-reporte-asistencia.png" alt="Reporte mensual de asistencia con el feriado de octubre marcado" loading="lazy">
+    <figcaption>Reporte mensual: el feriado de octubre queda marcado aparte, no como falta.</figcaption>
+  </figure>
 </Layout>
