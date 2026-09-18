@@ -1,0 +1,14 @@
+{
+  "name": "documentacion-mi-escuelita",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manual de uso de Mi Escuelita para el personal de la Unidad Educativa Pestalozzi Ambato",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.2.4"
+  }
+}

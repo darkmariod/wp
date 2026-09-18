@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Panel de administración">
+  <p class="eyebrow">Para coordinación y guías</p>
+  <h1>Panel de administración</h1>
+  <p class="lead">
+    Acá el colegio gestiona todo lo que después ve la familia: niños, tareas,
+    asistencia, y las fotos y videos que suben las guías.
+  </p>
+
+  <h2><span class="num">01</span>Entrar al panel</h2>
+  <p>Entrá con tu correo y contraseña. Al ingresar ves el <strong>Escritorio</strong>, con las estadísticas generales del colegio: niños activos, asistencias de hoy, evidencias por revisar, y el gráfico de asistencia del mes.</p>
+
+  <h2><span class="num">02</span>Crear un usuario (guía, coordinación o administrador)</h2>
+  <p>Cada persona que entra al sistema —guía, coordinación o familia— es un usuario.</p>
+  <div class="paso-nota">
+    <code>Gestión de Familias → Usuarios → Nuevo usuario</code>. Completá <code>Nombre</code>, <code>Correo electrónico</code>, elegí el <code>Rol</code> y poné una <code>Contraseña</code>. Dejá <code>Activo</code> encendido y guardá.
+  </div>
+
+  <h2><span class="num">03</span>Confirmar el ambiente de una guía</h2>
+  <p>Cada guía tiene a su cargo un ambiente —un aula—: ahí van sus niños y el contenido que suba.</p>
+  <div class="paso-nota">
+    <code>Gestión Académica → Ambientes</code>. Un ambiente tiene <code>Nombre</code>, <code>Docente</code> a cargo y <code>Etapa</code> (Mentes Absorbentes o Mentes Razonadoras).
+  </div>
+
+  <h2><span class="num">04</span>Registrar una familia y un niño</h2>
+  <p>Primero la familia, que es la que va a tener acceso al portal; después el niño, asociado a esa familia y a un ambiente.</p>
+  <div class="paso-nota">
+    <code>Gestión de Familias → Padres de Familia → Nueva familia</code>: <code>Nombre</code> y <code>Teléfono</code>.<br>
+    Después <code>Gestión de Familias → Niños → Nuevo niño</code>: <code>Nombre</code>, <code>Fecha de nacimiento</code>, <code>Familia</code> y <code>Ambiente</code>.
+  </div>
+  <p>Una guía también puede inscribir un niño nuevo, pero solo dentro de su propio ambiente — no puede asignarlo a un ambiente ajeno.</p>
+
+  <h2><span class="num">05</span>Crear y publicar contenido (experiencias, lecturas, tareas)</h2>
+  <p>Acá es donde la guía sube lo que la familia va a ver: una experiencia, una lectura, un video, un documento, una galería, un anuncio, o una tarea con fecha límite y evidencia.</p>
+  <div class="paso-nota">
+    <code>Gestión Académica → Contenidos → Nuevo</code>. Completá <code>Título</code> (el slug se genera solo, no hace falta escribirlo), elegí <code>Tipo</code>, <code>Área</code>, <code>Ambiente</code> y <code>Docente</code>.
+    Si es una tarea, activá <code>Requiere evidencia</code> y poné una <code>Fecha límite</code>.
+    En "Multimedia" podés dejar un video y, si corresponde, el enlace de <code>Libros (Drive o Dropbox)</code> para que la familia descargue el material de lectura.
+    Cambiá el <code>Estado</code> a "Publicado" y guardá.
+  </div>
+  <p>En un ambiente de Mentes Razonadoras solo se permiten lecturas y tareas — el sistema no deja publicar otro tipo ahí.</p>
+
+  <h2><span class="num">06</span>Registrar asistencia</h2>
+  <p>Se marca una vez por día, por ambiente: cada niño queda presente, con atraso, o con falta justificada o injustificada.</p>
+  <div class="paso-nota">
+    <code>Gestión Académica → Registro de Asistencia</code>. Elegí <code>Ambiente</code> y <code>Fecha</code> (por defecto hoy), marcá el estado de cada niño con los botones, y guardá. Volver a marcar el mismo día no duplica el registro: lo actualiza.
+  </div>
+
+  <h2><span class="num">07</span>Ver y responder una evidencia</h2>
+  <p>Cuando la familia responde una tarea con una foto o un comentario, queda como evidencia pendiente. La guía puede leerla y responder directamente.</p>
+  <div class="paso-nota">
+    <code>Gestión Académica → Evidencias</code>. Abrí una evidencia para ver el comentario de la familia, y usá <code>Responder</code> para escribir la respuesta.
+  </div>
+
+  <h2><span class="num">08</span>Reporte mensual de asistencia (PDF / Excel)</h2>
+  <p>Un reporte individual por niño, para uso interno del colegio — las familias nunca lo ven. Ya tiene cargado el calendario de feriados del ciclo lectivo, así que un día sin clases no cuenta como falta.</p>
+  <div class="paso-nota">
+    <code>Gestión Académica → Reportes de Asistencia</code>. Elegí <code>Ambiente</code>, <code>Niño</code> y <code>Mes</code>, revisá el resumen en pantalla, y descargalo en <code>PDF</code> o <code>Excel</code>.
+  </div>
+</Layout>

@@ -1,0 +1,10 @@
+# logs
+npm-debug.log*
+
+# macOS-specific files
+.DS_Store
+
+# Astro: se regeneran en cada build, nunca van al repo.
+node_modules/
+dist/
+.astro/

@@ -1,0 +1,147 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Manual de uso de Mi Escuelita para el personal de la Unidad Educativa Pestalozzi Ambato.' } = Astro.props;
+
+const paginas = [
+  { href: '/', label: 'Inicio' },
+  { href: '/panel-administrativo', label: 'Panel de administración' },
+  { href: '/portal-familias', label: 'Portal de familias' },
+];
+const rutaActual = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} · Mi Escuelita</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2220%22 font-size=%2220%22>🌱</text></svg>" />
+</head>
+<body>
+  <header class="top">
+    <div class="envoltorio top__fila">
+      <a href="/" class="marca">Mi Escuelita <span>· Manual de uso</span></a>
+      <nav class="nav">
+        {paginas.map((p) => (
+          <a href={p.href} class:list={['nav__link', { activo: rutaActual === p.href }]}>{p.label}</a>
+        ))}
+      </nav>
+    </div>
+  </header>
+
+  <main class="envoltorio contenido">
+    <slot />
+  </main>
+
+  <footer class="pie">
+    <div class="envoltorio">
+      Unidad Educativa Pestalozzi Ambato — Manual interno de Mi Escuelita.
+    </div>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --green-900: #143829;
+    --green-800: #1f5c3f;
+    --green-700: #276e4c;
+    --green-100: #e3ede6;
+    --green-50: #f3f8f5;
+    --ink-900: #1c2321;
+    --ink-600: #4b5850;
+    --ink-400: #78877e;
+    --rule: #dfe6e0;
+    --bg: #fbfaf7;
+    --card: #ffffff;
+    --radius: 6px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink-900);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .envoltorio { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  a { color: var(--green-800); }
+
+  .top { border-bottom: 1px solid var(--rule); background: var(--card); position: sticky; top: 0; z-index: 10; }
+  .top__fila { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 16px 20px; }
+  .marca { font-weight: 700; color: var(--ink-900); text-decoration: none; font-size: 1.05rem; }
+  .marca span { color: var(--ink-400); font-weight: 400; }
+  .nav { display: flex; gap: 20px; flex-wrap: wrap; }
+  .nav__link { text-decoration: none; color: var(--ink-600); font-size: 0.92rem; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+  .nav__link.activo, .nav__link:hover { color: var(--green-800); border-bottom-color: var(--green-800); }
+
+  .contenido { padding: 40px 20px 80px; }
+
+  h1 { font-size: 1.9rem; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.35rem; margin: 48px 0 4px; padding-top: 20px; border-top: 1px solid var(--rule); }
+  h2 .num { font-family: ui-monospace, monospace; color: var(--green-700); margin-right: 10px; }
+  h3 { font-size: 1.05rem; margin: 24px 0 6px; }
+  p { color: var(--ink-600); max-width: 68ch; }
+  .eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green-700); font-weight: 600; margin: 0 0 8px; }
+  .lead { font-size: 1.05rem; color: var(--ink-600); max-width: 62ch; }
+
+  .paso-nota {
+    background: var(--green-50);
+    border-left: 3px solid var(--green-700);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 0.92rem;
+    color: var(--ink-900);
+    margin: 10px 0 18px;
+    max-width: 68ch;
+  }
+  .paso-nota code { background: var(--green-100); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+
+  figure.captura {
+    margin: 16px 0 28px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+    max-width: 720px;
+  }
+  figure.captura img { display: block; width: 100%; height: auto; }
+  figure.captura figcaption {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: var(--ink-400);
+    border-top: 1px solid var(--rule);
+  }
+
+  .indice {
+    display: grid;
+    gap: 14px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .indice a {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    background: var(--card);
+  }
+  .indice a:hover { border-color: var(--green-700); }
+  .indice .titulo { color: var(--ink-900); font-weight: 700; font-size: 1.05rem; }
+  .indice .desc { color: var(--ink-600); font-size: 0.9rem; margin-top: 4px; }
+
+  .pie {
+    border-top: 1px solid var(--rule);
+    padding: 20px 0;
+    color: var(--ink-400);
+    font-size: 0.82rem;
+  }
+
+  code { font-family: ui-monospace, monospace; }
+</style>
