@@ -85,6 +85,16 @@ ul { list-style: none; padding: 0; }
   .seccion { padding-block: var(--space-24); }
 }
 
+/* Páginas legales: van directo a un .seccion sin hero encima, así que
+   nada empuja el contenido bajo el header fijo — el título quedaba
+   tapado a medias. El resto de las páginas no lo necesita porque su
+   .hero ya reserva var(--header-h) arriba. */
+.seccion--bajo-header { padding-top: calc(var(--header-h) + var(--space-16)); }
+
+@media (min-width: 1024px) {
+  .seccion--bajo-header { padding-top: calc(var(--header-h) + var(--space-24)); }
+}
+
 .seccion--clara { background: var(--surface); }
 .seccion--suave { background: var(--green-50); }
 

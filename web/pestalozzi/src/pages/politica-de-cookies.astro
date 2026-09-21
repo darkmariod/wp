@@ -14,7 +14,7 @@ const config = await traerConfiguracion();
   current="contacto"
   locale="es"
 >
-  <section class="seccion seccion--clara">
+  <section class="seccion seccion--clara seccion--bajo-header">
     <div class="contenedor legal">
       <h1>Política de cookies</h1>
       <p class="legal__actualizado">Última actualización: 4 de septiembre de 2026.</p>
@@ -32,20 +32,22 @@ const config = await traerConfiguracion();
         ningún otro rastreador</strong>. Lo único que se guarda en tu
         navegador es lo siguiente:
       </p>
-      <table class="legal__tabla">
-        <thead>
-          <tr><th>Nombre</th><th>Tipo</th><th>Finalidad</th><th>Duración</th><th>Proveedor</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>pestalozzi_cookies</code></td>
-            <td>Necesaria</td>
-            <td>Recuerda tu elección sobre cookies, para no volver a preguntarte en cada visita.</td>
-            <td>Sin vencimiento (hasta que la borres)</td>
-            <td>Propio del sitio</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="legal__tabla-envoltorio">
+        <table class="legal__tabla">
+          <thead>
+            <tr><th>Nombre</th><th>Tipo</th><th>Finalidad</th><th>Duración</th><th>Proveedor</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>pestalozzi_cookies</code></td>
+              <td>Necesaria</td>
+              <td>Recuerda tu elección sobre cookies, para no volver a preguntarte en cada visita.</td>
+              <td>Sin vencimiento (hasta que la borres)</td>
+              <td>Propio del sitio</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p>
         Esta cookie es técnicamente un valor guardado en el
         almacenamiento local de tu navegador (localStorage), no una

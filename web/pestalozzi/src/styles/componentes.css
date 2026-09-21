@@ -2080,10 +2080,18 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
 }
 .legal ul { padding-left: var(--space-5); list-style: disc; }
 .legal a { color: var(--green-700); text-decoration: underline; }
+/* Las 5 columnas no entran en un celular sin forzar el ancho de toda
+   la página — el scroll horizontal queda adentro de este envoltorio,
+   nunca en el body. */
+.legal__tabla-envoltorio {
+  overflow-x: auto;
+  margin-block: var(--space-4);
+  -webkit-overflow-scrolling: touch;
+}
 .legal__tabla {
   width: 100%;
+  min-width: 540px;
   border-collapse: collapse;
-  margin-block: var(--space-4);
   font-size: var(--fs-small);
 }
 .legal__tabla th, .legal__tabla td {
