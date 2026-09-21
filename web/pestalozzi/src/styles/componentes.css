@@ -1571,6 +1571,16 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
   z-index: 120;
   width: 62px;
   height: 62px;
+  transition: opacity .25s var(--ease-out);
+}
+/* Mientras se scrollea se atenúa y deja de recibir clics, para no
+   tapar de forma permanente lo que caiga en esa esquina (ver JS). */
+.fab--desvanecido {
+  opacity: .32;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fab { transition: none; }
 }
 
 /* --- Disparador --- */

@@ -840,6 +840,19 @@
     opciones.forEach(function (o) { o.addEventListener('click', function () { abrirFab(false); }); });
 
     abrirFab(false);   // estado inicial coherente
+
+    // Es fixed en la esquina inferior derecha, así que tapa lo que sea
+    // que el scroll deje justo ahí — en celular ya tapó un filtro de la
+    // galería y el cierre de una tarjeta. En vez de dejarle hueco a cada
+    // sección nueva, se atenúa mientras se scrollea y vuelve apenas se
+    // frena (no mientras está abierto, para no cerrarlo en la cara).
+    var idScrollFab;
+    window.addEventListener('scroll', function () {
+      if (fab.getAttribute('data-abierto') === 'true') return;
+      fab.classList.add('fab--desvanecido');
+      clearTimeout(idScrollFab);
+      idScrollFab = setTimeout(function () { fab.classList.remove('fab--desvanecido'); }, 350);
+    }, { passive: true });
   }
 
 
