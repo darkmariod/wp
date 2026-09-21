@@ -7,16 +7,15 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Sin auto-registro: acá no hay "público en general" con acceso propio,
+// solo personal y familias que el colegio da de alta desde el panel.
+// Sacar estas dos rutas alcanza — welcome.blade.php y login.blade.php
+// ya ocultan el botón "Crear cuenta" solos cuando Route::has('register')
+// da false.
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
-
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
