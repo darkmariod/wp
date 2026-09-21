@@ -907,7 +907,20 @@
       }
     }
 
-    function ocultarBanner() { banner.hidden = true; }
+    // El banner es position:fixed y no reserva su propio espacio: sin
+    // esto, tapa el final de páginas cortas (la propia política de
+    // cookies era la más afectada, porque además tiene una tabla que
+    // termina justo donde se posa el banner).
+    function ajustarEspacioBanner() {
+      document.body.style.paddingBottom = banner.hidden
+        ? ''
+        : (banner.getBoundingClientRect().height + 24) + 'px';
+    }
+
+    function ocultarBanner() {
+      banner.hidden = true;
+      ajustarEspacioBanner();
+    }
     function mostrarModal() {
       var actual = leer();
       if (checkAnaliticas) checkAnaliticas.checked = !!(actual && actual.analiticas);
@@ -921,6 +934,10 @@
 
     var guardadas = leer();
     if (!guardadas) banner.hidden = false;
+    ajustarEspacioBanner();
+    window.addEventListener('resize', function () {
+      if (!banner.hidden) ajustarEspacioBanner();
+    });
 
     banner.querySelector('[data-cookies-aceptar]').addEventListener('click', function () {
       guardar({ analiticas: true });
