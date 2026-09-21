@@ -43,6 +43,26 @@ Es el mismo resultado, solo que llenando formularios.
 
 ---
 
+## Fotos de la galería, en bloque
+
+Cuando el colegio te mande fotos para la galería, no hace falta
+subirlas una por una desde el Studio. Metelas todas en una carpeta —
+el **nombre de la carpeta** es la categoría en la que van a aparecer
+(si esa categoría no existe todavía, se crea sola):
+
+```bash
+./cargar-fotos.sh ~/Desktop/fotos-actividades
+```
+
+Se puede correr varias veces con carpetas distintas: nunca pisa lo
+que ya está cargado, solo agrega. La descripción de cada foto sale
+del nombre del archivo (`patio-de-juegos.jpg` → "Patio de juegos");
+si el nombre no dice nada (`IMG_0042.jpg`), queda una descripción
+genérica con el nombre de la categoría — conviene repasarlas después
+en el Studio si el nombre de archivo no era descriptivo.
+
+---
+
 > El Aula Virtual (Moodle) tiene sus propias guías, fuera de este
 > repositorio: sus datos de acceso no deben quedar versionados.
 

@@ -7,7 +7,8 @@
 # archivo no se toca, así que no pisa lo que ya esté cargado.
 
 set -euo pipefail
-cd "$(dirname "$0")"
+DIR_HERRAMIENTAS="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR_HERRAMIENTAS"
 
 if [ ! -f contenido.txt ]; then
   echo "ERROR: falta contenido.txt en esta carpeta."
@@ -15,7 +16,7 @@ if [ ! -f contenido.txt ]; then
 fi
 
 echo "==> Buscando la credencial de Sanity..."
-TOKEN=$(cd "$(dirname "$0")/.." && npx --yes sanity@latest debug --secrets 2>/dev/null \
+TOKEN=$(cd "$DIR_HERRAMIENTAS/.." && npx --yes sanity@latest debug --secrets 2>/dev/null \
         | grep "Auth token:" | awk '{print $3}')
 
 if [ -z "$TOKEN" ]; then
