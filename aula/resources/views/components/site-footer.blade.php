@@ -1,23 +1,13 @@
 {{--
     Pie de sitio del portal de familias.
 
-    Sigue la estructura del sitio institucional (Institución / Contacto /
-    Redes + barra legal) para que el aula se sienta parte de la misma casa
-    y no un producto aparte.
-
-    Los enlaces institucionales salen del portal hacia el sitio público:
-    por eso llevan target y rel de seguridad.
+    Sin enlaces a las páginas de marketing del sitio público (Propuesta
+    educativa, Niveles, Filosofía, Admisiones) — tenían sentido en
+    pestalozzi-opal.vercel.app, donde alguien todavía está decidiendo si
+    inscribirse, pero acá adentro son ruido: quien entra ya es familia
+    del colegio y usa esto todos los días, no está de visita.
 --}}
 @php
-    $sitio = 'https://pestalozzi-opal.vercel.app';
-
-    $institucion = [
-        ['Propuesta educativa', $sitio . '/propuesta-educativa'],
-        ['Niveles', $sitio . '/niveles'],
-        ['Filosofía', $sitio . '/filosofia'],
-        ['Admisiones', $sitio . '/admisiones'],
-    ];
-
     // Mismas redes y correo que pestalozzi-opal.vercel.app: es la
     // presencia real de la institución, no un placeholder inventado.
     $redes = [
@@ -29,25 +19,15 @@
 
 <footer class="mt-10 border-t border-green-100 bg-white">
     <div class="mx-auto max-w-6xl px-6 py-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            {{-- Marca + institución --}}
-            <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {{-- Marca --}}
+            <div class="flex flex-col gap-1">
                 <x-brand-logo icon-class="h-6 w-auto" text-class="text-sm font-semibold text-green-800" />
                 <p class="text-xs text-ink-400">Unidad Educativa · Ambato, Ecuador</p>
-                <nav aria-label="Institución" class="flex flex-wrap gap-x-4 gap-y-1">
-                    @foreach ($institucion as [$texto, $url])
-                        <a
-                            href="{{ $url }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex min-h-[44px] items-center text-xs text-ink-400 transition-fast hover:text-green-800 focus-ring sm:min-h-0"
-                        >{{ $texto }}</a>
-                    @endforeach
-                </nav>
             </div>
 
             {{-- Contacto --}}
-            <address class="text-xs not-italic leading-relaxed text-ink-400">
+            <address class="text-xs not-italic leading-relaxed text-ink-400 sm:text-right">
                 <p>Tiwinza N.º 95 y Etza, Ambato, Ecuador</p>
                 <a
                     href="mailto:uepestalozzi.ambato@gmail.com"
@@ -56,7 +36,7 @@
             </address>
 
             {{-- Síguenos --}}
-            <nav aria-labelledby="footer-redes" class="flex items-center gap-3">
+            <nav aria-labelledby="footer-redes" class="flex items-center gap-1">
                 <h2 id="footer-redes" class="sr-only">Síguenos</h2>
                 @foreach ($redes as [$texto, $url])
                     <a
@@ -64,7 +44,7 @@
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label="{{ $texto }}"
-                        class="flex h-8 w-8 items-center justify-center text-ink-400 transition-fast hover:text-green-800 focus-ring"
+                        class="flex h-9 w-9 items-center justify-center rounded-full text-ink-400 transition-fast hover:bg-green-50 hover:text-green-800 focus-ring"
                     >
                         <x-social-icon :name="$texto" class="h-4 w-4" />
                     </a>
