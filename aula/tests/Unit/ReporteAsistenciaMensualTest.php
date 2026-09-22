@@ -69,4 +69,68 @@ class ReporteAsistenciaMensualTest extends TestCase
 
         $this->assertCount(30, $reporte['dias']);
     }
+
+    public function test_la_semana_siempre_cubre_7_dias_de_lunes_a_domingo(): void
+    {
+        $nino = Child::factory()->create();
+
+        // Un miércoles cualquiera: el reporte tiene que ubicar solo la
+        // semana que lo contiene, no desde el 1 de mes ni desde hoy.
+        $reporte = ReporteAsistenciaMensual::generarSemana($nino, CarbonImmutable::parse('2026-09-23'));
+
+        $this->assertCount(7, $reporte['dias']);
+        $this->assertSame('2026-09-21', $reporte['dias'][0]['fecha']->toDateString());
+        $this->assertSame('2026-09-27', $reporte['dias'][6]['fecha']->toDateString());
+    }
+
+    public function test_dos_fechas_de_la_misma_semana_dan_el_mismo_reporte(): void
+    {
+        $nino = Child::factory()->create();
+
+        // El lunes y el domingo de una misma semana civil tienen que
+        // resolver a la MISMA semana (lun-dom), no a dos distintas.
+        $desdeLunes = ReporteAsistenciaMensual::generarSemana($nino, CarbonImmutable::parse('2026-09-21'));
+        $desdeDomingo = ReporteAsistenciaMensual::generarSemana($nino, CarbonImmutable::parse('2026-09-27'));
+
+        $this->assertSame(
+            $desdeLunes['dias'][0]['fecha']->toDateString(),
+            $desdeDomingo['dias'][0]['fecha']->toDateString(),
+        );
+    }
+
+    public function test_una_semana_que_cruza_de_mes_trae_dias_de_los_dos_meses(): void
+    {
+        $nino = Child::factory()->create();
+
+        // La semana del 28 de sep. al 4 de oct. 2026 cruza el fin de mes.
+        $reporte = ReporteAsistenciaMensual::generarSemana($nino, CarbonImmutable::parse('2026-09-30'));
+
+        $this->assertSame('2026-09-28', $reporte['dias'][0]['fecha']->toDateString());
+        $this->assertSame('2026-10-04', $reporte['dias'][6]['fecha']->toDateString());
+    }
+
+    public function test_el_reporte_anual_cubre_el_ciclo_completo(): void
+    {
+        $nino = Child::factory()->create();
+
+        $reporte = ReporteAsistenciaMensual::generarAnual($nino, 2025);
+
+        $this->assertSame('2025-09-01', $reporte['dias'][0]['fecha']->toDateString());
+        $this->assertSame('2026-07-31', $reporte['dias'][array_key_last($reporte['dias'])]['fecha']->toDateString());
+    }
+
+    public function test_el_reporte_anual_cuenta_los_registros_reales_del_ciclo(): void
+    {
+        $nino = Child::factory()->create();
+
+        Attendance::factory()->create([
+            'child_id' => $nino->id,
+            'date' => '2026-03-10',
+            'status' => Attendance::STATUS_PRESENTE,
+        ]);
+
+        $reporte = ReporteAsistenciaMensual::generarAnual($nino, 2025);
+
+        $this->assertSame(1, $reporte['resumen'][Attendance::STATUS_PRESENTE]);
+    }
 }

@@ -104,6 +104,54 @@ class CicloEscolar
     }
 
     /**
+     * Resumen de asistencia de un nino en la semana (lun-dom) que
+     * contiene la fecha dada. Retorna conteos por estado (base 0).
+     */
+    public static function resumenSemana(CarbonInterface $fecha, Child $child): array
+    {
+        $inicio = CarbonImmutable::instance($fecha)->startOfWeek(CarbonInterface::MONDAY);
+        $fin = $inicio->copy()->endOfWeek(CarbonInterface::SUNDAY);
+
+        return static::contarEstados(
+            $child->attendances()->whereBetween('date', [$inicio, $fin])->get()
+        );
+    }
+
+    /**
+     * Semanas (lun-dom) del ciclo lectivo dado, de punta a punta, listas
+     * para un selector: clave = lunes en formato Y-m-d, valor = etiqueta
+     * legible. Se comparte entre el reporte del panel y el portal de
+     * familias para no repetir el mismo cálculo en los dos lados.
+     *
+     * @return array<string, string>
+     */
+    public static function opcionesSemanas(int $anio): array
+    {
+        $inicio = static::inicio($anio)->startOfWeek(CarbonInterface::MONDAY);
+        $fin = static::fin($anio)->endOfWeek(CarbonInterface::SUNDAY);
+
+        $opciones = [];
+
+        for ($semana = $inicio; $semana->lte($fin); $semana = $semana->addWeek()) {
+            $opciones[$semana->format('Y-m-d')] = static::etiquetaSemana($semana);
+        }
+
+        return $opciones;
+    }
+
+    /**
+     * "21 de sep al 27 de sep 2026" para la semana (lun-dom) que
+     * contiene la fecha dada.
+     */
+    public static function etiquetaSemana(CarbonInterface $fecha): string
+    {
+        $inicio = CarbonImmutable::instance($fecha)->startOfWeek(CarbonInterface::MONDAY);
+        $fin = $inicio->copy()->endOfWeek(CarbonInterface::SUNDAY);
+
+        return ucfirst($inicio->locale('es')->isoFormat('D [de] MMM')).' al '.$fin->locale('es')->isoFormat('D [de] MMM YYYY');
+    }
+
+    /**
      * Cuenta las ocurrencias de cada estado en una coleccion de attendances.
      */
     private static function contarEstados($attendances): array

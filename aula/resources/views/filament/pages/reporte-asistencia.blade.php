@@ -18,7 +18,7 @@
     <x-filament::section>
         <x-slot name="heading">Generar reporte</x-slot>
         <x-slot name="description">
-            Elegí ambiente, niño y mes. El reporte es de uso interno: las familias nunca lo ven.
+            Elegí ambiente, niño y período. El reporte es de uso interno: las familias nunca lo ven.
         </x-slot>
 
         {{ $this->content }}
@@ -26,7 +26,7 @@
 
     @if ($reporte)
         <x-filament::section>
-            <x-slot name="heading">Resumen del mes</x-slot>
+            <x-slot name="heading">Resumen — {{ $this->tituloPeriodo() }}</x-slot>
 
             <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
                 @foreach ($etiquetas as $estado => $label)
@@ -82,7 +82,7 @@
         <x-filament::section>
             <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;padding-block:2rem;text-align:center;">
                 <x-filament::icon icon="heroicon-o-document-chart-bar" style="height:2rem;width:2rem;color:var(--gray-400);" />
-                <p style="font-size:.875rem;color:var(--gray-500);">Elegí ambiente, niño y mes para ver el reporte.</p>
+                <p style="font-size:.875rem;color:var(--gray-500);">Elegí ambiente, niño y período para ver el reporte.</p>
             </div>
         </x-filament::section>
     @endif

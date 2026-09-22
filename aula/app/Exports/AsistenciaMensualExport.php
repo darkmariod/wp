@@ -3,18 +3,23 @@
 namespace App\Exports;
 
 use App\Models\Attendance;
-use App\Models\Child;
 use App\Support\ReporteAsistenciaMensual;
-use Carbon\CarbonImmutable;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
+/**
+ * Recibe el reporte ya generado (semana, mes o año) en vez de calcularlo
+ * él mismo: así no le importa qué período fue, solo lo vuelca a filas.
+ */
 class AsistenciaMensualExport implements FromArray, WithHeadings, WithTitle
 {
+    /**
+     * @param  array{dias: array, resumen: array<string, int>}  $reporte
+     */
     public function __construct(
-        private readonly Child $child,
-        private readonly CarbonImmutable $mes,
+        private readonly array $reporte,
+        private readonly string $titulo,
     ) {}
 
     public function headings(): array
@@ -24,7 +29,7 @@ class AsistenciaMensualExport implements FromArray, WithHeadings, WithTitle
 
     public function array(): array
     {
-        $reporte = ReporteAsistenciaMensual::generar($this->child, $this->mes);
+        $reporte = $this->reporte;
 
         $filas = collect($reporte['dias'])
             ->map(fn (array $dia) => [
@@ -48,7 +53,7 @@ class AsistenciaMensualExport implements FromArray, WithHeadings, WithTitle
 
     public function title(): string
     {
-        return ucfirst($this->mes->locale('es')->isoFormat('MMMM YYYY'));
+        return $this->titulo;
     }
 
     private function etiqueta(array $dia): string

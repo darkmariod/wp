@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Asistencia de {{ $child->name }} — {{ ucfirst($mes->locale('es')->isoFormat('MMMM YYYY')) }}</title>
+    <title>Asistencia de {{ $child->name }} — {{ $titulo }}</title>
     <style>
         body { font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #1f2937; }
         h1 { font-size: 16px; margin-bottom: 2px; }
@@ -19,9 +19,9 @@
     </style>
 </head>
 <body>
-    <h1>Reporte mensual de asistencia</h1>
+    <h1>Reporte de asistencia</h1>
     <p class="subtitulo">
-        {{ $child->name }} — {{ ucfirst($mes->locale('es')->isoFormat('MMMM YYYY')) }}
+        {{ $child->name }} — {{ $titulo }}
         · Ambiente: {{ $child->environment?->name ?? '—' }}
     </p>
 
@@ -61,7 +61,7 @@
     </table>
 
     <table class="resumen">
-        <tr><td colspan="2">Resumen del mes</td></tr>
+        <tr><td colspan="2">Resumen del período</td></tr>
         <tr><td>Presentes</td><td>{{ $resumen['presente'] }}</td></tr>
         <tr><td>Atrasos</td><td>{{ $resumen['atraso'] }}</td></tr>
         <tr><td>Faltas justificadas</td><td>{{ $resumen['falta_justificada'] }}</td></tr>

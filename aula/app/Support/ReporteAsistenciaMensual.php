@@ -27,9 +27,48 @@ class ReporteAsistenciaMensual
      */
     public static function generar(Child $child, CarbonImmutable $mes): array
     {
-        $inicio = $mes->startOfMonth();
-        $fin = $mes->copy()->endOfMonth();
+        return self::generarRango($child, $mes->startOfMonth(), $mes->copy()->endOfMonth());
+    }
 
+    /**
+     * Igual que generar(), pero para la semana (lun-dom) que contiene
+     * la fecha dada, en vez de un mes calendario completo.
+     *
+     * @return array{
+     *     dias: array<int, array{fecha: CarbonImmutable, status: ?string, feriado: ?string, finDeSemana: bool}>,
+     *     resumen: array<string, int>,
+     * }
+     */
+    public static function generarSemana(Child $child, CarbonImmutable $semana): array
+    {
+        $inicio = $semana->startOfWeek(CarbonImmutable::MONDAY);
+        $fin = $inicio->copy()->endOfWeek(CarbonImmutable::SUNDAY);
+
+        return self::generarRango($child, $inicio, $fin);
+    }
+
+    /**
+     * Igual que generar(), pero para el ciclo lectivo completo (1 de
+     * septiembre al 31 de julio siguiente) en vez de un mes.
+     *
+     * @return array{
+     *     dias: array<int, array{fecha: CarbonImmutable, status: ?string, feriado: ?string, finDeSemana: bool}>,
+     *     resumen: array<string, int>,
+     * }
+     */
+    public static function generarAnual(Child $child, int $anioCiclo): array
+    {
+        return self::generarRango($child, CicloEscolar::inicio($anioCiclo), CicloEscolar::fin($anioCiclo));
+    }
+
+    /**
+     * @return array{
+     *     dias: array<int, array{fecha: CarbonImmutable, status: ?string, feriado: ?string, finDeSemana: bool}>,
+     *     resumen: array<string, int>,
+     * }
+     */
+    private static function generarRango(Child $child, CarbonImmutable $inicio, CarbonImmutable $fin): array
+    {
         $registros = $child->attendances()
             ->whereBetween('date', [$inicio, $fin])
             ->get()

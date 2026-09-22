@@ -43,11 +43,16 @@ class ReporteAsistencia extends Page
 
     public ?int $child_id = null;
 
+    public string $periodo = 'mes';
+
     public string $mes = '';
+
+    public string $semana = '';
 
     public function mount(): void
     {
         $this->mes = now()->format('Y-m');
+        $this->semana = now()->startOfWeek(CarbonImmutable::MONDAY)->format('Y-m-d');
     }
 
     public static function canAccess(): bool
@@ -72,11 +77,27 @@ class ReporteAsistencia extends Page
                     ->options(fn (): array => $this->opcionesNinos())
                     ->live()
                     ->required(),
+                Select::make('periodo')
+                    ->label('Período')
+                    ->options([
+                        'semana' => 'Semana',
+                        'mes' => 'Mes',
+                        'anio' => 'Año (ciclo)',
+                    ])
+                    ->live()
+                    ->required(),
+                Select::make('semana')
+                    ->label('Semana')
+                    ->options($this->opcionesSemanas())
+                    ->live()
+                    ->visible(fn (): bool => $this->periodo === 'semana')
+                    ->required(fn (): bool => $this->periodo === 'semana'),
                 Select::make('mes')
                     ->label('Mes')
                     ->options($this->opcionesMeses())
                     ->live()
-                    ->required(),
+                    ->visible(fn (): bool => $this->periodo === 'mes')
+                    ->required(fn (): bool => $this->periodo === 'mes'),
             ])
             ->columns(3);
     }
@@ -127,6 +148,14 @@ class ReporteAsistencia extends Page
     }
 
     /**
+     * Semanas (lun-dom) del ciclo lectivo vigente, de punta a punta.
+     */
+    public function opcionesSemanas(): array
+    {
+        return CicloEscolar::opcionesSemanas(CicloEscolar::vigente());
+    }
+
+    /**
      * El niño elegido, validando que la guía no pida el reporte de un
      * ambiente ajeno manipulando el request.
      */
@@ -154,53 +183,102 @@ class ReporteAsistencia extends Page
         return CarbonImmutable::createFromFormat('Y-m', $this->mes)->startOfMonth();
     }
 
+    public function semanaElegida(): ?CarbonImmutable
+    {
+        if (! $this->semana) {
+            return null;
+        }
+
+        return CarbonImmutable::createFromFormat('Y-m-d', $this->semana)->startOfWeek(CarbonImmutable::MONDAY);
+    }
+
+    /**
+     * Arma el reporte según el período elegido y su título/nombre de
+     * archivo. Null cuando falta un dato para calcularlo (incluido el
+     * caso "Año" sin ningún ciclo lectivo ya cerrado todavía).
+     *
+     * @return array{reporte: array{dias: array, resumen: array<string, int>}, titulo: string, archivo: string}|null
+     */
+    private function armarReporte(Child $child): ?array
+    {
+        return match ($this->periodo) {
+            'semana' => $this->semanaElegida() ? [
+                'reporte' => ReporteAsistenciaMensual::generarSemana($child, $this->semanaElegida()),
+                'titulo' => CicloEscolar::etiquetaSemana($this->semanaElegida()),
+                'archivo' => 'semana-'.$this->semanaElegida()->format('Y-m-d'),
+            ] : null,
+            'mes' => $this->mesElegido() ? [
+                'reporte' => ReporteAsistenciaMensual::generar($child, $this->mesElegido()),
+                'titulo' => ucfirst($this->mesElegido()->locale('es')->isoFormat('MMMM YYYY')),
+                'archivo' => $this->mesElegido()->format('Y-m'),
+            ] : null,
+            'anio' => ($anio = CicloEscolar::ultimoCerrado()) !== null ? [
+                'reporte' => ReporteAsistenciaMensual::generarAnual($child, $anio),
+                'titulo' => 'Ciclo '.CicloEscolar::etiqueta($anio),
+                'archivo' => 'ciclo-'.CicloEscolar::etiqueta($anio),
+            ] : null,
+            default => null,
+        };
+    }
+
     /**
      * @return array{dias: array, resumen: array<string, int>}|null
      */
     public function reporte(): ?array
     {
         $child = $this->child();
-        $mes = $this->mesElegido();
 
-        if (! $child || ! $mes) {
+        if (! $child) {
             return null;
         }
 
-        return ReporteAsistenciaMensual::generar($child, $mes);
+        return $this->armarReporte($child)['reporte'] ?? null;
+    }
+
+    /**
+     * Título legible del período elegido para mostrarlo en pantalla.
+     */
+    public function tituloPeriodo(): ?string
+    {
+        $child = $this->child();
+
+        if (! $child) {
+            return null;
+        }
+
+        return $this->armarReporte($child)['titulo'] ?? null;
     }
 
     public function descargarPdf(): ?StreamedResponse
     {
         $child = $this->child();
-        $mes = $this->mesElegido();
+        $datos = $child ? $this->armarReporte($child) : null;
 
-        if (! $child || ! $mes) {
+        if (! $datos) {
             $this->avisarSeleccionIncompleta();
 
             return null;
         }
 
-        $reporte = ReporteAsistenciaMensual::generar($child, $mes);
-
         $pdf = Pdf::loadView('pdf.asistencia-mensual', [
             'child' => $child,
-            'mes' => $mes,
-            'dias' => $reporte['dias'],
-            'resumen' => $reporte['resumen'],
+            'titulo' => $datos['titulo'],
+            'dias' => $datos['reporte']['dias'],
+            'resumen' => $datos['reporte']['resumen'],
         ]);
 
         return response()->streamDownload(
             fn () => print ($pdf->output()),
-            $this->nombreArchivo($child, $mes, 'pdf'),
+            $this->nombreArchivo($child, $datos['archivo'], 'pdf'),
         );
     }
 
     public function descargarExcel(): ?StreamedResponse
     {
         $child = $this->child();
-        $mes = $this->mesElegido();
+        $datos = $child ? $this->armarReporte($child) : null;
 
-        if (! $child || ! $mes) {
+        if (! $datos) {
             $this->avisarSeleccionIncompleta();
 
             return null;
@@ -212,24 +290,33 @@ class ReporteAsistencia extends Page
         // el límite global de PHP para esto.
         ini_set('memory_limit', '512M');
 
-        $bytes = Excel::raw(new AsistenciaMensualExport($child, $mes), ExcelFormat::XLSX);
+        $bytes = Excel::raw(new AsistenciaMensualExport($datos['reporte'], $datos['titulo']), ExcelFormat::XLSX);
 
         return response()->streamDownload(
             fn () => print ($bytes),
-            $this->nombreArchivo($child, $mes, 'xlsx'),
+            $this->nombreArchivo($child, $datos['archivo'], 'xlsx'),
         );
     }
 
     private function avisarSeleccionIncompleta(): void
     {
+        if ($this->periodo === 'anio' && CicloEscolar::ultimoCerrado() === null) {
+            Notification::make()
+                ->title('Todavía no hay ningún ciclo lectivo cerrado para reportar')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
         Notification::make()
-            ->title('Elegí un ambiente, un niño y un mes')
+            ->title('Elegí un ambiente, un niño y el período del reporte')
             ->warning()
             ->send();
     }
 
-    private function nombreArchivo(Child $child, CarbonImmutable $mes, string $extension): string
+    private function nombreArchivo(Child $child, string $sufijo, string $extension): string
     {
-        return 'asistencia-'.Str::slug($child->name).'-'.$mes->format('Y-m').'.'.$extension;
+        return 'asistencia-'.Str::slug($child->name).'-'.$sufijo.'.'.$extension;
     }
 }

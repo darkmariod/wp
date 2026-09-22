@@ -21,8 +21,20 @@ class Asistencia extends Component
      */
     public ?int $mes = null;
 
+    /**
+     * "mes" o "semana": qué vista está eligiendo la familia.
+     */
+    public string $vista = 'mes';
+
+    /**
+     * Lunes de la semana elegida, formato Y-m-d. Null = semana actual.
+     */
+    public ?string $semana = null;
+
     protected $queryString = [
         'mes' => ['except' => null],
+        'vista' => ['except' => 'mes'],
+        'semana' => ['except' => null],
     ];
 
     /**
@@ -160,6 +172,74 @@ class Asistencia extends Component
         return $opciones;
     }
 
+    /**
+     * Semanas (lun-dom) del ciclo vigente para el selector.
+     */
+    #[Computed]
+    public function opcionesSemanas(): array
+    {
+        return CicloEscolar::opcionesSemanas(CicloEscolar::vigente());
+    }
+
+    /**
+     * Resumen de la semana elegida (o la actual): conteos por estado.
+     */
+    #[Computed]
+    public function resumenSemana(): array
+    {
+        $child = $this->currentChild();
+
+        if (! $child) {
+            return [];
+        }
+
+        return CicloEscolar::resumenSemana($this->semanaElegida(), $child);
+    }
+
+    /**
+     * Etiqueta legible de la semana elegida, ej. "15 de sep al 21 de sep 2026".
+     */
+    #[Computed]
+    public function etiquetaSemana(): string
+    {
+        return CicloEscolar::etiquetaSemana($this->semanaElegida());
+    }
+
+    /**
+     * Los 7 días (lun-dom) de la semana elegida, con su estado si lo
+     * tiene, para la vista semanal.
+     *
+     * @return array<int, array{fecha: CarbonImmutable, status: ?string, esHoy: bool}>
+     */
+    #[Computed]
+    public function detalleSemana(): array
+    {
+        if (! $this->currentChild()) {
+            return [];
+        }
+
+        $inicio = $this->semanaElegida();
+        $fin = $inicio->endOfWeek(CarbonImmutable::SUNDAY);
+        $hoy = CarbonImmutable::now()->startOfDay();
+
+        $registros = $this->currentChild()->attendances()
+            ->whereBetween('date', [$inicio, $fin])
+            ->get()
+            ->keyBy(fn ($registro) => $registro->date->toDateString());
+
+        $dias = [];
+
+        for ($dia = $inicio; $dia->lte($fin); $dia = $dia->addDay()) {
+            $dias[] = [
+                'fecha' => $dia,
+                'status' => $registros->get($dia->toDateString())?->status,
+                'esHoy' => $dia->isSameDay($hoy),
+            ];
+        }
+
+        return $dias;
+    }
+
     private function mesElegido(): CarbonImmutable
     {
         if (! $this->mes) {
@@ -167,6 +247,15 @@ class Asistencia extends Component
         }
 
         return CarbonImmutable::createFromDate(intdiv($this->mes, 100), $this->mes % 100, 1);
+    }
+
+    private function semanaElegida(): CarbonImmutable
+    {
+        if (! $this->semana) {
+            return CarbonImmutable::now()->startOfWeek(CarbonImmutable::MONDAY);
+        }
+
+        return CarbonImmutable::createFromFormat('Y-m-d', $this->semana)->startOfWeek(CarbonImmutable::MONDAY);
     }
 
     public function render(): View
