@@ -81,7 +81,7 @@ class ContentResource extends Resource
                     ])->columns(2),
 
                 Section::make('Asignación')
-                    ->description('A qué aula, área y guía pertenece esta actividad.')
+                    ->description('A qué aula, área y docente pertenece esta actividad.')
                     ->icon('heroicon-o-link')
                     ->schema([
                         Forms\Components\Select::make('environment_id')
@@ -98,7 +98,7 @@ class ContentResource extends Resource
                             ->preload()
                             ->nullable(),
                         Forms\Components\Select::make('teacher_id')
-                            ->label('Guía')
+                            ->label('Docente')
                             ->relationship('teacher', 'name')
                             ->searchable()
                             ->preload(),
@@ -218,7 +218,7 @@ class ContentResource extends Resource
                     ->label('Área')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('teacher.name')
-                    ->label('Guía')
+                    ->label('Docente')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('requires_evidence')
                     ->label('Evidencia')

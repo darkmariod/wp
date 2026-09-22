@@ -7,7 +7,7 @@
         @if (auth()->user()?->isFamilia())
             <h1 class="text-xl font-semibold text-ink-900">¡Bienvenido/a a Mi Escuelita!</h1>
             <p class="mt-2 text-sm text-ink-600">
-                Entrá al portal de tu familia para ver las experiencias y compartir momentos con la guía.
+                Entrá al portal de tu familia para ver las experiencias y compartir momentos con la docente.
             </p>
             <a
                 href="{{ route('mi-escuelita.home') }}"

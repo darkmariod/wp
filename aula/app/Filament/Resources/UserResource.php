@@ -64,7 +64,7 @@ class UserResource extends Resource
                             ->options([
                                 User::ROLE_ADMINISTRADOR => 'Administrador',
                                 User::ROLE_COORDINACION => 'Coordinación',
-                                User::ROLE_GUIA => 'Guía',
+                                User::ROLE_GUIA => 'Docente',
                                 User::ROLE_FAMILIA => 'Familia',
                             ])
                             ->required(),
@@ -125,7 +125,7 @@ class UserResource extends Resource
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'administrador' => 'Administrador',
                         'coordinacion' => 'Coordinación',
-                        'guia' => 'Guía',
+                        'guia' => 'Docente',
                         'familia' => 'Familia',
                     }),
                 Tables\Columns\IconColumn::make('active')
@@ -146,7 +146,7 @@ class UserResource extends Resource
                     ->options([
                         'administrador' => 'Administrador',
                         'coordinacion' => 'Coordinación',
-                        'guia' => 'Guía',
+                        'guia' => 'Docente',
                         'familia' => 'Familia',
                     ]),
                 Tables\Filters\TernaryFilter::make('active')

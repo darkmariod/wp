@@ -26,7 +26,7 @@
                     <span>
                         <span class="block font-medium text-ink-900">Nueva experiencia publicada</span>
                         <span class="mt-0.5 block text-sm text-ink-400">
-                            Avísame cuando la guía publique una experiencia nueva.
+                            Avísame cuando la docente publique una experiencia nueva.
                         </span>
                     </span>
                 </label>
@@ -43,9 +43,9 @@
                         class="mt-1 h-4 w-4 rounded border-green-300 text-green-800 focus-ring"
                     />
                     <span>
-                        <span class="block font-medium text-ink-900">Respuesta de la guía</span>
+                        <span class="block font-medium text-ink-900">Respuesta de la docente</span>
                         <span class="mt-0.5 block text-sm text-ink-400">
-                            Avísame cuando la guía responde a una experiencia compartida.
+                            Avísame cuando la docente responde a una experiencia compartida.
                         </span>
                     </span>
                 </label>

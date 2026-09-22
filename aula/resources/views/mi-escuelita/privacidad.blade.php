@@ -38,7 +38,7 @@
                 <p class="mt-2 leading-relaxed">
                     Los datos se usan exclusivamente para conectar a la familia con la
                     experiencia educativa del estudiante: mostrar contenidos publicados por
-                    las guías, recibir y responder la evidencia compartida, y mantener la
+                    las docentes, recibir y responder la evidencia compartida, y mantener la
                     comunicación del colegio con la familia. No utilizamos los datos para
                     fines de mercadotecnia.
                 </p>
@@ -59,7 +59,7 @@
                 <p class="mt-2 leading-relaxed">
                     Los archivos compartidos por las familias se guardan en almacenamiento
                     privado y encriptado, y solo son accesibles por las personas autorizadas
-                    (la propia familia, la guía del ambiente y el personal del colegio). Nunca
+                    (la propia familia, la docente del ambiente y el personal del colegio). Nunca
                     se publican en la web pública.
                 </p>
             </section>

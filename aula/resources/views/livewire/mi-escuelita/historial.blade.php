@@ -3,9 +3,9 @@
         <x-breadcrumb
             :items="[['label' => 'Inicio', 'url' => route('mi-escuelita.home')], ['label' => 'Mis experiencias']]"
         />
-        <h1 class="mt-3 text-2xl font-semibold text-ink-900">Mis experiencias</h1>
-        <p class="mt-1.5 max-w-lg text-sm text-ink-600">
-            Todo lo que esta familia ya compartió, con el estado y la respuesta de la guía.
+        <h1 class="mt-4 text-3xl font-semibold text-ink-900">Mis experiencias</h1>
+        <p class="mt-2 max-w-lg text-sm text-ink-600">
+            Todo lo que esta familia ya compartió, con el estado y la respuesta de la docente.
         </p>
     </div>
 
@@ -13,28 +13,21 @@
         $etiquetado = [
             \App\Models\Evidence::STATUS_PENDING => 'Pendiente',
             \App\Models\Evidence::STATUS_SUBMITTED => 'Enviada',
-            \App\Models\Evidence::STATUS_VIEWED => 'Vista por la guía',
+            \App\Models\Evidence::STATUS_VIEWED => 'Vista por la docente',
             \App\Models\Evidence::STATUS_RESPONDED => 'Con respuesta',
             \App\Models\Evidence::STATUS_ARCHIVED => 'Archivada',
         ];
-        $puntoEstado = [
-            \App\Models\Evidence::STATUS_PENDING => 'bg-amber-500',
-            \App\Models\Evidence::STATUS_SUBMITTED => 'bg-ink-300',
-            \App\Models\Evidence::STATUS_VIEWED => 'bg-sky-500',
-            \App\Models\Evidence::STATUS_RESPONDED => 'bg-green-700',
-            \App\Models\Evidence::STATUS_ARCHIVED => 'bg-ink-200',
-        ];
-        $textoEstado = [
-            \App\Models\Evidence::STATUS_PENDING => 'text-amber-700',
-            \App\Models\Evidence::STATUS_SUBMITTED => 'text-ink-600',
-            \App\Models\Evidence::STATUS_VIEWED => 'text-sky-700',
-            \App\Models\Evidence::STATUS_RESPONDED => 'font-medium text-green-800',
-            \App\Models\Evidence::STATUS_ARCHIVED => 'text-ink-400',
+        $pildoraEstado = [
+            \App\Models\Evidence::STATUS_PENDING => 'bg-amber-50 text-amber-700',
+            \App\Models\Evidence::STATUS_SUBMITTED => 'bg-gray-100 text-gray-600',
+            \App\Models\Evidence::STATUS_VIEWED => 'bg-sky-50 text-sky-700',
+            \App\Models\Evidence::STATUS_RESPONDED => 'bg-green-50 text-green-800',
+            \App\Models\Evidence::STATUS_ARCHIVED => 'bg-gray-100 text-gray-500',
         ];
     @endphp
 
     {{-- El buscador es la acción principal; área, estado y orden son ajustes secundarios debajo, no cuatro controles del mismo peso. --}}
-    <div class="mt-5">
+    <div class="mt-6">
         <label class="relative block">
             <span class="sr-only">Buscar por experiencia</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -44,7 +37,7 @@
                 type="search"
                 placeholder="Buscar experiencias…"
                 wire:model.live.debounce.300ms="search"
-                class="w-full border border-green-100 bg-white py-2.5 pl-9 pr-3 text-sm text-ink-900 focus-ring"
+                class="w-full rounded-md border border-green-100 bg-white py-2.5 pl-9 pr-3 text-sm text-ink-900 focus-ring"
             >
         </label>
 
@@ -77,42 +70,41 @@
         </div>
     </div>
 
-    <p class="mt-5 text-sm text-ink-600">
+    <p class="mt-4 text-sm text-ink-400">
         {{ $this->evidencias()->total() }}
         {{ $this->evidencias()->total() === 1 ? 'experiencia enviada' : 'experiencias enviadas' }}
     </p>
 
     @if ($this->evidencias()->isEmpty())
-        <p class="mt-4 border border-green-100 p-6 text-center text-ink-400">
+        <p class="mt-10 rounded-lg border border-green-100 bg-white p-6 text-center text-ink-400 shadow-card">
             Todavía no compartieron ninguna experiencia aquí. Las que envíen van a aparecer en esta lista.
         </p>
     @else
-        <div class="mt-2 overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead>
-                    <tr class="border-b border-green-100">
-                        <th scope="col" class="py-2 pr-3 text-left text-xs font-medium uppercase tracking-wide text-ink-400">Experiencia</th>
-                        <th scope="col" class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-ink-400">Área</th>
-                        <th scope="col" class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-ink-400">Fecha de envío</th>
-                        <th scope="col" class="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-ink-400">Estado</th>
-                        <th scope="col" class="pl-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-ink-400">Respuesta de la guía</th>
+        <div class="mt-4 overflow-x-auto rounded-lg border border-green-100 bg-white shadow-card">
+            <table class="min-w-full divide-y divide-green-100 text-sm">
+                <thead class="bg-green-50/60">
+                    <tr>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Experiencia</th>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Área</th>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Fecha de envío</th>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Estado</th>
+                        <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-600">Respuesta de la docente</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-green-100">
                     @foreach ($this->evidencias() as $evidencia)
-                        <tr class="align-top">
-                            <td class="py-4 pr-3 font-medium text-ink-900">{{ $evidencia['experiencia'] }}</td>
-                            <td class="px-3 py-4 text-ink-600">{{ $evidencia['area'] ?? '—' }}</td>
-                            <td class="whitespace-nowrap px-3 py-4 text-ink-600">
+                        <tr class="align-top transition-base hover:bg-green-50/40">
+                            <td class="px-5 py-4 font-medium text-ink-900">{{ $evidencia['experiencia'] }}</td>
+                            <td class="whitespace-nowrap px-5 py-4 text-ink-600">{{ $evidencia['area'] ?? '—' }}</td>
+                            <td class="whitespace-nowrap px-5 py-4 text-ink-600">
                                 {{ $evidencia['enviada']?->locale('es')->isoFormat('D [de] MMMM [de] YYYY') ?? '—' }}
                             </td>
-                            <td class="px-3 py-4">
-                                <span class="inline-flex items-center gap-1.5 {{ $textoEstado[$evidencia['estado']] ?? 'text-ink-400' }}">
-                                    <span @class(['h-1.5 w-1.5 rounded-full', $puntoEstado[$evidencia['estado']] ?? 'bg-ink-200'])></span>
+                            <td class="whitespace-nowrap px-5 py-4">
+                                <span @class(['inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium', $pildoraEstado[$evidencia['estado']] ?? 'bg-gray-100 text-gray-500'])>
                                     {{ $etiquetado[$evidencia['estado']] ?? 'Desconocido' }}
                                 </span>
                             </td>
-                            <td class="pl-3 py-4 text-sm text-ink-500">
+                            <td class="px-5 py-4 text-sm text-ink-500">
                                 @if ($evidencia['observacion'])
                                     <p class="border-l-2 border-green-200 pl-3 italic">{{ $evidencia['observacion'] }}</p>
                                 @else

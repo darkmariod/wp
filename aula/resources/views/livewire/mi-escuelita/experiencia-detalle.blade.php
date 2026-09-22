@@ -275,9 +275,9 @@
                         <h2 class="text-lg font-semibold text-ink-900">Ya compartiste esta experiencia</h2>
                         <p class="mt-1 text-sm text-ink-400">
                             @if ($this->fechaEnvio)
-                                La enviaste el {{ $this->fechaEnvio }}. La guía la va a revisar y vas a ver su respuesta en “Mis experiencias”.
+                                La enviaste el {{ $this->fechaEnvio }}. La docente la va a revisar y vas a ver su respuesta en “Mis experiencias”.
                             @else
-                                La guía la va a revisar y vas a ver su respuesta en “Mis experiencias”.
+                                La docente la va a revisar y vas a ver su respuesta en “Mis experiencias”.
                             @endif
                         </p>
                     </div>

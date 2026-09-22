@@ -49,7 +49,7 @@
                 {{ $sinResponder > 0 ? $sinResponder : 'Al día' }}
             </p>
             <p class="mt-0.5 text-sm text-ink-600">
-                {{ $sinResponder > 0 ? 'esperando respuesta de la guía' : 'con la guía' }}
+                {{ $sinResponder > 0 ? 'esperando respuesta de la docente' : 'con la docente' }}
             </p>
         </a>
 

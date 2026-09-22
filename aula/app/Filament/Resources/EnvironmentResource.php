@@ -37,7 +37,7 @@ class EnvironmentResource extends Resource
         return $schema
             ->schema([
                 Section::make('Datos del Ambiente')
-                    ->description('El aula, su rango de edad y quién la guía.')
+                    ->description('El aula, su rango de edad y quién es su docente.')
                     ->icon('heroicon-o-building-office-2')
                     ->schema([
                         Forms\Components\TextInput::make('name')
@@ -49,7 +49,7 @@ class EnvironmentResource extends Resource
                             ->maxLength(255)
                             ->placeholder('Ej: 3-4 años'),
                         Forms\Components\Select::make('teacher_id')
-                            ->label('Guía')
+                            ->label('Docente')
                             ->relationship('teacher', 'name')
                             ->searchable()
                             ->preload()
@@ -97,7 +97,7 @@ class EnvironmentResource extends Resource
                 Tables\Columns\TextColumn::make('age_range')
                     ->label('Edad'),
                 Tables\Columns\TextColumn::make('teacher.name')
-                    ->label('Guía')
+                    ->label('Docente')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('active')
                     ->label('Activo')

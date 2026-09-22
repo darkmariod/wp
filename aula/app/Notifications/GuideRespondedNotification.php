@@ -27,7 +27,7 @@ class GuideRespondedNotification extends Notification implements ShouldQueue
             'type' => 'guide_responded',
             'feedback_id' => $this->feedback->id,
             'child_name' => $child->name,
-            'message' => "La guía respondió sobre {$child->name}",
+            'message' => "La docente respondió sobre {$child->name}",
         ];
     }
 
@@ -36,9 +36,9 @@ class GuideRespondedNotification extends Notification implements ShouldQueue
         $child = $this->feedback->observation->child;
 
         return (new MailMessage)
-            ->subject('Respuesta de la guía')
+            ->subject('Respuesta de la docente')
             ->greeting("Hola, familia de {$notifiable->family?->name}")
-            ->line("La guía dejó una nueva retroalimentación sobre {$child->name}.")
+            ->line("La docente dejó una nueva retroalimentación sobre {$child->name}.")
             ->action('Ver respuesta', url('/mi-escuelita/mis-experiencias'));
     }
 }
