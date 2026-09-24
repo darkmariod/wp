@@ -68,10 +68,12 @@
                     <li class="border-b border-green-100">
                         <a
                             href="{{ route('mi-escuelita.experiencias.index', ['area' => $area->id]) }}"
-                            class="flex items-baseline justify-between gap-6 py-4 transition-fast hover:bg-green-50/40 focus-ring"
+                            class="flex items-center justify-between gap-6 py-4 transition-fast hover:bg-green-50/40 focus-ring"
                         >
-                            <span class="flex items-baseline gap-4">
-                                <span class="font-mono text-xs text-ink-300">{{ sprintf('%02d', $loop->iteration) }}</span>
+                            <span class="flex items-center gap-4">
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-700">
+                                    <x-area-icon :name="$area->icon" class="h-5 w-5" />
+                                </span>
                                 <span class="font-medium text-ink-900">{{ $area->name }}</span>
                             </span>
 
