@@ -16,9 +16,28 @@
         .atraso { color: #b45309; }
         .falta_justificada { color: #1d4ed8; }
         .falta_injustificada { color: #b91c1c; font-weight: bold; }
+
+        .membrete { width: 100%; border: none; margin-bottom: 6px; }
+        .membrete td { border: none; padding: 0; vertical-align: middle; }
+        .membrete .ministerio img { height: 26px; }
+        .membrete .pestalozzi { text-align: right; }
+        .membrete .pestalozzi img { height: 40px; }
+        .membrete-linea { border-bottom: 1.5px solid #126333; margin-bottom: 14px; }
+
+        .firmas { width: 100%; border: none; margin-top: 60px; }
+        .firmas td { border: none; padding: 0; text-align: center; font-size: 10px; }
+        .firmas .linea { border-top: 1px solid #1f2937; padding-top: 4px; margin: 0 24px; }
     </style>
 </head>
 <body>
+    <table class="membrete">
+        <tr>
+            <td class="ministerio"><img src="{{ public_path('images/ministerio-educacion-logo.png') }}" alt=""></td>
+            <td class="pestalozzi"><img src="{{ public_path('images/pestalozzi-logo-pdf.png') }}" alt=""></td>
+        </tr>
+    </table>
+    <div class="membrete-linea"></div>
+
     <h1>Reporte de asistencia</h1>
     <p class="subtitulo">
         {{ $child->name }} — {{ $titulo }}
@@ -68,6 +87,13 @@
         <tr><td>Faltas injustificadas</td><td>{{ $resumen['falta_injustificada'] }}</td></tr>
         <tr><td>Feriados</td><td>{{ $resumen['feriado'] }}</td></tr>
         <tr><td>Sin registro</td><td>{{ $resumen['sin_registro'] }}</td></tr>
+    </table>
+
+    <table class="firmas">
+        <tr>
+            <td><div class="linea">Firma del Rector</div></td>
+            <td><div class="linea">Firma de la Docente</div></td>
+        </tr>
     </table>
 </body>
 </html>

@@ -2,6 +2,7 @@
     'iconClass' => 'h-9 w-auto',
     'textClass' => 'text-lg font-semibold tracking-tight text-green-800',
     'tagline' => false,
+    'showText' => true,
 ])
 
 {{--
@@ -19,10 +20,12 @@
         alt="Unidad Educativa Pestalozzi Ambato"
         class="{{ $iconClass }}"
     >
-    <span class="flex flex-col justify-center leading-none">
-        <span class="{{ $textClass }}">Mi Escuelita</span>
-        @if ($tagline)
-            <span class="mt-0.5 text-xs font-medium text-ink-400">Unidad Educativa Pestalozzi</span>
-        @endif
-    </span>
+    @if ($showText)
+        <span class="flex flex-col justify-center leading-none">
+            <span class="{{ $textClass }}">Mi Escuelita</span>
+            @if ($tagline)
+                <span class="mt-0.5 text-xs font-medium text-ink-400">Unidad Educativa Pestalozzi</span>
+            @endif
+        </span>
+    @endif
 </span>

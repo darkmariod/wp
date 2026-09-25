@@ -34,11 +34,11 @@
                 <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
                     @if (auth()->user()?->isFamilia())
                         <a href="{{ route('mi-escuelita.home') }}" class="rounded-md focus-ring">
-                            <x-brand-logo icon-class="h-8 w-auto" />
+                            <x-brand-logo icon-class="h-9 w-auto" :show-text="false" />
                         </a>
                     @else
                         <a href="{{ route('dashboard') }}" class="rounded-md focus-ring">
-                            <x-brand-logo icon-class="h-8 w-auto" />
+                            <x-brand-logo icon-class="h-9 w-auto" :show-text="false" />
                         </a>
                     @endif
 
