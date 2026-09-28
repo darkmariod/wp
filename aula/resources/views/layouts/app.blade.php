@@ -50,16 +50,20 @@
 
                     <nav class="hidden items-center gap-6 text-sm text-ink-600 sm:flex" aria-label="Navegación principal">
                         @if (auth()->user()?->isFamilia())
-                            <a href="{{ route('mi-escuelita.experiencias.index') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.experiencias.*')) }}">
+                            <a href="{{ route('mi-escuelita.experiencias.index') }}" class="inline-flex items-center gap-1.5 {{ $enlaceNav(request()->routeIs('mi-escuelita.experiencias.*')) }}">
+                                <x-nav-icon name="experiencias" class="h-4 w-4" />
                                 Experiencias
                             </a>
-                            <a href="{{ route('mi-escuelita.historial') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.historial')) }}">
+                            <a href="{{ route('mi-escuelita.historial') }}" class="inline-flex items-center gap-1.5 {{ $enlaceNav(request()->routeIs('mi-escuelita.historial')) }}">
+                                <x-nav-icon name="historial" class="h-4 w-4" />
                                 Mis experiencias
                             </a>
-                            <a href="{{ route('mi-escuelita.asistencia') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.asistencia')) }}">
+                            <a href="{{ route('mi-escuelita.asistencia') }}" class="inline-flex items-center gap-1.5 {{ $enlaceNav(request()->routeIs('mi-escuelita.asistencia')) }}">
+                                <x-nav-icon name="asistencia" class="h-4 w-4" />
                                 Asistencia
                             </a>
-                            <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="{{ $enlaceNav(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
+                            <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="inline-flex items-center gap-1.5 {{ $enlaceNav(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
+                                <x-nav-icon name="notificaciones" class="h-4 w-4" />
                                 Notificaciones
                             </a>
 
@@ -141,16 +145,20 @@
                     <div class="border-t border-green-100 px-6 py-4">
                         <div class="flex flex-col gap-1 text-sm text-ink-600">
                             @if (auth()->user()?->isFamilia())
-                                <a href="{{ route('mi-escuelita.experiencias.index') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.experiencias.*')) }}">
+                                <a href="{{ route('mi-escuelita.experiencias.index') }}" class="inline-flex items-center gap-2.5 {{ $enlaceNavMovil(request()->routeIs('mi-escuelita.experiencias.*')) }}">
+                                    <x-nav-icon name="experiencias" class="h-5 w-5" />
                                     Experiencias
                                 </a>
-                                <a href="{{ route('mi-escuelita.historial') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.historial')) }}">
+                                <a href="{{ route('mi-escuelita.historial') }}" class="inline-flex items-center gap-2.5 {{ $enlaceNavMovil(request()->routeIs('mi-escuelita.historial')) }}">
+                                    <x-nav-icon name="historial" class="h-5 w-5" />
                                     Mis experiencias
                                 </a>
-                                <a href="{{ route('mi-escuelita.asistencia') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.asistencia')) }}">
+                                <a href="{{ route('mi-escuelita.asistencia') }}" class="inline-flex items-center gap-2.5 {{ $enlaceNavMovil(request()->routeIs('mi-escuelita.asistencia')) }}">
+                                    <x-nav-icon name="asistencia" class="h-5 w-5" />
                                     Asistencia
                                 </a>
-                                <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="{{ $enlaceNavMovil(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
+                                <a href="{{ route('mi-escuelita.notificaciones.edit') }}" class="inline-flex items-center gap-2.5 {{ $enlaceNavMovil(request()->routeIs('mi-escuelita.notificaciones.*')) }}">
+                                    <x-nav-icon name="notificaciones" class="h-5 w-5" />
                                     Notificaciones
                                 </a>
 

@@ -8,36 +8,27 @@
     <div class="flex min-h-screen flex-col bg-bg">
         <header class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-6">
             <a href="{{ url('/') }}" class="flex min-h-[44px] items-center focus-ring">
-                <x-brand-logo icon-class="h-9 w-auto" :tagline="true" />
+                <x-brand-logo icon-class="h-10 w-auto" :show-text="false" />
             </a>
 
-            <nav class="flex items-center gap-2">
-                @auth
+            {{--
+                Guest ya tiene un único botón de entrada bien visible en el
+                hero ("Entrar al aula"): repetir "Iniciar sesión" acá arriba
+                era el mismo destino con otra palabra, dos formas de hacer
+                lo mismo en una sola pantalla — confuso para alguien poco
+                acostumbrado a webs. Solo queda algo acá cuando ya hay
+                sesión iniciada.
+            --}}
+            @auth
+                <nav class="flex items-center gap-2">
                     <a
                         href="{{ route('dashboard') }}"
                         class="inline-flex min-h-[44px] items-center rounded-full bg-green-800 px-6 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring"
                     >
                         Ir al portal
                     </a>
-                @else
-                    @if ($canLogin)
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-flex min-h-[44px] items-center rounded-full px-5 text-sm font-medium text-green-800 transition-fast hover:bg-green-50 focus-ring"
-                        >
-                            Iniciar sesión
-                        </a>
-                    @endif
-                    @if ($canRegister)
-                        <a
-                            href="{{ route('register') }}"
-                            class="inline-flex min-h-[44px] items-center rounded-full bg-green-800 px-6 text-sm font-medium text-white transition-fast hover:bg-green-900 focus-ring"
-                        >
-                            Crear cuenta
-                        </a>
-                    @endif
-                @endauth
-            </nav>
+                </nav>
+            @endauth
         </header>
 
         <main class="flex-1">
