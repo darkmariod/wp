@@ -36,7 +36,7 @@
             <div class="flex min-h-screen flex-col items-center bg-bg pt-6 sm:justify-center sm:pt-0">
                 <div>
                     <a href="{{ url('/') }}" class="focus-ring">
-                        <x-brand-logo icon-class="h-11 w-auto" text-class="text-2xl font-semibold tracking-tight text-green-800" />
+                        <x-brand-logo icon-class="h-12 w-auto" :show-text="false" />
                     </a>
                 </div>
 

@@ -8,7 +8,7 @@
     </head>
     <body class="flex min-h-screen items-center justify-center bg-bg font-sans text-ink-900 antialiased">
         <div class="mx-auto max-w-sm px-6 text-center">
-            <x-brand-logo icon-class="mx-auto h-12 w-auto" />
+            <x-brand-logo icon-class="mx-auto h-12 w-auto" :show-text="false" />
 
             <h1 class="mt-8 text-xl font-semibold text-ink-900">No tenés acceso a esta página</h1>
             <p class="mt-2 text-sm text-ink-600">

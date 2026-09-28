@@ -22,7 +22,7 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {{-- Marca --}}
             <div class="flex flex-col gap-1">
-                <x-brand-logo icon-class="h-6 w-auto" text-class="text-sm font-semibold text-green-800" />
+                <x-brand-logo icon-class="h-7 w-auto" :show-text="false" />
                 <p class="text-xs text-ink-400">Unidad Educativa · Ambato, Ecuador</p>
             </div>
 
