@@ -853,6 +853,20 @@
       clearTimeout(idScrollFab);
       idScrollFab = setTimeout(function () { fab.classList.remove('fab--desvanecido'); }, 350);
     }, { passive: true });
+
+    // El pie de página siempre cae en la misma esquina que el FAB: a
+    // diferencia del resto del scroll, acá no hay nada nuevo debajo
+    // dentro de un momento, así que atenuado no alcanza — se oculta
+    // del todo mientras el pie está a la vista.
+    var pie = document.querySelector('.footer');
+    if (pie && 'IntersectionObserver' in window) {
+      var obsPie = new IntersectionObserver(function (entradas) {
+        var visible = entradas[0].isIntersecting;
+        fab.classList.toggle('fab--sobre-footer', visible && fab.getAttribute('data-abierto') !== 'true');
+        if (visible) abrirFab(false);
+      }, { rootMargin: '0px 0px -10% 0px' });
+      obsPie.observe(pie);
+    }
   }
 
 

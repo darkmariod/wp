@@ -1579,6 +1579,13 @@ body:has(.menu-movil.abierto) .header__logo-blanco { display: block; }
   opacity: .32;
   pointer-events: none;
 }
+/* El pie de página siempre termina justo en esa esquina inferior
+   derecha — atenuado no alcanza, ahí se tapan los links legales por
+   completo mientras el pie está a la vista (ver JS). */
+.fab--sobre-footer {
+  opacity: 0;
+  pointer-events: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .fab { transition: none; }
 }
