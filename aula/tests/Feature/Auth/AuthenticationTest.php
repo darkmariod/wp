@@ -57,6 +57,24 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_una_familia_ya_logueada_que_vuelve_a_login_va_directo_a_su_portal(): void
+    {
+        $familia = User::factory()->create();
+
+        $response = $this->actingAs($familia)->get('/login');
+
+        $response->assertRedirect(route('mi-escuelita.home', absolute: false));
+    }
+
+    public function test_personal_ya_logueado_que_vuelve_a_login_va_al_dashboard(): void
+    {
+        $guia = User::factory()->guia()->create();
+
+        $response = $this->actingAs($guia)->get('/login');
+
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();
