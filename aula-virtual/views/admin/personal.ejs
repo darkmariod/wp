@@ -1,0 +1,55 @@
+<%- include('../layouts/admin-header', { title: 'Personal', adminName }) %>
+
+<h1 class="text-2xl font-semibold">Personal del colegio</h1>
+<p class="mt-1 text-sm text-ink-600">
+    Administrador: acceso completo. Docente: puede cargar y borrar contenido y niños, pero no crear otras cuentas.
+</p>
+
+<% if (errores.length > 0) { %>
+    <ul class="mt-4 space-y-1 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <% errores.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+<% } %>
+
+<form method="POST" action="/admin/personal/nuevo" class="mt-6 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Nombre</label>
+        <input type="text" name="name" required class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Correo</label>
+        <input type="email" name="email" required class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Contraseña</label>
+        <input type="password" name="password" required minlength="8" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Rol</label>
+        <select name="role" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <option value="docente">Docente</option>
+            <option value="administrador">Administrador</option>
+        </select>
+    </div>
+    <div class="sm:col-span-2">
+        <button type="submit" class="rounded-lg bg-green-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700">
+            Crear cuenta
+        </button>
+    </div>
+</form>
+
+<div class="mt-8 divide-y divide-ink-900/10 rounded-2xl border border-ink-900/10 bg-white shadow-card">
+    <% personal.forEach(p => { %>
+        <div class="flex items-center justify-between px-5 py-3">
+            <div>
+                <p class="font-medium"><%= p.name %> <span class="ml-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-800"><%= p.role %></span></p>
+                <p class="text-sm text-ink-600"><%= p.email %></p>
+            </div>
+            <form method="POST" action="/admin/personal/<%= p.id %>/eliminar" onsubmit="return confirm('¿Eliminar esta cuenta?');">
+                <button type="submit" class="text-sm text-rose-600 hover:text-rose-700">Eliminar</button>
+            </form>
+        </div>
+    <% }) %>
+</div>
+
+<%- include('../layouts/admin-footer') %>

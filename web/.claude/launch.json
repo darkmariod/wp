@@ -24,6 +24,12 @@
       "runtimeExecutable": "sh",
       "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/documentacion && npx astro preview --host --port=4322"],
       "port": 4322
+    },
+    {
+      "name": "aula-virtual",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd /Users/mariopazmino/Desktop/wp/aula-virtual && node server.js"],
+      "port": 3300
     }
   ]
 }

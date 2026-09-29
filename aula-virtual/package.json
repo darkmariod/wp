@@ -1,0 +1,26 @@
+{
+  "name": "aula-virtual",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "css:build": "tailwindcss -i ./src/styles/app.css -o ./public/css/app.css --minify",
+    "css:watch": "tailwindcss -i ./src/styles/app.css -o ./public/css/app.css --watch"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "multer": "^2.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.13",
+    "tailwindcss": "^4.1.13"
+  }
+}

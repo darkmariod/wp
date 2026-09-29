@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Panel' %> — Aula Virtual</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="min-h-screen bg-white text-ink-900">
+    <% if (typeof adminName !== 'undefined') { %>
+    <header class="border-b border-ink-900/10">
+        <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+            <a href="/admin" class="text-lg font-semibold">Aula Virtual · Panel</a>
+            <div class="flex items-center gap-4 text-sm text-ink-600">
+                <a href="/admin" class="hover:text-ink-900">Contenido</a>
+                <a href="/admin/ninos" class="hover:text-ink-900">Niños</a>
+                <% if (typeof adminRole !== 'undefined' && adminRole === 'administrador') { %>
+                    <a href="/admin/personal" class="hover:text-ink-900">Personal</a>
+                <% } %>
+                <span><%= adminName %></span>
+                <form method="POST" action="/admin/logout">
+                    <button type="submit" class="hover:text-ink-900">Salir</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <% } %>
+    <main class="mx-auto max-w-5xl px-6 py-8">

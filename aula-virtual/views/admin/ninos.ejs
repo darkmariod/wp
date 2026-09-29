@@ -1,0 +1,42 @@
+<%- include('../layouts/admin-header', { title: 'Niños', adminName }) %>
+
+<h1 class="text-2xl font-semibold">Perfiles de niños</h1>
+<p class="mt-1 text-sm text-ink-600">Cada uno elige su carita al entrar a la biblioteca, sin correo ni contraseña.</p>
+
+<% if (errores.length > 0) { %>
+    <ul class="mt-4 space-y-1 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <% errores.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+<% } %>
+
+<form method="POST" action="/admin/ninos/nuevo" enctype="multipart/form-data" class="mt-6 flex flex-wrap items-end gap-3">
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Nombre</label>
+        <input type="text" name="name" required class="mt-1 rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Foto (opcional)</label>
+        <input type="file" name="avatar" accept="image/*" class="mt-1 text-sm">
+    </div>
+    <button type="submit" class="rounded-lg bg-green-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700">
+        Agregar
+    </button>
+</form>
+
+<div class="mt-8 flex flex-wrap gap-4">
+    <% children.forEach(child => { %>
+        <div class="w-28 text-center">
+            <% if (child.avatar_path) { %>
+                <img src="<%= child.avatar_path %>" class="mx-auto h-20 w-20 rounded-full object-cover shadow-card">
+            <% } else { %>
+                <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-2xl">🙂</div>
+            <% } %>
+            <p class="mt-2 text-sm font-medium"><%= child.name %></p>
+            <form method="POST" action="/admin/ninos/<%= child.id %>/eliminar" onsubmit="return confirm('¿Eliminar este perfil?');">
+                <button type="submit" class="text-xs text-rose-600 hover:text-rose-700">Eliminar</button>
+            </form>
+        </div>
+    <% }) %>
+</div>
+
+<%- include('../layouts/admin-footer') %>

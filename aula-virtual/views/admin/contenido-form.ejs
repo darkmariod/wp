@@ -1,0 +1,54 @@
+<%- include('../layouts/admin-header', { title: 'Nuevo contenido', adminName }) %>
+
+<h1 class="text-2xl font-semibold">Nuevo contenido</h1>
+
+<% if (errores.length > 0) { %>
+    <ul class="mt-4 space-y-1 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <% errores.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+<% } %>
+
+<form method="POST" action="/admin/contenido/nuevo" enctype="multipart/form-data" class="mt-6 max-w-lg space-y-4">
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Tipo</label>
+        <select name="type" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <option value="book">Cuento</option>
+            <option value="video">Video</option>
+            <option value="activity">Actividad</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Materia</label>
+        <select name="subject_id" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <option value="">Sin materia</option>
+            <% subjects.forEach(s => { %>
+                <option value="<%= s.id %>"><%= s.icon %> <%= s.name %></option>
+            <% }) %>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Título</label>
+        <input type="text" name="title" required
+            class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Descripción (opcional)</label>
+        <textarea name="description" rows="3"
+            class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Portada (imagen)</label>
+        <input type="file" name="cover" accept="image/*" class="mt-1 w-full text-sm">
+    </div>
+
+    <button type="submit"
+        class="rounded-lg bg-green-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700">
+        Guardar
+    </button>
+</form>
+
+<%- include('../layouts/admin-footer') %>

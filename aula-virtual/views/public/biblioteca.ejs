@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca — Aula Virtual</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="min-h-screen bg-bg">
+    <%
+        // Tailwind necesita ver la clase completa escrita en algún
+        // lado para generarla — por eso el mapeo es explícito acá en
+        // vez de armar el nombre de la clase con un template string.
+        const colorClasses = {
+            violet: 'bg-violet-200 text-violet-800',
+            pink: 'bg-pink-200 text-pink-800',
+            amber: 'bg-amber-200 text-amber-800',
+            orange: 'bg-orange-200 text-orange-800',
+        };
+        const colorRing = {
+            violet: 'ring-violet-500',
+            pink: 'ring-pink-500',
+            amber: 'ring-amber-500',
+            orange: 'ring-orange-500',
+        };
+    %>
+
+    <header class="border-b border-ink-900/10 bg-white/60">
+        <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+            <h1 class="text-2xl font-extrabold text-green-800">Biblioteca</h1>
+            <p class="text-sm text-ink-600">Hola, <span class="font-semibold"><%= childName %></span></p>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-6 py-8">
+        <div class="flex flex-wrap items-center gap-4">
+            <a href="/biblioteca"
+                class="flex flex-col items-center gap-1.5 <%= !filtroSubject ? 'opacity-100' : 'opacity-70 hover:opacity-100' %>">
+                <span class="flex h-16 w-16 items-center justify-center rounded-full bg-ink-900/5 text-2xl ring-2 <%= !filtroSubject ? 'ring-ink-900/40' : 'ring-transparent' %>">
+                    📚
+                </span>
+                <span class="text-xs font-semibold text-ink-600">Todo</span>
+            </a>
+
+            <% subjects.forEach(subject => { %>
+                <a href="/biblioteca?materia=<%= subject.id %>"
+                    class="flex flex-col items-center gap-1.5 <%= filtroSubject === subject.id ? 'opacity-100' : 'opacity-70 hover:opacity-100' %>">
+                    <span class="flex h-16 w-16 items-center justify-center rounded-full text-2xl ring-2 <%= colorClasses[subject.color] %> <%= filtroSubject === subject.id ? colorRing[subject.color] : 'ring-transparent' %>">
+                        <%= subject.icon %>
+                    </span>
+                    <span class="text-xs font-semibold text-ink-600"><%= subject.name %></span>
+                </a>
+            <% }) %>
+        </div>
+
+        <h2 class="mt-10 text-lg font-bold text-ink-900">
+            <%= filtroSubject ? subjects.find(s => s.id === filtroSubject)?.name : 'Todo lo nuevo' %>
+        </h2>
+
+        <% if (items.length === 0) { %>
+            <p class="mt-6 rounded-2xl bg-white p-8 text-center text-ink-600 shadow-card">
+                Todavía no hay nada acá. ¡Pronto va a haber cuentos y videos!
+            </p>
+        <% } else { %>
+            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+                <% items.forEach(item => { %>
+                    <div class="group cursor-pointer text-center">
+                        <div class="overflow-hidden rounded-2xl bg-white shadow-card transition-transform group-hover:-translate-y-1 group-hover:shadow-card-hover">
+                            <% if (item.cover_path) { %>
+                                <img src="<%= item.cover_path %>" alt="" class="aspect-square w-full object-cover">
+                            <% } else { %>
+                                <div class="flex aspect-square w-full items-center justify-center bg-green-50 text-4xl">
+                                    <%= item.type === 'video' ? '🎬' : item.type === 'activity' ? '🎨' : '📖' %>
+                                </div>
+                            <% } %>
+                        </div>
+                        <p class="mt-2 text-sm font-medium text-ink-900"><%= item.title %></p>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>

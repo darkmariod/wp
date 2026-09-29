@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/*
+|--------------------------------------------------------------------------
+| Paleta — misma que aula/resources/css/app.css (verde Pestalozzi), para
+| que el panel de docentes se sienta parte de la misma institución.
+| Los colores de materia (violeta/rosa/ámbar/naranja) quedan aparte:
+| son solo para los íconos que ve el niño en la biblioteca, no para el
+| panel — igual que Khan Kids le da un color a cada materia sin que
+| cambie el color de marca de la app.
+|--------------------------------------------------------------------------
+*/
+@theme {
+    --font-sans: "Baloo 2", "DM Sans", ui-rounded, ui-sans-serif, system-ui, sans-serif;
+
+    --color-green-950: #05341A;
+    --color-green-900: #0B4A26;
+    --color-green-800: #126333;
+    --color-green-700: #197A40;
+    --color-green-600: #239450;
+    --color-green-500: #35AD65;
+    --color-green-300: #86D4A6;
+    --color-green-100: #D7F0E2;
+    --color-green-50: #EFF9F3;
+
+    --color-ink-900: #14261C;
+    --color-ink-600: #4A5A51;
+    --color-ink-400: #68776F;
+
+    --color-bg: #FBF3E7;
+
+    --radius-lg: 28px;
+    --radius-xl: 40px;
+
+    --shadow-card: 0 4px 14px rgba(20, 38, 28, 0.08);
+    --shadow-card-hover: 0 8px 22px rgba(20, 38, 28, 0.14);
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-ink-900);
+}
