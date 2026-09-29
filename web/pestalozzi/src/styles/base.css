@@ -183,14 +183,24 @@ ul { list-style: none; padding: 0; }
 }
 .enc-seco h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.08; }
 
-/* C) Titular con número de sección al costado */
+/* C) Titular con número de sección al costado.
+   Mobile-first apilado: en flex de una sola fila sin wrap, el span de
+   ancho fijo (flex-shrink:0) le dejaba tan poco lugar al h2 y al p que
+   el texto terminaba envuelto letra por letra, una palabra por línea. */
 .enc-numerado {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-6);
+  flex-direction: column;
+  gap: var(--space-3);
   margin-bottom: var(--space-12);
   border-bottom: 1px solid var(--border);
   padding-bottom: var(--space-6);
+}
+@media (min-width: 900px) {
+  .enc-numerado {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-6);
+  }
 }
 .enc-numerado span {
   font-family: var(--font-body);
