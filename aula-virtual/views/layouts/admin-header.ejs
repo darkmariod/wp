@@ -9,17 +9,18 @@
 <body class="min-h-screen bg-white text-ink-900">
     <% if (typeof adminName !== 'undefined') { %>
     <header class="border-b border-ink-900/10">
-        <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <a href="/admin" class="text-lg font-semibold">Aula Virtual · Panel</a>
-            <div class="flex items-center gap-4 text-sm text-ink-600">
-                <a href="/admin" class="hover:text-ink-900">Contenido</a>
-                <a href="/admin/ninos" class="hover:text-ink-900">Niños</a>
+        <div class="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <a href="/admin" class="whitespace-nowrap text-lg font-semibold">Aula Virtual · Panel</a>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-600">
+                <a href="/admin" class="whitespace-nowrap hover:text-ink-900">Contenido</a>
+                <a href="/admin/modulos" class="whitespace-nowrap hover:text-ink-900">Módulos</a>
+                <a href="/admin/ninos" class="whitespace-nowrap hover:text-ink-900">Niños</a>
                 <% if (typeof adminRole !== 'undefined' && adminRole === 'administrador') { %>
-                    <a href="/admin/personal" class="hover:text-ink-900">Personal</a>
+                    <a href="/admin/personal" class="whitespace-nowrap hover:text-ink-900">Personal</a>
                 <% } %>
-                <span><%= adminName %></span>
+                <span class="whitespace-nowrap"><%= adminName %></span>
                 <form method="POST" action="/admin/logout">
-                    <button type="submit" class="hover:text-ink-900">Salir</button>
+                    <button type="submit" class="whitespace-nowrap hover:text-ink-900">Salir</button>
                 </form>
             </div>
         </div>
