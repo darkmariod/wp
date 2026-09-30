@@ -18,7 +18,7 @@
 
     <main class="mx-auto max-w-3xl px-6 py-8">
         <p class="text-xs font-semibold uppercase tracking-wide text-violet-600">
-            <%= item.type === 'video' ? 'Video' : item.type === 'activity' ? 'Actividad' : 'Cuento' %>
+            <%= item.type === 'video' ? 'Video' : item.type === 'activity' ? 'Actividad' : item.type === 'document' ? 'Documento' : 'Cuento' %>
             <% if (item.subject_name) { %> · <%= item.subject_name %><% } %>
         </p>
         <h1 class="mt-1 text-3xl font-extrabold text-ink-900"><%= item.title %></h1>
@@ -29,6 +29,7 @@
         <div class="mt-6">
             <% if (item.type === 'video') { %>
                 <video
+                    id="video-contenido"
                     src="<%= item.file_path %>"
                     controls
                     playsinline
@@ -37,6 +38,21 @@
                 >
                     Tu navegador no puede reproducir este video.
                 </video>
+
+                <script>
+                    document.getElementById('video-contenido').addEventListener('ended', function () {
+                        fetch('/biblioteca/<%= item.id %>/completado', { method: 'POST' });
+                    });
+                </script>
+
+            <% } else if (item.type === 'document') { %>
+                <div class="rounded-2xl bg-white p-6 text-center shadow-card">
+                    <p class="text-4xl">📄</p>
+                    <a href="<%= item.file_path %>" download
+                        class="mt-4 inline-block rounded-lg bg-green-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700">
+                        Descargar
+                    </a>
+                </div>
 
             <% } else if (item.type === 'book') { %>
                 <div id="lector-cuento" class="relative overflow-hidden rounded-2xl bg-white shadow-card">
@@ -73,12 +89,20 @@
                             numero.textContent = actual + 1;
                             botonAnterior.disabled = actual === 0;
                             botonSiguiente.disabled = actual === paginas.length - 1;
+
+                            if (actual === paginas.length - 1) {
+                                fetch('/biblioteca/<%= item.id %>/completado', { method: 'POST' });
+                            }
                         }
 
                         botonAnterior.disabled = true;
                         botonSiguiente.disabled = paginas.length <= 1;
                         botonAnterior.addEventListener('click', function () { if (actual > 0) mostrar(actual - 1); });
                         botonSiguiente.addEventListener('click', function () { if (actual < paginas.length - 1) mostrar(actual + 1); });
+
+                        if (paginas.length === 1) {
+                            fetch('/biblioteca/<%= item.id %>/completado', { method: 'POST' });
+                        }
                     })();
                 </script>
 

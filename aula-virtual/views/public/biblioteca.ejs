@@ -34,7 +34,7 @@
 
     <main class="mx-auto max-w-5xl px-6 py-8">
         <div class="flex flex-wrap items-center gap-4">
-            <a href="/biblioteca"
+            <a href="/biblioteca<%= busqueda ? '?q=' + encodeURIComponent(busqueda) : '' %>"
                 class="flex flex-col items-center gap-1.5 <%= !filtroSubject ? 'opacity-100' : 'opacity-70 hover:opacity-100' %>">
                 <span class="flex h-16 w-16 items-center justify-center rounded-full bg-ink-900/5 text-2xl ring-2 <%= !filtroSubject ? 'ring-ink-900/40' : 'ring-transparent' %>">
                     📚
@@ -43,7 +43,7 @@
             </a>
 
             <% subjects.forEach(subject => { %>
-                <a href="/biblioteca?materia=<%= subject.id %>"
+                <a href="/biblioteca?materia=<%= subject.id %><%= busqueda ? '&q=' + encodeURIComponent(busqueda) : '' %>"
                     class="flex flex-col items-center gap-1.5 <%= filtroSubject === subject.id ? 'opacity-100' : 'opacity-70 hover:opacity-100' %>">
                     <span class="flex h-16 w-16 items-center justify-center rounded-full text-2xl ring-2 <%= colorClasses[subject.color] %> <%= filtroSubject === subject.id ? colorRing[subject.color] : 'ring-transparent' %>">
                         <%= subject.icon %>
@@ -53,36 +53,34 @@
             <% }) %>
         </div>
 
-        <h2 class="mt-10 text-lg font-bold text-ink-900">
-            <%= filtroSubject ? subjects.find(s => s.id === filtroSubject)?.name : 'Todo lo nuevo' %>
-        </h2>
+        <form method="GET" action="/biblioteca" class="mt-6 flex gap-2">
+            <% if (filtroSubject) { %><input type="hidden" name="materia" value="<%= filtroSubject %>"><% } %>
+            <input type="search" name="q" value="<%= busqueda %>" placeholder="Buscar por título..."
+                class="w-full max-w-sm rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <button type="submit" class="rounded-lg bg-green-800 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                Buscar
+            </button>
+        </form>
 
-        <% if (items.length === 0) { %>
-            <p class="mt-6 rounded-2xl bg-white p-8 text-center text-ink-600 shadow-card">
-                Todavía no hay nada acá. ¡Pronto va a haber cuentos y videos!
-            </p>
+        <% if (!filtroSubject) { %>
+            <h2 class="mt-8 text-lg font-bold text-ink-900">Todo lo nuevo</h2>
+            <%- include('_tarjetas-contenido', { items, mensajeVacio: busqueda ? 'No encontramos nada con ese título.' : 'Todavía no hay nada acá. ¡Pronto va a haber cuentos y videos!' }) %>
         <% } else { %>
-            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
-                <% items.forEach(item => { %>
-                    <a href="/biblioteca/<%= item.id %>" class="group block text-center">
-                        <div class="relative overflow-hidden rounded-2xl bg-white shadow-card transition-transform group-hover:-translate-y-1 group-hover:shadow-card-hover">
-                            <% if (item.cover_path) { %>
-                                <img src="<%= item.cover_path %>" alt="" class="aspect-square w-full object-cover">
-                            <% } else { %>
-                                <div class="flex aspect-square w-full items-center justify-center bg-green-50 text-4xl">
-                                    <%= item.type === 'video' ? '🎬' : item.type === 'activity' ? '🎨' : '📖' %>
-                                </div>
-                            <% } %>
-                            <% if (item.type === 'video') { %>
-                                <span class="absolute inset-0 flex items-center justify-center bg-ink-900/0 transition-colors group-hover:bg-ink-900/20">
-                                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lg opacity-0 transition-opacity group-hover:opacity-100">▶</span>
-                                </span>
-                            <% } %>
-                        </div>
-                        <p class="mt-2 text-sm font-medium text-ink-900"><%= item.title %></p>
-                    </a>
-                <% }) %>
-            </div>
+            <% modulosConItems.forEach(modulo => { %>
+                <h2 class="mt-8 text-lg font-bold text-ink-900"><%= modulo.name %></h2>
+                <%- include('_tarjetas-contenido', { items: modulo.items, mensajeVacio: '' }) %>
+            <% }) %>
+
+            <% if (itemsSinModulo.length > 0) { %>
+                <h2 class="mt-8 text-lg font-bold text-ink-900"><%= modulosConItems.length > 0 ? 'Otros' : subjects.find(s => s.id === filtroSubject)?.name %></h2>
+                <%- include('_tarjetas-contenido', { items: itemsSinModulo, mensajeVacio: '' }) %>
+            <% } %>
+
+            <% if (modulosConItems.length === 0 && itemsSinModulo.length === 0) { %>
+                <p class="mt-6 rounded-2xl bg-white p-8 text-center text-ink-600 shadow-card">
+                    <%= busqueda ? 'No encontramos nada con ese título.' : 'Todavía no hay nada acá. ¡Pronto va a haber cuentos y videos!' %>
+                </p>
+            <% } %>
         <% } %>
     </main>
 </body>

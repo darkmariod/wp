@@ -15,6 +15,7 @@
             <option value="book">Cuento</option>
             <option value="video">Video</option>
             <option value="activity">Actividad</option>
+            <option value="document">Documento descargable</option>
         </select>
     </div>
 
@@ -24,6 +25,17 @@
             <option value="">Sin materia</option>
             <% subjects.forEach(s => { %>
                 <option value="<%= s.id %>"><%= s.icon %> <%= s.name %></option>
+            <% }) %>
+        </select>
+        <p class="mt-1 text-xs text-ink-400">Se ignora si elegís un módulo abajo — el módulo ya define la materia.</p>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Módulo (opcional)</label>
+        <select name="module_id" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <option value="">Sin módulo</option>
+            <% modules.forEach(m => { %>
+                <option value="<%= m.id %>"><%= m.subject_name %> — <%= m.name %></option>
             <% }) %>
         </select>
     </div>
@@ -40,7 +52,7 @@
             class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm"></textarea>
     </div>
 
-    <div data-campo-tipo="book,video,activity">
+    <div data-campo-tipo="book,video,activity,document">
         <label class="block text-sm font-medium text-ink-600">Portada (imagen)</label>
         <input type="file" name="cover" accept="image/*" class="mt-1 w-full text-sm">
         <p class="mt-1 text-xs text-ink-400" data-campo-tipo="book">Opcional en un cuento — si no subís una, se usa la primera página.</p>
@@ -54,6 +66,11 @@
     <div data-campo-tipo="video" class="hidden">
         <label class="block text-sm font-medium text-ink-600">Archivo de video</label>
         <input type="file" name="archivo" accept="video/mp4,video/quicktime" class="mt-1 w-full text-sm">
+    </div>
+
+    <div data-campo-tipo="document" class="hidden">
+        <label class="block text-sm font-medium text-ink-600">Documento (PDF)</label>
+        <input type="file" name="archivo" accept="application/pdf" class="mt-1 w-full text-sm">
     </div>
 
     <button type="submit"

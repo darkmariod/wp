@@ -69,9 +69,54 @@ router.get('/', (req, res) => {
     res.render('admin/dashboard', { items });
 });
 
+router.get('/modulos', (req, res) => {
+    const subjects = db.prepare('SELECT * FROM subjects ORDER BY sort_order').all();
+    const modules = db.prepare('SELECT * FROM modules ORDER BY subject_id, sort_order').all();
+    res.render('admin/modulos', { subjects, modules, errores: [] });
+});
+
+router.post('/modulos/nuevo', (req, res) => {
+    const { subject_id, name } = req.body;
+    const subjects = db.prepare('SELECT * FROM subjects ORDER BY sort_order').all();
+    const errores = [];
+
+    if (!subject_id || !subjects.some(s => s.id === Number(subject_id))) {
+        errores.push('Elegí una materia válida.');
+    }
+    if (!name || !name.trim()) {
+        errores.push('El nombre del módulo es obligatorio.');
+    }
+
+    if (errores.length > 0) {
+        const modules = db.prepare('SELECT * FROM modules ORDER BY subject_id, sort_order').all();
+        return res.status(422).render('admin/modulos', { subjects, modules, errores });
+    }
+
+    const siguienteOrden = db
+        .prepare('SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM modules WHERE subject_id = ?')
+        .get(subject_id).n;
+
+    db.prepare('INSERT INTO modules (subject_id, name, sort_order) VALUES (?, ?, ?)')
+        .run(subject_id, name.trim(), siguienteOrden);
+
+    res.redirect('/admin/modulos');
+});
+
+router.post('/modulos/:id/eliminar', (req, res) => {
+    db.prepare('DELETE FROM modules WHERE id = ?').run(req.params.id);
+    res.redirect('/admin/modulos');
+});
+
 router.get('/contenido/nuevo', (req, res) => {
     const subjects = db.prepare('SELECT * FROM subjects ORDER BY sort_order').all();
-    res.render('admin/contenido-form', { subjects, errores: [] });
+    const modules = db
+        .prepare(
+            `SELECT modules.*, subjects.name AS subject_name
+             FROM modules JOIN subjects ON subjects.id = modules.subject_id
+             ORDER BY subjects.sort_order, modules.sort_order`
+        )
+        .all();
+    res.render('admin/contenido-form', { subjects, modules, errores: [] });
 });
 
 const uploadContenido = upload.fields([
@@ -81,15 +126,22 @@ const uploadContenido = upload.fields([
 ]);
 
 router.post('/contenido/nuevo', uploadContenido, (req, res) => {
-    const { title, description, subject_id, type } = req.body;
+    const { title, description, subject_id, module_id, type } = req.body;
     const subjects = db.prepare('SELECT * FROM subjects ORDER BY sort_order').all();
+    const modules = db
+        .prepare(
+            `SELECT modules.*, subjects.name AS subject_name
+             FROM modules JOIN subjects ON subjects.id = modules.subject_id
+             ORDER BY subjects.sort_order, modules.sort_order`
+        )
+        .all();
     const errores = [];
 
     if (!title || !title.trim()) {
         errores.push('El título es obligatorio.');
     }
 
-    if (!['book', 'video', 'activity'].includes(type)) {
+    if (!['book', 'video', 'activity', 'document'].includes(type)) {
         errores.push('Elegí un tipo de contenido válido.');
     }
 
@@ -98,12 +150,12 @@ router.post('/contenido/nuevo', uploadContenido, (req, res) => {
         errores.push('Un cuento necesita al menos una página (imagen).');
     }
 
-    if (type === 'video' && !req.files?.archivo?.[0]) {
-        errores.push('Un video necesita el archivo de video.');
+    if ((type === 'video' || type === 'document') && !req.files?.archivo?.[0]) {
+        errores.push(type === 'video' ? 'Un video necesita el archivo de video.' : 'Un documento necesita el archivo a descargar.');
     }
 
     if (errores.length > 0) {
-        return res.status(422).render('admin/contenido-form', { subjects, errores });
+        return res.status(422).render('admin/contenido-form', { subjects, modules, errores });
     }
 
     const coverFile = req.files?.cover?.[0];
@@ -118,10 +170,16 @@ router.post('/contenido/nuevo', uploadContenido, (req, res) => {
         : (type === 'book' && paginas[0] ? `/uploads/${paginas[0].filename}` : null);
     const filePath = archivoFile ? `/uploads/${archivoFile.filename}` : null;
 
+    // Un módulo ya pertenece a una materia — si se eligió uno, esa es
+    // la materia real del contenido, sin importar qué haya quedado
+    // seleccionado en el combo de materia.
+    const moduloElegido = module_id ? modules.find(m => m.id === Number(module_id)) : null;
+    const materiaFinal = moduloElegido ? moduloElegido.subject_id : (subject_id || null);
+
     const { lastInsertRowid } = db.prepare(
-        `INSERT INTO content_items (subject_id, type, title, description, cover_path, file_path)
-         VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(subject_id || null, type, title.trim(), description || null, coverPath, filePath);
+        `INSERT INTO content_items (subject_id, module_id, type, title, description, cover_path, file_path)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).run(materiaFinal, moduloElegido ? moduloElegido.id : null, type, title.trim(), description || null, coverPath, filePath);
 
     if (type === 'book' && paginas.length > 0) {
         const insertPagina = db.prepare(

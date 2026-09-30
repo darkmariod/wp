@@ -1,0 +1,52 @@
+<%- include('../layouts/admin-header', { title: 'Módulos', adminName }) %>
+
+<h1 class="text-2xl font-semibold">Módulos</h1>
+<p class="mt-1 text-sm text-ink-600">Agrupá el contenido de cada materia en unidades, como los temas de un curso.</p>
+
+<% if (errores.length > 0) { %>
+    <ul class="mt-4 space-y-1 rounded-lg bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <% errores.forEach(e => { %><li><%= e %></li><% }) %>
+    </ul>
+<% } %>
+
+<form method="POST" action="/admin/modulos/nuevo" class="mt-6 flex flex-wrap items-end gap-3">
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Materia</label>
+        <select name="subject_id" required class="mt-1 rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+            <% subjects.forEach(s => { %>
+                <option value="<%= s.id %>"><%= s.icon %> <%= s.name %></option>
+            <% }) %>
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-ink-600">Nombre del módulo</label>
+        <input type="text" name="name" required placeholder="Ej: Vocales"
+            class="mt-1 rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+    </div>
+    <button type="submit" class="rounded-lg bg-green-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700">
+        Agregar
+    </button>
+</form>
+
+<div class="mt-8 space-y-6">
+    <% subjects.forEach(subject => { %>
+        <% const modulosDeLaMateria = modules.filter(m => m.subject_id === subject.id); %>
+        <% if (modulosDeLaMateria.length > 0) { %>
+            <div>
+                <h2 class="text-sm font-bold uppercase tracking-wide text-ink-600"><%= subject.icon %> <%= subject.name %></h2>
+                <ul class="mt-2 space-y-1">
+                    <% modulosDeLaMateria.forEach(modulo => { %>
+                        <li class="flex items-center justify-between rounded-lg bg-ink-900/[0.03] px-4 py-2">
+                            <span class="text-sm"><%= modulo.name %></span>
+                            <form method="POST" action="/admin/modulos/<%= modulo.id %>/eliminar" onsubmit="return confirm('¿Eliminar este módulo? El contenido que tenía queda sin módulo asignado.');">
+                                <button type="submit" class="text-xs text-rose-600 hover:text-rose-700">Eliminar</button>
+                            </form>
+                        </li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+    <% }) %>
+</div>
+
+<%- include('../layouts/admin-footer') %>

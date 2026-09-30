@@ -1,0 +1,30 @@
+<% if (items.length === 0) { %>
+    <p class="mt-2 text-sm text-ink-500"><%= mensajeVacio || 'No hay nada acá todavía.' %></p>
+<% } else { %>
+    <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        <% items.forEach(item => { %>
+            <a href="/biblioteca/<%= item.id %>" class="group block text-center">
+                <div class="relative overflow-hidden rounded-2xl bg-white shadow-card transition-transform group-hover:-translate-y-1 group-hover:shadow-card-hover">
+                    <% if (item.cover_path) { %>
+                        <img src="<%= item.cover_path %>" alt="" class="aspect-square w-full object-cover">
+                    <% } else { %>
+                        <div class="flex aspect-square w-full items-center justify-center bg-green-50 text-4xl">
+                            <%= item.type === 'video' ? '🎬' : item.type === 'activity' ? '🎨' : item.type === 'document' ? '📄' : '📖' %>
+                        </div>
+                    <% } %>
+                    <% if (item.type === 'video') { %>
+                        <span class="absolute inset-0 flex items-center justify-center bg-ink-900/0 transition-colors group-hover:bg-ink-900/20">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lg opacity-0 transition-opacity group-hover:opacity-100">▶</span>
+                        </span>
+                    <% } %>
+                    <% if (item.completado) { %>
+                        <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-xs text-white" title="Completado">✓</span>
+                    <% } else if (item.visto) { %>
+                        <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-xs" title="Ya lo viste">👀</span>
+                    <% } %>
+                </div>
+                <p class="mt-2 text-sm font-medium text-ink-900"><%= item.title %></p>
+            </a>
+        <% }) %>
+    </div>
+<% } %>
