@@ -42,4 +42,29 @@ router.get('/biblioteca', (req, res) => {
     });
 });
 
+router.get('/biblioteca/:id', (req, res) => {
+    if (!req.session.childId) {
+        return res.redirect('/');
+    }
+
+    const item = db
+        .prepare(
+            `SELECT content_items.*, subjects.name AS subject_name
+             FROM content_items
+             LEFT JOIN subjects ON subjects.id = content_items.subject_id
+             WHERE content_items.id = ? AND content_items.published = 1`
+        )
+        .get(req.params.id);
+
+    if (!item) {
+        return res.redirect('/biblioteca');
+    }
+
+    const paginas = item.type === 'book'
+        ? db.prepare('SELECT * FROM content_pages WHERE content_id = ? ORDER BY sort_order').all(item.id)
+        : [];
+
+    res.render('public/contenido', { item, paginas, childName: req.session.childName });
+});
+
 module.exports = router;

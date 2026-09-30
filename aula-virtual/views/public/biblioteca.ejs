@@ -64,8 +64,8 @@
         <% } else { %>
             <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
                 <% items.forEach(item => { %>
-                    <div class="group cursor-pointer text-center">
-                        <div class="overflow-hidden rounded-2xl bg-white shadow-card transition-transform group-hover:-translate-y-1 group-hover:shadow-card-hover">
+                    <a href="/biblioteca/<%= item.id %>" class="group block text-center">
+                        <div class="relative overflow-hidden rounded-2xl bg-white shadow-card transition-transform group-hover:-translate-y-1 group-hover:shadow-card-hover">
                             <% if (item.cover_path) { %>
                                 <img src="<%= item.cover_path %>" alt="" class="aspect-square w-full object-cover">
                             <% } else { %>
@@ -73,9 +73,14 @@
                                     <%= item.type === 'video' ? '🎬' : item.type === 'activity' ? '🎨' : '📖' %>
                                 </div>
                             <% } %>
+                            <% if (item.type === 'video') { %>
+                                <span class="absolute inset-0 flex items-center justify-center bg-ink-900/0 transition-colors group-hover:bg-ink-900/20">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lg opacity-0 transition-opacity group-hover:opacity-100">▶</span>
+                                </span>
+                            <% } %>
                         </div>
                         <p class="mt-2 text-sm font-medium text-ink-900"><%= item.title %></p>
-                    </div>
+                    </a>
                 <% }) %>
             </div>
         <% } %>

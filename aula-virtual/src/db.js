@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 
 const db = new DatabaseSync(path.join(__dirname, '..', 'data', 'aula-virtual.sqlite'));
 
+db.exec('PRAGMA foreign_keys = ON');
+
 db.exec(`
     CREATE TABLE IF NOT EXISTS admins (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +42,16 @@ db.exec(`
         name TEXT NOT NULL,
         avatar_path TEXT,
         created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    -- Páginas de un cuento (type='book'): una imagen por página, en
+    -- orden. Videos y actividades no la usan — un video es un solo
+    -- archivo (content_items.file_path) y una actividad es solo texto.
+    CREATE TABLE IF NOT EXISTS content_pages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        content_id INTEGER NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
+        image_path TEXT NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0
     );
 `);
 

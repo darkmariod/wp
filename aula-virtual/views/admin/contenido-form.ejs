@@ -11,7 +11,7 @@
 <form method="POST" action="/admin/contenido/nuevo" enctype="multipart/form-data" class="mt-6 max-w-lg space-y-4">
     <div>
         <label class="block text-sm font-medium text-ink-600">Tipo</label>
-        <select name="type" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
+        <select id="tipo-contenido" name="type" class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm">
             <option value="book">Cuento</option>
             <option value="video">Video</option>
             <option value="activity">Actividad</option>
@@ -40,9 +40,20 @@
             class="mt-1 w-full rounded-lg border border-ink-900/15 px-3 py-2 text-sm"></textarea>
     </div>
 
-    <div>
+    <div data-campo-tipo="book,video,activity">
         <label class="block text-sm font-medium text-ink-600">Portada (imagen)</label>
         <input type="file" name="cover" accept="image/*" class="mt-1 w-full text-sm">
+        <p class="mt-1 text-xs text-ink-400" data-campo-tipo="book">Opcional en un cuento — si no subís una, se usa la primera página.</p>
+    </div>
+
+    <div data-campo-tipo="book">
+        <label class="block text-sm font-medium text-ink-600">Páginas del cuento (imágenes, en orden)</label>
+        <input type="file" name="paginas" accept="image/*" multiple class="mt-1 w-full text-sm">
+    </div>
+
+    <div data-campo-tipo="video" class="hidden">
+        <label class="block text-sm font-medium text-ink-600">Archivo de video</label>
+        <input type="file" name="archivo" accept="video/mp4,video/quicktime" class="mt-1 w-full text-sm">
     </div>
 
     <button type="submit"
@@ -50,5 +61,23 @@
         Guardar
     </button>
 </form>
+
+<script>
+    (function () {
+        var selector = document.getElementById('tipo-contenido');
+        var campos = document.querySelectorAll('[data-campo-tipo]');
+
+        function actualizar() {
+            var tipo = selector.value;
+            campos.forEach(function (campo) {
+                var tipos = campo.getAttribute('data-campo-tipo').split(',');
+                campo.classList.toggle('hidden', tipos.indexOf(tipo) === -1);
+            });
+        }
+
+        selector.addEventListener('change', actualizar);
+        actualizar();
+    })();
+</script>
 
 <%- include('../layouts/admin-footer') %>

@@ -74,7 +74,13 @@ router.get('/contenido/nuevo', (req, res) => {
     res.render('admin/contenido-form', { subjects, errores: [] });
 });
 
-router.post('/contenido/nuevo', upload.single('cover'), (req, res) => {
+const uploadContenido = upload.fields([
+    { name: 'cover', maxCount: 1 },
+    { name: 'archivo', maxCount: 1 }, // video, type='video'
+    { name: 'paginas', maxCount: 30 }, // imágenes del cuento, type='book'
+]);
+
+router.post('/contenido/nuevo', uploadContenido, (req, res) => {
     const { title, description, subject_id, type } = req.body;
     const subjects = db.prepare('SELECT * FROM subjects ORDER BY sort_order').all();
     const errores = [];
@@ -87,16 +93,44 @@ router.post('/contenido/nuevo', upload.single('cover'), (req, res) => {
         errores.push('Elegí un tipo de contenido válido.');
     }
 
+    const paginas = req.files?.paginas || [];
+    if (type === 'book' && paginas.length === 0) {
+        errores.push('Un cuento necesita al menos una página (imagen).');
+    }
+
+    if (type === 'video' && !req.files?.archivo?.[0]) {
+        errores.push('Un video necesita el archivo de video.');
+    }
+
     if (errores.length > 0) {
         return res.status(422).render('admin/contenido-form', { subjects, errores });
     }
 
-    const coverPath = req.file ? `/uploads/${req.file.filename}` : null;
+    const coverFile = req.files?.cover?.[0];
+    const archivoFile = req.files?.archivo?.[0];
 
-    db.prepare(
-        `INSERT INTO content_items (subject_id, type, title, description, cover_path)
-         VALUES (?, ?, ?, ?, ?)`
-    ).run(subject_id || null, type, title.trim(), description || null, coverPath);
+    // La portada es opcional en general, pero un cuento sin portada
+    // propia usa su primera página como portada — así no queda un
+    // ícono genérico en la biblioteca cuando la docente se olvida de
+    // subirla aparte.
+    const coverPath = coverFile
+        ? `/uploads/${coverFile.filename}`
+        : (type === 'book' && paginas[0] ? `/uploads/${paginas[0].filename}` : null);
+    const filePath = archivoFile ? `/uploads/${archivoFile.filename}` : null;
+
+    const { lastInsertRowid } = db.prepare(
+        `INSERT INTO content_items (subject_id, type, title, description, cover_path, file_path)
+         VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(subject_id || null, type, title.trim(), description || null, coverPath, filePath);
+
+    if (type === 'book' && paginas.length > 0) {
+        const insertPagina = db.prepare(
+            'INSERT INTO content_pages (content_id, image_path, sort_order) VALUES (?, ?, ?)'
+        );
+        paginas.forEach((pagina, indice) => {
+            insertPagina.run(lastInsertRowid, `/uploads/${pagina.filename}`, indice);
+        });
+    }
 
     res.redirect('/admin');
 });
