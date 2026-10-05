@@ -44,6 +44,27 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Entrega de archivos
+    |--------------------------------------------------------------------------
+    |
+    | temporary_url_minutes: vigencia de la URL firmada cuando el disco es
+    | remoto (s3 / R2); en un disco local el archivo se sirve desde la app.
+    |
+    | rate_limit: peticiones por minuto y por usuario. "archivos" sirve a los
+    | visores (PDF.js, video y audio piden muchos rangos), por eso es mucho
+    | más alto que "descargas".
+    |
+    */
+
+    'temporary_url_minutes' => (int) env('BIBLIOTECA_TEMPORARY_URL_MINUTES', 5),
+
+    'rate_limit' => [
+        'archivos' => (int) env('BIBLIOTECA_RATE_ARCHIVOS', 240),
+        'descargas' => (int) env('BIBLIOTECA_RATE_DESCARGAS', 30),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Extensiones permitidas y su contenido real
     |--------------------------------------------------------------------------
     |

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Biblioteca\ResourceFileController;
 use App\Http\Controllers\MiEscuelita\AsistenciaController;
 use App\Http\Controllers\MiEscuelita\EvidenceController;
 use App\Http\Controllers\MiEscuelita\ExperienceController;
@@ -61,9 +62,20 @@ Route::middleware(['auth', 'familia'])->prefix('mi-escuelita')->name('mi-escueli
 | Personal y estudiantes activos (middleware 'biblioteca'). Las familias
 | quedan fuera. Por ahora solo hay una página provisional; T06/T07 la
 | reemplazan por la Biblioteca real.
+|
+| Los archivos solo salen por estas dos rutas: cada una exige poder ver el
+| recurso (si no, 404) y descargar exige además permiso de descarga.
 */
 Route::middleware(['auth', 'biblioteca'])->group(function () {
     Route::get('/biblioteca', fn () => view('biblioteca.placeholder'))->name('biblioteca.index');
+
+    Route::get('/biblioteca/{resource:slug}/archivo', [ResourceFileController::class, 'inline'])
+        ->middleware('throttle:biblioteca-archivos')
+        ->name('biblioteca.archivo');
+
+    Route::get('/biblioteca/{resource:slug}/descargar', [ResourceFileController::class, 'download'])
+        ->middleware('throttle:biblioteca-descargas')
+        ->name('biblioteca.descargar');
 });
 
 /*
