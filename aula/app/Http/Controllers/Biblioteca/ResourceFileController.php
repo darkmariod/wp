@@ -51,8 +51,11 @@ class ResourceFileController extends Controller
 
         $response = $this->delivery->download($file, $request);
 
-        // Solo se anota si el archivo realmente se entrega.
-        $this->logger->downloaded($resource, $request->user());
+        // Solo cuenta una descarga completa: HEAD, las peticiones de rango y
+        // las condicionales (304) se repiten y no deben inflar las estadísticas.
+        if ($request->isMethod('GET') && ! $request->headers->has('Range') && ! $response->isNotModified($request)) {
+            $this->logger->downloaded($resource, $request->user());
+        }
 
         return $response;
     }

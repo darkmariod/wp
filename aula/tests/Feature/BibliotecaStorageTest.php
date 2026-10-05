@@ -6,12 +6,15 @@ use App\Enums\ResourceType;
 use App\Models\LibraryResource;
 use App\Models\ResourceFile;
 use App\Services\Biblioteca\ResourceFileService;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Mockery;
 use RuntimeException;
 use Tests\TestCase;
 use ZipArchive;
@@ -833,5 +836,29 @@ class BibliotecaStorageTest extends TestCase
             ->assertFailed();
 
         Storage::disk('biblioteca')->assertExists('resources/999/viejo.pdf');
+    }
+
+    public function test_un_borrado_que_falla_en_silencio_se_reporta(): void
+    {
+        // El disco usa throw=false: delete() devuelve false en vez de lanzar.
+        Exceptions::fake();
+
+        $disco = Mockery::mock(FilesystemAdapter::class);
+        $disco->shouldReceive('delete')->once()->with('resources/1/a.pdf')->andReturn(false);
+        $disco->shouldReceive('exists')->once()->with('resources/1/a.pdf')->andReturn(true);
+        Storage::shouldReceive('disk')->with('biblioteca')->andReturn($disco);
+
+        $this->servicio()->deleteObject('biblioteca', 'resources/1/a.pdf');
+
+        Exceptions::assertReported(RuntimeException::class);
+    }
+
+    public function test_borrar_un_objeto_que_ya_no_existe_no_se_reporta(): void
+    {
+        Exceptions::fake();
+
+        $this->servicio()->deleteObject('biblioteca', 'resources/1/no-existe.pdf');
+
+        Exceptions::assertNothingReported();
     }
 }

@@ -717,4 +717,38 @@ class BibliotecaDeliveryTest extends TestCase
     {
         $this->abrir($this->usuario('estudiante'), route('mi-escuelita.home'))->assertForbidden();
     }
+
+    public function test_quien_no_puede_usar_la_biblioteca_no_distingue_un_recurso_inexistente_de_uno_real(): void
+    {
+        // La puerta de la Biblioteca debe cerrarse ANTES de resolver el slug:
+        // si no, el 404 del binding delata qué recursos existen.
+        $borrador = $this->recurso('pdf', 'draft');
+        $this->conArchivo($borrador);
+
+        foreach ([$this->usuario('familia'), $this->usuario('estudiante', ['active' => false])] as $usuario) {
+            foreach (['archivo', 'descargar'] as $ruta) {
+                $this->abrir($usuario, "/biblioteca/slug-que-no-existe/{$ruta}")->assertForbidden();
+                $this->abrir($usuario, "/biblioteca/{$borrador->slug}/{$ruta}")->assertForbidden();
+            }
+        }
+    }
+
+    public function test_solo_una_descarga_completa_se_anota_en_el_registro(): void
+    {
+        $estudiante = $this->usuario('estudiante');
+        $recurso = $this->recursoDelEstudiante($estudiante, 'pdf', ['is_downloadable' => true]);
+        $url = $this->urlDescarga($recurso);
+
+        // Ni HEAD ni una petición de rango son una descarga: no inflan las estadísticas.
+        $this->actingAs($estudiante)->call('HEAD', $url)->assertOk();
+        $this->abrir($estudiante, $url, ['Range' => 'bytes=0-9'])->assertStatus(206);
+        $this->assertSame(0, ResourceAccessLog::count());
+
+        $completa = $this->abrir($estudiante, $url)->assertOk();
+        $this->assertSame(1, ResourceAccessLog::count());
+
+        // Tampoco una petición condicional que termina en 304.
+        $this->abrir($estudiante, $url, ['If-None-Match' => $completa->headers->get('ETag')])->assertStatus(304);
+        $this->assertSame(1, ResourceAccessLog::count());
+    }
 }

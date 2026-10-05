@@ -194,7 +194,13 @@ class ResourceFileService
         }
 
         try {
-            Storage::disk($disk)->delete($path);
+            $almacenamiento = Storage::disk($disk);
+
+            // Con throw=false un fallo real devuelve false en vez de lanzar:
+            // que el objeto ya no exista no es un error, que siga ahí sí.
+            if (! $almacenamiento->delete($path) && $almacenamiento->exists($path)) {
+                throw new RuntimeException("No se pudo borrar el objeto {$path} del disco {$disk}.");
+            }
         } catch (Throwable $e) {
             report($e);
         }
