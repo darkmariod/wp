@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -142,6 +143,32 @@ class User extends Authenticatable implements FilamentUser
     public function environments(): HasMany
     {
         return $this->hasMany(Environment::class, 'teacher_id');
+    }
+
+    /**
+     * Cursos de la Biblioteca que este usuario dicta.
+     */
+    public function taughtCourses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'teacher_id');
+    }
+
+    /**
+     * Cursos de la Biblioteca en los que está matriculado.
+     */
+    public function enrolledCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_enrollments', 'user_id', 'course_id')
+            ->withPivot('enrolled_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * Recursos de la Biblioteca que este usuario creó.
+     */
+    public function libraryResources(): HasMany
+    {
+        return $this->hasMany(LibraryResource::class, 'created_by');
     }
 
     /**
