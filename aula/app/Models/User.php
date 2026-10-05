@@ -30,12 +30,30 @@ class User extends Authenticatable implements FilamentUser
 
     public const ROLE_FAMILIA = 'familia';
 
+    public const ROLE_ESTUDIANTE = 'estudiante';
+
     /** Roles válidos de la app (coinciden con los roles de Spatie/Shield). */
     public const ROLES = [
         self::ROLE_ADMINISTRADOR,
         self::ROLE_COORDINACION,
         self::ROLE_GUIA,
         self::ROLE_FAMILIA,
+        self::ROLE_ESTUDIANTE,
+    ];
+
+    /** Roles del lado del personal: los únicos que entran al panel /admin. */
+    public const PANEL_ROLES = [
+        self::ROLE_ADMINISTRADOR,
+        self::ROLE_COORDINACION,
+        self::ROLE_GUIA,
+    ];
+
+    /** Roles que pueden usar la Biblioteca (la familia queda fuera). */
+    public const BIBLIOTECA_ROLES = [
+        self::ROLE_ADMINISTRADOR,
+        self::ROLE_COORDINACION,
+        self::ROLE_GUIA,
+        self::ROLE_ESTUDIANTE,
     ];
 
     /**
@@ -82,6 +100,29 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_FAMILIA;
     }
 
+    public function isEstudiante(): bool
+    {
+        return $this->role === self::ROLE_ESTUDIANTE;
+    }
+
+    /**
+     * Administrador, Coordinación y Guía: todo el que trabaja del lado del
+     * colegio. Es una lista blanca a propósito: un rol nuevo no hereda
+     * acceso de personal por no ser familia.
+     */
+    public function isPanelRole(): bool
+    {
+        return in_array($this->role, self::PANEL_ROLES, true);
+    }
+
+    /**
+     * Cuenta activa con un rol que puede entrar a la Biblioteca.
+     */
+    public function canUseBiblioteca(): bool
+    {
+        return $this->active && in_array($this->role, self::BIBLIOTECA_ROLES, true);
+    }
+
     /**
      * Administrador y Coordinación gestionan la plataforma completa.
      */
@@ -104,13 +145,13 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Filament: acá se cierra de verdad la puerta del panel para las
-     * familias, no alcanza con nunca mandarles el link. Sin esto,
-     * CUALQUIER usuario autenticado puede entrar a /admin escribiendo
-     * la URL a mano.
+     * Filament: acá se cierra de verdad la puerta del panel, no alcanza
+     * con nunca mandar el link. Sin esto, CUALQUIER usuario autenticado
+     * puede entrar a /admin escribiendo la URL a mano. Lista blanca: solo
+     * el personal entra; familia y estudiante nunca.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->active && ! $this->isFamilia();
+        return $this->active && $this->isPanelRole();
     }
 }

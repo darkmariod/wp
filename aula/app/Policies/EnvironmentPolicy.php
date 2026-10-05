@@ -9,7 +9,7 @@ class EnvironmentPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->active && ! $user->isFamilia();
+        return $user->active && $user->isPanelRole();
     }
 
     public function view(User $user, Environment $environment): bool

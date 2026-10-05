@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Puerta del personal (admin, coordinación y guías — todo el que no es
- * familia). Las familias que intenten entrar acá se rechazan.
+ * Puerta del personal (admin, coordinación y guías). Cualquier otro rol
+ * (familia, estudiante) que intente entrar acá se rechaza.
  */
 class EnsureStaff
 {
@@ -17,7 +17,7 @@ class EnsureStaff
     {
         $user = $request->user();
 
-        if (! $user || $user->isFamilia()) {
+        if (! $user || ! $user->isPanelRole()) {
             abort(403, 'Acceso restringido al personal.');
         }
 

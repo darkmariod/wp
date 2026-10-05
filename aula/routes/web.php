@@ -56,6 +56,18 @@ Route::middleware(['auth', 'familia'])->prefix('mi-escuelita')->name('mi-escueli
 
 /*
 |--------------------------------------------------------------------------
+| Biblioteca
+|--------------------------------------------------------------------------
+| Personal y estudiantes activos (middleware 'biblioteca'). Las familias
+| quedan fuera. Por ahora solo hay una página provisional; T06/T07 la
+| reemplazan por la Biblioteca real.
+*/
+Route::middleware(['auth', 'biblioteca'])->group(function () {
+    Route::get('/biblioteca', fn () => view('biblioteca.placeholder'))->name('biblioteca.index');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Storage privado — Fase 10
 |--------------------------------------------------------------------------
 | Única puerta a un archivo de evidencia/contenido: pasa por la misma

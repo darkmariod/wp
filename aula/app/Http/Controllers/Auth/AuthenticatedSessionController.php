@@ -36,7 +36,11 @@ class AuthenticatedSessionController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $destino = $user->isFamilia() ? route('mi-escuelita.home', absolute: false) : '/admin';
+        $destino = match (true) {
+            $user->isFamilia() => route('mi-escuelita.home', absolute: false),
+            $user->isEstudiante() => route('biblioteca.index', absolute: false),
+            default => '/admin',
+        };
 
         return redirect()->intended($destino);
     }

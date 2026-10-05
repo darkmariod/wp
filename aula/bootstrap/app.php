@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureStaff;
+use App\Http\Middleware\EnsureUserCanUseBiblioteca;
 use App\Http\Middleware\EnsureUserIsFamilia;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'familia' => EnsureUserIsFamilia::class,
             'staff' => EnsureStaff::class,
+            'biblioteca' => EnsureUserCanUseBiblioteca::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

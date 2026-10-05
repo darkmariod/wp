@@ -78,6 +78,11 @@ class UserFactory extends Factory
         return $this->state(fn () => ['role' => User::ROLE_GUIA, 'family_id' => null]);
     }
 
+    public function estudiante(): static
+    {
+        return $this->state(fn () => ['role' => User::ROLE_ESTUDIANTE, 'family_id' => null]);
+    }
+
     public function familia(?Family $family = null): static
     {
         return $this->state(fn () => [
