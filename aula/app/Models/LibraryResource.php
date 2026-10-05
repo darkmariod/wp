@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Enums\ResourceStatus;
 use App\Enums\ResourceType;
 use App\Models\Concerns\GeneratesUniqueSlug;
+use App\Observers\LibraryResourceObserver;
 use Database\Factories\LibraryResourceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'title', 'slug', 'description', 'type', 'category_id', 'thumbnail', 'external_url',
     'status', 'is_downloadable', 'created_by', 'updated_by', 'published_by', 'published_at',
 ])]
+#[ObservedBy(LibraryResourceObserver::class)]
 class LibraryResource extends Model
 {
     /** @use HasFactory<LibraryResourceFactory> */

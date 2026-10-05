@@ -38,6 +38,17 @@ return [
             'report' => false,
         ],
 
+        // Disco PRIVADO de la Biblioteca: sin URL pública ni `serve`, solo se
+        // entrega por controladores con autorización. Se puede cambiar a s3/R2
+        // con BIBLIOTECA_DISK (ver config/biblioteca.php).
+        'biblioteca' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/biblioteca'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
