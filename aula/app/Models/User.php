@@ -164,6 +164,19 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Es el docente asignado a ese curso.
+     */
+    public function teachesCourse(Course $course): bool
+    {
+        return $course->teacher_id !== null && (int) $course->teacher_id === (int) $this->id;
+    }
+
+    public function isEnrolledIn(Course $course): bool
+    {
+        return $this->enrolledCourses()->whereKey($course->id)->exists();
+    }
+
+    /**
      * Recursos de la Biblioteca que este usuario creó.
      */
     public function libraryResources(): HasMany

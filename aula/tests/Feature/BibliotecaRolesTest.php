@@ -6,10 +6,14 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\Content;
+use App\Models\Course;
 use App\Models\Environment;
+use App\Models\LibraryResource;
+use App\Models\ResourceCategory;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -207,6 +211,40 @@ class BibliotecaRolesTest extends TestCase
         $this->actingAs(User::factory()->familia()->create())->get('/__prueba-staff')->assertForbidden();
         $this->actingAs(User::factory()->guia()->create())->get('/__prueba-staff')->assertOk();
         $this->actingAs(User::factory()->administrador()->create())->get('/__prueba-staff')->assertOk();
+    }
+
+    public function test_estudiante_recibe_403_en_el_portal_de_familias(): void
+    {
+        $estudiante = User::factory()->estudiante()->create();
+
+        foreach (['mi-escuelita.home', 'mi-escuelita.asistencia', 'mi-escuelita.experiencias.index', 'mi-escuelita.historial'] as $ruta) {
+            $this->actingAs($estudiante)->get(route($ruta))->assertForbidden();
+        }
+    }
+
+    public function test_un_rol_desconocido_es_denegado_por_las_politicas_de_la_biblioteca(): void
+    {
+        $desconocido = User::factory()->create(['role' => 'invitado', 'family_id' => null]);
+        $recurso = LibraryResource::factory()->published()->create();
+        $categoria = ResourceCategory::factory()->create();
+        $curso = Course::factory()->create();
+
+        foreach (['viewAny', 'create'] as $habilidad) {
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, LibraryResource::class), "recurso {$habilidad}");
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, ResourceCategory::class), "categoría {$habilidad}");
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, Course::class), "curso {$habilidad}");
+        }
+
+        foreach (['view', 'update', 'delete', 'archive', 'publish', 'duplicate', 'download'] as $habilidad) {
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, $recurso), "recurso {$habilidad}");
+        }
+
+        foreach (['view', 'update', 'delete'] as $habilidad) {
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, $categoria), "categoría {$habilidad}");
+            $this->assertFalse(Gate::forUser($desconocido)->allows($habilidad, $curso), "curso {$habilidad}");
+        }
+
+        $this->assertFalse(Gate::forUser($desconocido)->allows('manageResources', $curso));
     }
 
     // ---- Filament UserResource ------------------------------------------

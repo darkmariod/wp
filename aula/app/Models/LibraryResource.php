@@ -106,6 +106,73 @@ class LibraryResource extends Model
     }
 
     /**
+     * Regla de `LibraryResourcePolicy::view` en SQL, para que los listados
+     * nunca carguen lo que el usuario no puede ver. Si cambias una, cambia
+     * la otra: la prueba de paridad las cruza.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        if (! $user->canUseBiblioteca()) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->isStaff()) {
+            return $query;
+        }
+
+        // Todo en un solo grupo: así un `orWhere` nunca escapa a otros filtros.
+        return $query->where(function (Builder $visible) use ($user) {
+            $visible->where('resources.created_by', $user->id)
+                ->orWhere(function (Builder $shared) use ($user) {
+                    $shared->where('resources.status', ResourceStatus::Published)
+                        ->where(function (Builder $audience) use ($user) {
+                            $audience->doesntHave('courses')
+                                ->orWhereHas('permissions', fn (Builder $grant) => $grant
+                                    ->where('can_view', true)
+                                    ->where(fn (Builder $who) => $who->where('user_id', $user->id)->orWhere('role', $user->role)));
+
+                            if ($user->isEstudiante()) {
+                                $audience->orWhereHas('courses', fn (Builder $course) => $course
+                                    ->where('courses.is_active', true)
+                                    ->whereHas('students', fn (Builder $students) => $students->whereKey($user->id)));
+                            }
+
+                            if ($user->isGuia()) {
+                                $audience->orWhereHas('courses', fn (Builder $course) => $course->where('courses.teacher_id', $user->id));
+                            }
+                        });
+                });
+        });
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === ResourceStatus::Published;
+    }
+
+    /**
+     * Recurso de la biblioteca general: no está en ningún curso.
+     */
+    public function isGeneral(): bool
+    {
+        return ! $this->courses()->exists();
+    }
+
+    public function isOwnedBy(User $user): bool
+    {
+        return $this->created_by !== null && (int) $this->created_by === (int) $user->id;
+    }
+
+    /**
+     * Hay un archivo guardado que se pueda bajar: los enlaces y los videos
+     * por URL no lo tienen.
+     */
+    public function hasDownloadableFile(): bool
+    {
+        return $this->type->usesFile() && $this->files()->exists();
+    }
+
+    /**
      * El archivo con el que se abre el recurso (el más antiguo), o null si
      * es un enlace o un video por URL.
      */

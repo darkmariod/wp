@@ -31,6 +31,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Ventana para no repetir consultas (minutos)
+    |--------------------------------------------------------------------------
+    |
+    | Si un usuario consulta el mismo recurso otra vez dentro de esta ventana,
+    | no se anota una nueva consulta: recargar la página no debe inflar las
+    | estadísticas. Con 0 se anota cada consulta. Las descargas siempre se anotan.
+    |
+    */
+
+    'view_log_window_minutes' => (int) env('BIBLIOTECA_VIEW_LOG_WINDOW', 30),
+
+    /*
+    |--------------------------------------------------------------------------
     | Extensiones permitidas y su contenido real
     |--------------------------------------------------------------------------
     |
