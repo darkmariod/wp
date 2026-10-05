@@ -4,6 +4,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Marca de la Biblioteca
+    |--------------------------------------------------------------------------
+    |
+    | El colegio cambia nombre, logo, icono y color desde aquí, sin tocar
+    | vistas ni CSS.
+    |
+    | - name: texto junto al logo y en el título de cada página.
+    | - logo: null usa el logo del portal (<x-brand-logo>). Una ruta relativa
+    |   (se resuelve con asset()), una ruta desde la raíz o una URL https
+    |   usa esa imagen. Se muestra sobre el fondo del tema, tanto en claro
+    |   como en oscuro: conviene un PNG/SVG con fondo transparente.
+    | - favicon: null deja el icono de la aplicación; mismo formato que logo.
+    | - primary: color principal en hex de 6 dígitos (#RRGGBB). Elige uno
+    |   con contraste >= 4.5:1 sobre blanco: se usa para botones y enlaces.
+    |   El tema oscuro y el texto del botón se derivan solos.
+    |
+    */
+
+    'brand' => [
+        'name' => 'Pestalozzi',
+        'logo' => null,
+        'favicon' => null,
+        'primary' => '#126333',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Disco de la Biblioteca
     |--------------------------------------------------------------------------
     |
