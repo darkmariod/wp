@@ -1,11 +1,20 @@
 {
   "resources/js/app.js": {
-    "file": "assets/app-ttIgawyB.js",
+    "file": "assets/app-DXk7-G7g.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-D_ZowLH-.css"
+      "assets/app-oROkdb_m.css"
+    ]
+  },
+  "resources/js/biblioteca.js": {
+    "file": "assets/biblioteca-D-fFS9Yn.js",
+    "name": "biblioteca",
+    "src": "resources/js/biblioteca.js",
+    "isEntry": true,
+    "css": [
+      "assets/biblioteca-evtdGeJ5.css"
     ]
   }
 }
