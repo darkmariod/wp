@@ -24,6 +24,11 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  // Archivos protegidos (Biblioteca y evidencias): el service worker no se
+  // mete, ni para guardarlos ni para reenviar sus peticiones de rango.
+  const { pathname } = new URL(event.request.url);
+  if (pathname.startsWith('/biblioteca') || pathname.startsWith('/storage-privado')) return;
+
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );

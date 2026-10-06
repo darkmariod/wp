@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Biblioteca\ResourceFileController;
 use App\Http\Controllers\MiEscuelita\AsistenciaController;
 use App\Http\Controllers\MiEscuelita\EvidenceController;
 use App\Http\Controllers\MiEscuelita\ExperienceController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\MiEscuelita\MediaController;
 use App\Http\Controllers\MiEscuelita\NotificationPreferenceController;
 use App\Http\Controllers\MiEscuelita\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,7 +22,12 @@ Route::get('/', function () {
 Route::get('/privacidad', [PrivacyPolicyController::class, 'show'])
     ->name('privacidad');
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function (Request $request) {
+    // El estudiante no tiene panel: su inicio es la Biblioteca.
+    if ($request->user()->isEstudiante()) {
+        return redirect()->route('biblioteca.index');
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -52,6 +59,29 @@ Route::middleware(['auth', 'familia'])->prefix('mi-escuelita')->name('mi-escueli
 
     Route::get('/notificaciones', [NotificationPreferenceController::class, 'edit'])->name('notificaciones.edit');
     Route::patch('/notificaciones', [NotificationPreferenceController::class, 'update'])->name('notificaciones.update');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Biblioteca
+|--------------------------------------------------------------------------
+| Personal y estudiantes activos (middleware 'biblioteca'). Las familias
+| quedan fuera. Por ahora solo hay una página provisional; T06/T07 la
+| reemplazan por la Biblioteca real.
+|
+| Los archivos solo salen por estas dos rutas: cada una exige poder ver el
+| recurso (si no, 404) y descargar exige además permiso de descarga.
+*/
+Route::middleware(['auth', 'biblioteca'])->group(function () {
+    Route::get('/biblioteca', fn () => view('biblioteca.placeholder'))->name('biblioteca.index');
+
+    Route::get('/biblioteca/{resource:slug}/archivo', [ResourceFileController::class, 'inline'])
+        ->middleware('throttle:biblioteca-archivos')
+        ->name('biblioteca.archivo');
+
+    Route::get('/biblioteca/{resource:slug}/descargar', [ResourceFileController::class, 'download'])
+        ->middleware('throttle:biblioteca-descargas')
+        ->name('biblioteca.descargar');
 });
 
 /*

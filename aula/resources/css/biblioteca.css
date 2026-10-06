@@ -1,0 +1,217 @@
+/*
+|--------------------------------------------------------------------------
+| Biblioteca — tokens de diseño, tema claro/oscuro y base
+|--------------------------------------------------------------------------
+| Se importa el CSS del portal para reutilizar Tailwind, la fuente y la
+| escala verde del colegio: este bundle compila solo, sin app.js.
+|
+| Los valores de color van en hex plano a propósito: tests/Unit/
+| BibliotecaTokensContrastTest.php los lee de aquí y exige contraste WCAG
+| en los dos temas. Los colores derivados (hover, tono suave, borde de
+| campos) usan color-mix y siguen solos al color primario de la marca.
+*/
+@import "./app.css";
+
+/* Tema claro: es el valor por defecto, también sin JavaScript. */
+:root {
+    --bib-background: #FAFAF7;
+    --bib-surface: #FFFFFF;
+    --bib-surface-secondary: #F3F5F1;
+    --bib-text: #14261C;
+    --bib-text-secondary: #4A5A51;
+    --bib-border: #D6DDD7;
+    --bib-primary: #126333;
+    --bib-primary-contrast: #FFFFFF;
+    --bib-success: #15803D;
+    --bib-warning: #B45309;
+    --bib-danger: #B91C1C;
+
+    --bib-primary-hover: color-mix(in srgb, var(--bib-primary) 86%, black);
+    --bib-primary-soft: color-mix(in srgb, var(--bib-primary) 8%, var(--bib-surface));
+    --bib-border-strong: color-mix(in srgb, var(--bib-text-secondary) 70%, var(--bib-surface));
+
+    color-scheme: light;
+}
+
+/* Tema oscuro: no es una inversión, es una paleta propia sobre verde casi negro. */
+:root[data-theme="dark"] {
+    --bib-background: #0F1511;
+    --bib-surface: #161E19;
+    --bib-surface-secondary: #1D2721;
+    --bib-text: #EDF2EE;
+    --bib-text-secondary: #A6B4AB;
+    --bib-border: #2D3A32;
+    --bib-primary: #4CC37D;
+    --bib-primary-contrast: #0B1F14;
+    --bib-success: #4ADE80;
+    --bib-warning: #FBBF24;
+    --bib-danger: #F87171;
+
+    --bib-primary-hover: color-mix(in srgb, var(--bib-primary) 85%, white);
+    --bib-primary-soft: color-mix(in srgb, var(--bib-primary) 16%, var(--bib-surface));
+    --bib-border-strong: color-mix(in srgb, var(--bib-text-secondary) 70%, var(--bib-surface));
+
+    color-scheme: dark;
+}
+
+/* "Automático" con el sistema en oscuro: mismos valores que el tema oscuro. */
+@media (prefers-color-scheme: dark) {
+    :root[data-theme="system"] {
+        --bib-background: #0F1511;
+        --bib-surface: #161E19;
+        --bib-surface-secondary: #1D2721;
+        --bib-text: #EDF2EE;
+        --bib-text-secondary: #A6B4AB;
+        --bib-border: #2D3A32;
+        --bib-primary: #4CC37D;
+        --bib-primary-contrast: #0B1F14;
+        --bib-success: #4ADE80;
+        --bib-warning: #FBBF24;
+        --bib-danger: #F87171;
+
+        --bib-primary-hover: color-mix(in srgb, var(--bib-primary) 85%, white);
+        --bib-primary-soft: color-mix(in srgb, var(--bib-primary) 16%, var(--bib-surface));
+        --bib-border-strong: color-mix(in srgb, var(--bib-text-secondary) 70%, var(--bib-surface));
+
+        color-scheme: dark;
+    }
+}
+
+/* Clases como bg-bib-surface o text-bib-text, sin variantes dark:. */
+@theme inline {
+    --color-bib-background: var(--bib-background);
+    --color-bib-surface: var(--bib-surface);
+    --color-bib-surface-secondary: var(--bib-surface-secondary);
+    --color-bib-text: var(--bib-text);
+    --color-bib-text-secondary: var(--bib-text-secondary);
+    --color-bib-border: var(--bib-border);
+    --color-bib-border-strong: var(--bib-border-strong);
+    --color-bib-primary: var(--bib-primary);
+    --color-bib-primary-hover: var(--bib-primary-hover);
+    --color-bib-primary-soft: var(--bib-primary-soft);
+    --color-bib-primary-contrast: var(--bib-primary-contrast);
+    --color-bib-success: var(--bib-success);
+    --color-bib-warning: var(--bib-warning);
+    --color-bib-danger: var(--bib-danger);
+}
+
+@layer base {
+    html {
+        background-color: var(--bib-background);
+    }
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--bib-border);
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    ::placeholder {
+        color: var(--bib-text-secondary);
+        opacity: 0.8;
+    }
+}
+
+/* El foco siempre se ve y usa el color de la marca. */
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid var(--bib-primary);
+    outline-offset: 2px;
+}
+
+/* El logo del portal es de un solo color verde oscuro: en oscuro se aclara. */
+:root[data-theme="dark"] .bib-logo-default img {
+    filter: brightness(0) invert(0.93);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-theme="system"] .bib-logo-default img {
+        filter: brightness(0) invert(0.93);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/*
+| Compatibilidad: el formulario de perfil del portal (partials con colores
+| ink/green) se muestra dentro de este layout. Sin esto sus textos serían
+| ilegibles en oscuro. Sin capa a propósito: gana a las utilidades de Tailwind.
+*/
+.bib-legacy .text-ink-900 {
+    color: var(--bib-text);
+}
+
+.bib-legacy :is(.text-ink-600, .text-ink-400) {
+    color: var(--bib-text-secondary);
+}
+
+.bib-legacy .text-green-800 {
+    color: var(--bib-primary);
+}
+
+.bib-legacy .text-red-600 {
+    color: var(--bib-danger);
+}
+
+.bib-legacy :is(.border-green-100, .border-green-200):not(input, select, textarea) {
+    border-color: var(--bib-border);
+}
+
+.bib-legacy .border-red-200 {
+    border-color: var(--bib-danger);
+}
+
+.bib-legacy .bg-white {
+    background-color: var(--bib-surface);
+}
+
+.bib-legacy :is(input, select, textarea) {
+    background-color: var(--bib-surface);
+    border-color: var(--bib-border-strong);
+    color: var(--bib-text);
+}
+
+.bib-legacy .bg-green-800 {
+    background-color: var(--bib-primary);
+    color: var(--bib-primary-contrast);
+}
+
+.bib-legacy .bg-green-800:hover {
+    background-color: var(--bib-primary-hover);
+}
+
+.bib-legacy .bg-red-600 {
+    background-color: var(--bib-danger);
+    color: var(--bib-surface);
+}
+
+.bib-legacy .bg-red-600:hover {
+    filter: brightness(0.92);
+}
+
+.bib-legacy :is(.hover\:bg-green-50, .hover\:bg-red-50):hover {
+    background-color: var(--bib-surface-secondary);
+}
+
+/* El anillo de .focus-ring se reemplaza por el contorno de arriba. */
+.bib-legacy .focus-ring:focus {
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+}

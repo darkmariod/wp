@@ -9,7 +9,7 @@ class ContentPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->active && ! $user->isFamilia();
+        return $user->active && $user->isPanelRole();
     }
 
     /**

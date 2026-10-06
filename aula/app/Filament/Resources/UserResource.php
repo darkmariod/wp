@@ -31,6 +31,22 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    /**
+     * Etiquetas de los roles para el formulario, la tabla y el filtro.
+     *
+     * @return array<string, string>
+     */
+    public static function roleLabels(): array
+    {
+        return [
+            User::ROLE_ADMINISTRADOR => 'Administrador',
+            User::ROLE_COORDINACION => 'Coordinación',
+            User::ROLE_GUIA => 'Docente',
+            User::ROLE_FAMILIA => 'Familia',
+            User::ROLE_ESTUDIANTE => 'Estudiante',
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -61,12 +77,7 @@ class UserResource extends Resource
                             ->unique(ignoreRecord: true),
                         Forms\Components\Select::make('role')
                             ->label('Rol')
-                            ->options([
-                                User::ROLE_ADMINISTRADOR => 'Administrador',
-                                User::ROLE_COORDINACION => 'Coordinación',
-                                User::ROLE_GUIA => 'Docente',
-                                User::ROLE_FAMILIA => 'Familia',
-                            ])
+                            ->options(self::roleLabels())
                             ->required(),
                         Forms\Components\Toggle::make('active')
                             ->label('Activo')
@@ -117,17 +128,13 @@ class UserResource extends Resource
                     ->label('Rol')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'administrador' => 'danger',
-                        'coordinacion' => 'warning',
-                        'guia' => 'success',
-                        'familia' => 'gray',
+                        User::ROLE_ADMINISTRADOR => 'danger',
+                        User::ROLE_COORDINACION => 'warning',
+                        User::ROLE_GUIA => 'success',
+                        User::ROLE_ESTUDIANTE => 'info',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'administrador' => 'Administrador',
-                        'coordinacion' => 'Coordinación',
-                        'guia' => 'Docente',
-                        'familia' => 'Familia',
-                    }),
+                    ->formatStateUsing(fn (string $state): string => self::roleLabels()[$state] ?? $state),
                 Tables\Columns\IconColumn::make('active')
                     ->label('Activo')
                     ->boolean()
@@ -143,12 +150,7 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
                     ->label('Rol')
-                    ->options([
-                        'administrador' => 'Administrador',
-                        'coordinacion' => 'Coordinación',
-                        'guia' => 'Docente',
-                        'familia' => 'Familia',
-                    ]),
+                    ->options(self::roleLabels()),
                 Tables\Filters\TernaryFilter::make('active')
                     ->label('Activo'),
             ])
