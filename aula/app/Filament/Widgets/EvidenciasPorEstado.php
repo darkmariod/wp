@@ -12,13 +12,7 @@ class EvidenciasPorEstado extends ChartWidget
 
     protected function ninoIds()
     {
-        $query = Child::query()->where('status', 'active');
-
-        if (auth()->user()?->isGuia()) {
-            $query->whereHas('environment', fn ($q) => $q->where('teacher_id', auth()->id()));
-        }
-
-        return $query->pluck('id');
+        return Child::query()->where('status', 'active')->taughtBy(auth()->user())->pluck('id');
     }
 
     protected function getType(): string

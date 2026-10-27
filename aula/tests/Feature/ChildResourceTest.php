@@ -24,7 +24,9 @@ class ChildResourceTest extends TestCase
     {
         $guia = User::factory()->guia()->create();
         $ambiente = Environment::factory()->create(['teacher_id' => $guia->id]);
+        // La guía solo puede elegir familias que ya tienen un niño en su grado.
         $familia = Family::factory()->create();
+        Child::factory()->create(['family_id' => $familia->id, 'environment_id' => $ambiente->id]);
 
         Livewire::actingAs($guia)
             ->test(CreateChild::class)

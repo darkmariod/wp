@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -64,6 +65,28 @@ class Child extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Niños que ese usuario puede ver en el panel por su grado: el personal
+     * los ve todos, la docente (guía) solo los de los ambientes donde ella
+     * es la docente, y cualquier otro rol no ve ninguno. Un niño sin
+     * ambiente solo lo ve el personal.
+     */
+    public function scopeTaughtBy(Builder $query, ?User $user): Builder
+    {
+        if ($user?->isStaff()) {
+            return $query;
+        }
+
+        if ($user?->isGuia()) {
+            return $query->whereHas(
+                'environment',
+                fn (Builder $environment) => $environment->where('teacher_id', $user->id),
+            );
+        }
+
+        return $query->whereRaw('1 = 0');
     }
 
     public function avatarUrl(): ?string

@@ -104,7 +104,9 @@ class EnvironmentResource extends Resource
                     ->boolean(),
                 Tables\Columns\TextColumn::make('children.count')
                     ->label('Niños')
-                    ->counts('children'),
+                    ->counts('children')
+                    // El total de niños de otros grados no es de la docente.
+                    ->visible(fn (): bool => (bool) auth()->user()?->isStaff()),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('active')

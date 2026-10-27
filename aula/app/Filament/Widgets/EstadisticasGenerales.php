@@ -12,13 +12,7 @@ class EstadisticasGenerales extends StatsOverviewWidget
 {
     protected function ninosVisibles()
     {
-        $query = Child::query()->where('status', 'active');
-
-        if (auth()->user()?->isGuia()) {
-            $query->whereHas('environment', fn ($q) => $q->where('teacher_id', auth()->id()));
-        }
-
-        return $query;
+        return Child::query()->where('status', 'active')->taughtBy(auth()->user());
     }
 
     protected function getStats(): array

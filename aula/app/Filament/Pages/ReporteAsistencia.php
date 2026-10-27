@@ -122,7 +122,10 @@ class ReporteAsistencia extends Page
             return [];
         }
 
+        // taughtBy: una guía que fuerce un ambiente ajeno desde la petición no
+        // recibe los nombres de otro grado.
         return Child::query()
+            ->taughtBy(auth()->user())
             ->where('environment_id', $this->environment_id)
             ->orderBy('name')
             ->pluck('name', 'id')

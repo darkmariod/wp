@@ -3,21 +3,21 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ChildResource\Pages;
+use App\Filament\Resources\ChildResource\RelationManagers\AttendancesRelationManager;
+use App\Filament\Resources\ChildResource\RelationManagers\ParentsRelationManager;
 use App\Models\Child;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use App\Filament\Resources\ChildResource\RelationManagers\AttendancesRelationManager;
-use App\Filament\Resources\ChildResource\RelationManagers\ParentsRelationManager;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class ChildResource extends Resource
@@ -76,7 +76,11 @@ class ChildResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('family_id')
                             ->label('Familia')
-                            ->relationship('family', 'name')
+                            ->relationship(
+                                'family',
+                                'name',
+                                modifyQueryUsing: fn (Builder $query) => $query->withChildrenTaughtBy(auth()->user(), true),
+                            )
                             ->searchable()
                             ->preload()
                             ->required()
@@ -97,9 +101,7 @@ class ChildResource extends Resource
                             ->relationship(
                                 'environment',
                                 'name',
-                                modifyQueryUsing: fn (Builder $query) => auth()->user()?->isGuia()
-                                    ? $query->where('teacher_id', auth()->id())
-                                    : $query,
+                                modifyQueryUsing: fn (Builder $query) => static::limitEnvironments($query),
                             )
                             ->searchable()
                             ->preload()
@@ -141,10 +143,18 @@ class ChildResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('environment_id')
                     ->label('Ambiente')
-                    ->relationship('environment', 'name'),
+                    ->relationship(
+                        'environment',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query) => static::limitEnvironments($query),
+                    ),
                 Tables\Filters\SelectFilter::make('family_id')
                     ->label('Familia')
-                    ->relationship('family', 'name'),
+                    ->relationship(
+                        'family',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->withChildrenTaughtBy(auth()->user()),
+                    ),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Estado')
                     ->options([
@@ -161,6 +171,29 @@ class ChildResource extends Resource
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * La docente solo ve y filtra a los niños de su grado; el personal, a todos.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->taughtBy(auth()->user());
+    }
+
+    /**
+     * Ambientes que el usuario puede elegir o filtrar: todos para el
+     * personal, solo los suyos para la docente.
+     */
+    protected static function limitEnvironments(Builder $query): Builder
+    {
+        $user = auth()->user();
+
+        return match (true) {
+            $user?->isStaff() => $query,
+            $user?->isGuia() => $query->where('teacher_id', $user->id),
+            default => $query->whereRaw('1 = 0'),
+        };
     }
 
     public static function getRelations(): array
